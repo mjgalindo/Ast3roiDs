@@ -6,6 +6,9 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
 endif()
 
+# Use the c++17 standard
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+
 project(Ast3roiDs)
 set(EXECUTABLE_NAME Ast3roiDs)
 set(SFML_ROOT "C:/Program Files (x86)/SFML")
