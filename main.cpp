@@ -1,106 +1,333 @@
 #include <SFML/Graphics.hpp>
 
-#include "Graficos/Grafico.hpp"
-
-using namespace sf;
 using namespace std;
+
+int tratarTitulo(int estado);
+int tratarMenu(int estado);
+int tratarJuego(int estado);
+int tratarGameOver(int estado);
+int tratarPuntuaciones(int estado);
+int tratarOpciones(int estado);
+
+//Tamaño de la ventana
+sf::Vector2u MAX_SIZE;
+//Ventana
+sf::RenderWindow ventana;
 
 int main() {
 
-    Vector2u MAX_SIZE;
-
-    // Creacion de la ventana
-    RenderWindow window;
-
-    for(VideoMode vm : VideoMode::getFullscreenModes()) {
+    for(sf::VideoMode vm : sf::VideoMode::getFullscreenModes()) {
         if(vm.isValid()) {
-            window.create(VideoMode::getDesktopMode(), "Ast3roiDs", Style::Fullscreen);
-            MAX_SIZE = window.getSize();
+            ventana.create(sf::VideoMode::getDesktopMode(), "Ast3roiDs", sf::Style::Fullscreen);
+            MAX_SIZE = ventana.getSize();
             break;
         }
     }
 
-    Vector2f posicion;
-    posicion.x = window.getSize().x / 2;
-    posicion.y = window.getSize().y / 2;
-
-    Grafico gr = Grafico(posicion);
-    gr.setTextura("Imagenes/tx1.png");
-
-    Vector2f posicion2;
-    posicion2.x = 5;
-    posicion2.y = 5;
-    Vector2f velocidad2;
-    velocidad2.x = 0.2;
-    velocidad2.y = 0.2;
-
-    Grafico gr2 = Grafico(posicion2);
-    gr2.setTextura("Imagenes/tx2.png");
-
-    while (window.isOpen()) {
-        Event event;
-        while (window.pollEvent(event)) {
-
-            switch(event.type){
-                case Event::Closed:
-                    window.close();
-                    break;
-                case Event::KeyPressed:
-                    if(Keyboard::isKeyPressed(Keyboard::Left)){
-                        posicion.x -= 2;
-                        if(posicion.x<0){
-                            posicion.x = MAX_SIZE.x;
-                        }
-                        gr.setPosicion(posicion);
-                    }
-                    else if(Keyboard::isKeyPressed(Keyboard::Right)){
-                        posicion.x += 2;
-                        if(posicion.x>MAX_SIZE.x){
-                            posicion.x = 0;
-                        }
-                        gr.setPosicion(posicion);
-                    }
-                    else if(Keyboard::isKeyPressed(Keyboard::Up)){
-                        posicion.y -= 2;
-                        if(posicion.y<0){
-                            posicion.y = MAX_SIZE.y;
-                        }
-                        gr.setPosicion(posicion);
-                    }
-                    else if(Keyboard::isKeyPressed(Keyboard::Down)){
-                        posicion.y += 2;
-                        if(posicion.y>MAX_SIZE.y){
-                            posicion.y = 0;
-                        }
-                        gr.setPosicion(posicion);
-                    }
-                    else if(Keyboard::isKeyPressed(Keyboard::Escape)){
-                        window.close();
-                    }
-            }
+    int estado_actual = 0;
+    while(ventana.isOpen()){
+        switch(estado_actual){
+            case 0: //Titulo
+                estado_actual = tratarTitulo(estado_actual);
+                break;
+            case 1: //Menu
+                estado_actual = tratarMenu(estado_actual);
+                break;
+            case 2: //Juego
+                estado_actual = tratarJuego(estado_actual);
+                break;
+            case 3: //Game Over
+                estado_actual = tratarGameOver(estado_actual);
+                break;
+            case 4: //Puntuaciones
+                estado_actual = tratarPuntuaciones(estado_actual);
+                break;
+            case 5: //Opciones
+                estado_actual = tratarOpciones(estado_actual);
+                break;
+            default:
+                return 0;
         }
-
-        posicion2.x = posicion2.x + velocidad2.x;
-        posicion2.y = posicion2.y + velocidad2.y;
-        gr2.setPosicion(posicion2);
-
-        if(posicion2.x<0 || posicion2.x+gr2.getAncho()>MAX_SIZE.x){
-            velocidad2.x = velocidad2.x * -1;
-        }
-        if(posicion2.y<0 || posicion2.y+gr2.getAlto()>MAX_SIZE.y){
-            velocidad2.y = velocidad2.y * -1;
-        }
-
-        // Se borra la pantalla con negro
-        window.clear(Color::Black);
-
-        //Se dibuja el circulo
-        gr.dibujar(&window);
-        gr2.dibujar(&window);
-
-        // Se muestra la ventana
-        window.display();
     }
-
     return 0;
+}
+
+int tratarTitulo(int estado){
+    sf::Text texto;
+    sf::Text instrucciones;
+
+    sf::Font fuente;
+    fuente.loadFromFile("Recursos/Fuentes/arial.ttf");
+
+    texto.setFont(fuente);
+    texto.setString("TITULO");
+    texto.setCharacterSize(30);
+    texto.setFillColor(sf::Color::White);
+
+    instrucciones.setFont(fuente);
+    instrucciones.setString("<ENTER> PARA MENU");
+    instrucciones.setCharacterSize(30);
+    instrucciones.setPosition(sf::Vector2f(0.0,35.0));
+    instrucciones.setFillColor(sf::Color::White);
+
+    while(true){
+        sf::Event event;
+        while(ventana.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    ventana.close();
+                    return -1;
+                case sf::Event::KeyPressed:
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
+                        return 1;
+                    }
+                default:
+                    break;
+            }
+
+            ventana.clear(sf::Color::Black);
+            ventana.draw(texto);
+            ventana.draw(instrucciones);
+            ventana.display();
+        }
+    }
+}
+
+int tratarMenu(int estado){
+    sf::Text texto;
+    sf::Text opcion1;
+    sf::Text opcion2;
+    sf::Text opcion3;
+    sf::Text opcion4;
+
+    sf::Font fuente;
+    fuente.loadFromFile("Recursos/Fuentes/arial.ttf");
+
+    texto.setFont(fuente);
+    texto.setString("MENU");
+    texto.setCharacterSize(30);
+    texto.setFillColor(sf::Color::White);
+
+    opcion1.setFont(fuente);
+    opcion1.setString("1-JUEGO");
+    opcion1.setCharacterSize(30);
+    opcion1.setPosition(sf::Vector2f(0.0,35.0));
+    opcion1.setFillColor(sf::Color::White);
+
+    opcion2.setFont(fuente);
+    opcion2.setString("2-PUNTUACIONES");
+    opcion2.setCharacterSize(30);
+    opcion2.setPosition(sf::Vector2f(0.0,70.0));
+    opcion2.setFillColor(sf::Color::White);
+
+    opcion3.setFont(fuente);
+    opcion3.setString("3-OPCIONES");
+    opcion3.setCharacterSize(30);
+    opcion3.setPosition(sf::Vector2f(0.0,105.0));
+    opcion3.setFillColor(sf::Color::White);
+
+    opcion4.setFont(fuente);
+    opcion4.setString("4-SALIR");
+    opcion4.setCharacterSize(30);
+    opcion4.setPosition(sf::Vector2f(0.0,140.0));
+    opcion4.setFillColor(sf::Color::White);
+
+
+    while(true){
+        sf::Event event;
+        while(ventana.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    ventana.close();
+                    return -1;
+                case sf::Event::KeyPressed:
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                        return 2;
+                    }
+                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+                        return 4;
+                    }
+                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
+                        return 5;
+                    }
+                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
+                        return -1;
+                    }
+                default:
+                    break;
+            }
+
+            ventana.clear(sf::Color::Black);
+            ventana.draw(texto);
+            ventana.draw(opcion1);
+            ventana.draw(opcion2);
+            ventana.draw(opcion3);
+            ventana.draw(opcion4);
+            ventana.display();
+        }
+    }
+}
+
+int tratarJuego(int estado) {
+    sf::Text texto;
+    sf::Text opcion1;
+
+    sf::Font fuente;
+    fuente.loadFromFile("Recursos/Fuentes/arial.ttf");
+
+    texto.setFont(fuente);
+    texto.setString("JUEGO");
+    texto.setCharacterSize(30);
+    texto.setFillColor(sf::Color::White);
+
+    opcion1.setFont(fuente);
+    opcion1.setString("1-GAME OVER");
+    opcion1.setCharacterSize(30);
+    opcion1.setPosition(sf::Vector2f(0.0, 35.0));
+    opcion1.setFillColor(sf::Color::White);
+
+    while (true) {
+        sf::Event event;
+        while (ventana.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    ventana.close();
+                    return -1;
+                case sf::Event::KeyPressed:
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                        return 3;
+                    }
+                default:
+                    break;
+            }
+
+            ventana.clear(sf::Color::Black);
+            ventana.draw(texto);
+            ventana.draw(opcion1);
+            ventana.display();
+        }
+    }
+}
+
+int tratarGameOver(int estado) {
+    sf::Text texto;
+    sf::Text opcion1;
+
+    sf::Font fuente;
+    fuente.loadFromFile("Recursos/Fuentes/arial.ttf");
+
+    texto.setFont(fuente);
+    texto.setString("GAME OVER");
+    texto.setCharacterSize(30);
+    texto.setFillColor(sf::Color::White);
+
+    opcion1.setFont(fuente);
+    opcion1.setString("1-PUNTUACIONES");
+    opcion1.setCharacterSize(30);
+    opcion1.setPosition(sf::Vector2f(0.0, 35.0));
+    opcion1.setFillColor(sf::Color::White);
+
+    while (true) {
+        sf::Event event;
+        while (ventana.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    ventana.close();
+                    return -1;
+                case sf::Event::KeyPressed:
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                        return 4;
+                    }
+                default:
+                    break;
+            }
+
+            ventana.clear(sf::Color::Black);
+            ventana.draw(texto);
+            ventana.draw(opcion1);
+            ventana.display();
+        }
+    }
+}
+
+int tratarPuntuaciones(int estado) {
+    sf::Text texto;
+    sf::Text opcion1;
+
+    sf::Font fuente;
+    fuente.loadFromFile("Recursos/Fuentes/arial.ttf");
+
+    texto.setFont(fuente);
+    texto.setString("PUNTUACIONES");
+    texto.setCharacterSize(30);
+    texto.setFillColor(sf::Color::White);
+
+    opcion1.setFont(fuente);
+    opcion1.setString("1-MENU");
+    opcion1.setCharacterSize(30);
+    opcion1.setPosition(sf::Vector2f(0.0, 35.0));
+    opcion1.setFillColor(sf::Color::White);
+
+    while (true) {
+        sf::Event event;
+        while (ventana.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    ventana.close();
+                    return -1;
+                case sf::Event::KeyPressed:
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                        return 1;
+                    }
+                default:
+                    break;
+            }
+
+            ventana.clear(sf::Color::Black);
+            ventana.draw(texto);
+            ventana.draw(opcion1);
+            ventana.display();
+        }
+    }
+}
+
+int tratarOpciones(int estado) {
+    sf::Text texto;
+    sf::Text opcion1;
+
+    sf::Font fuente;
+    fuente.loadFromFile("Recursos/Fuentes/arial.ttf");
+
+    texto.setFont(fuente);
+    texto.setString("OPCIONES");
+    texto.setCharacterSize(30);
+    texto.setFillColor(sf::Color::White);
+
+    opcion1.setFont(fuente);
+    opcion1.setString("1-MENU");
+    opcion1.setCharacterSize(30);
+    opcion1.setPosition(sf::Vector2f(0.0, 35.0));
+    opcion1.setFillColor(sf::Color::White);
+
+    while (true) {
+        sf::Event event;
+        while (ventana.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    ventana.close();
+                    return -1;
+                case sf::Event::KeyPressed:
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                        return 1;
+                    }
+                default:
+                    break;
+            }
+
+            ventana.clear(sf::Color::Black);
+            ventana.draw(texto);
+            ventana.draw(opcion1);
+            ventana.display();
+        }
+    }
 }
