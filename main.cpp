@@ -298,7 +298,7 @@ Estado tratarOpciones(Estado estado) {
     sf::Text opcion1;
 
     sf::Font fuente;
-    fuente.loadFromFile("Recursos/Fuentes/arial.ttf");
+    fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
     texto.setFont(fuente);
     texto.setString("OPCIONES");
