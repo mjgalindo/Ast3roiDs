@@ -55,22 +55,26 @@ int main() {
 }
 
 Estado tratarTitulo(Estado estado){
-    sf::Text texto;
+    sf::Text titulo;
     sf::Text instrucciones;
 
     sf::Font fuente;
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
-    texto.setFont(fuente);
-    texto.setString("TITULO");
-    texto.setCharacterSize(30);
-    texto.setFillColor(sf::Color::White);
+    titulo.setFont(fuente);
+    titulo.setString("AST3ROIDS");
+    titulo.setCharacterSize(MAX_SIZE.y / 6);
+    titulo.setFillColor(sf::Color::White);
+    titulo.setPosition((MAX_SIZE.x - titulo.getLocalBounds().width) / 2, MAX_SIZE.y / 5);
 
     instrucciones.setFont(fuente);
     instrucciones.setString("<ENTER> PARA MENU");
-    instrucciones.setCharacterSize(30);
-    instrucciones.setPosition(sf::Vector2f(0.0,35.0));
+    instrucciones.setCharacterSize(MAX_SIZE.y / 20);
+    instrucciones.setPosition((MAX_SIZE.x - instrucciones.getLocalBounds().width) / 2, 3 * MAX_SIZE.y / 5);
     instrucciones.setFillColor(sf::Color::White);
+
+    sf::Clock reloj;
+    bool dibujaInstrucciones = true;
 
     while(true){
         sf::Event event;
@@ -86,12 +90,17 @@ Estado tratarTitulo(Estado estado){
                 default:
                     break;
             }
-
-            ventana.clear(sf::Color::Black);
-            ventana.draw(texto);
-            ventana.draw(instrucciones);
-            ventana.display();
         }
+
+        ventana.clear(sf::Color::Black);
+        ventana.draw(titulo);
+        if (reloj.getElapsedTime().asMilliseconds() > 1000){
+            dibujaInstrucciones = !dibujaInstrucciones;
+            reloj.restart();
+        }
+        if (dibujaInstrucciones)
+            ventana.draw(instrucciones);
+        ventana.display();
     }
 }
 
