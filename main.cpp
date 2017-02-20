@@ -184,7 +184,7 @@ Estado tratarJuego(Estado estado) {
     sf::Text opcion1;
 
     sf::Font fuente;
-    fuente.loadFromFile("Recursos/Fuentes/arial.ttf");
+    fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
     texto.setFont(fuente);
     texto.setString("JUEGO");
@@ -225,7 +225,7 @@ Estado tratarGameOver(Estado estado) {
     sf::Text opcion1;
 
     sf::Font fuente;
-    fuente.loadFromFile("Recursos/Fuentes/arial.ttf");
+    fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
     texto.setFont(fuente);
     texto.setString("GAME OVER");
@@ -266,7 +266,7 @@ Estado tratarPuntuaciones(Estado estado) {
     sf::Text opcion1;
 
     sf::Font fuente;
-    fuente.loadFromFile("Recursos/Fuentes/arial.ttf");
+    fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
     texto.setFont(fuente);
     texto.setString("PUNTUACIONES");
@@ -288,7 +288,7 @@ Estado tratarPuntuaciones(Estado estado) {
                     return ERROR;
                 case sf::Event::KeyPressed:
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
-                        return TITULO;
+                        return MENU;
                     }
                 default:
                     break;
@@ -329,7 +329,7 @@ Estado tratarOpciones(Estado estado) {
                     return ERROR;
                 case sf::Event::KeyPressed:
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
-                        return TITULO;
+                        return MENU;
                     }
                 default:
                     break;
