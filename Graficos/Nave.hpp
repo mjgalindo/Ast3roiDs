@@ -1,57 +1,53 @@
 #ifndef AST3ROIDS_NAVE_HPP
 #define AST3ROIDS_NAVE_HPP
 
-enum Estado { OK, ACELERANDO, DESTRUIDA, RECONSTRUYENDO };
+#include <cmath>
+#include <SFML/Graphics.hpp>
 
-class Nave : public sf::Movil {
+class Nave : public sf::Drawable {
+    //Velocidad de giro
+    static const float V_ANGULAR = 5;
+    //Numero maximo de disparos activos
+    static const float MAX_DISPAROS = 4;
+
     private:
-        float velocidadAngular;
-
-        int vidas;
-        long int puntuacion;
-
-        Estado estado;
-
-        sf::Texture naveAcelerando;
-        sf::Texture naveDestruida;
-        sf::Texture naveReconstruyendo;
+        //Orden: morro, izquierda, derecha
+        sf::Vector2f puntos[3];
+        //Direccion de la nave
+        float direccion;
+        //Posicion de la nave
+        sf::Vector2f posicion;
+        //Velocidad de la nave
+        sf::Vector2f velocidad;
+        //Numero de disparos
+        int disparos;
 
     public:
-        //Constructores
+        //Constructor
         Nave();
-        Nave(Vector2f posicion, Vector2f vel, float velAng=1.0, int vidas=3, long int puntuacion=0, Estado e=OK);
-        Nave(Vector2f posicion, Vector2f vel, sf::Texture t, float velAng=1.0, int vidas=3, long int puntuacion=0, Estado e=OK);
-        Nave(float posX, float posY, float velX, float velY, float velAng=1.0, int vidas=3, long int puntuacion=0, Estado e=OK);
-        Nave(float posX, float posY, float velX, float velY, sf::Texture t, float velAng=1.0, int vidas=3, long int puntuacion=0, Estado e=OK);
 
         //Destructor
         ~Nave();
 
-        //Getters
-        float getVelocidadAngular();
-        int getVidas();
-        long int getPuntuacion();
-        Estado getEstado();
-        const sf::Texture* getTxtAcelerando();
-        const sf::Texture* getTxtDestruida();
-        const sf::Texture* getTxtReconstruyendo();
-
         //Setters
-        void setVelocidadAngular(float va);
-        void setVidas(int v);
-        void setPuntuacion(long int punt);
-        void setEstado(Estado est);
-        void setTxtAcelerando(sf::Texture t);
-        void setTxtDestruida(sf::Texture t);
-        void setTxtReconstruyendo(sf::Texture t);
+        void setPuntos(Vector3f ps[3]);
+        void setDireccion(float dir);
+        void setPosicion(sf::Vector2f pos);
+        void setVelocidad(sf::Vector2f vel);
+
+        //Getters
+        sf::Vector2f* getPuntos();
+        float getDireccion();
+        sf::Vector2f getPosicion();
+        sf::Vector2f getVelocidad();
 
         //Otros
-        void destruir();
-        void reconstruir();
-        void aumentarPuntuacion(int puntos);
         void disparar();
-        void girar();
-        void saltar();
+        void recuperarDisparos();
+        void rotarIzda();
+        void rotarDcha();
+        void mover();
+        void acelerar();
 };
 
 #endif //AST3ROIDS_NAVE_HPP

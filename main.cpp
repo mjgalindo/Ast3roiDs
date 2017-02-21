@@ -116,33 +116,33 @@ Estado tratarMenu(Estado estado){
 
     texto.setFont(fuente);
     texto.setString("MENU");
-    texto.setCharacterSize(30);
+    texto.setCharacterSize(80);
+    texto.setPosition({(MAX_SIZE.x - texto.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 10.0f});
     texto.setFillColor(sf::Color::White);
 
     opcion1.setFont(fuente);
     opcion1.setString("1-JUEGO");
-    opcion1.setCharacterSize(30);
-    opcion1.setPosition(sf::Vector2f(0.0,35.0));
+    opcion1.setCharacterSize(40);
+    opcion1.setPosition({(MAX_SIZE.x - opcion1.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 8 + MAX_SIZE.y / 5.0f});
     opcion1.setFillColor(sf::Color::White);
 
     opcion2.setFont(fuente);
     opcion2.setString("2-PUNTUACIONES");
-    opcion2.setCharacterSize(30);
-    opcion2.setPosition(sf::Vector2f(0.0,70.0));
+    opcion2.setCharacterSize(40);
+    opcion2.setPosition({(MAX_SIZE.x - opcion2.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 8 + 2 * MAX_SIZE.y / 5.0f});
     opcion2.setFillColor(sf::Color::White);
 
     opcion3.setFont(fuente);
     opcion3.setString("3-OPCIONES");
-    opcion3.setCharacterSize(30);
-    opcion3.setPosition(sf::Vector2f(0.0,105.0));
+    opcion3.setCharacterSize(40);
+    opcion3.setPosition({(MAX_SIZE.x - opcion3.getLocalBounds().width) / 2, MAX_SIZE.y / 8.0f + 3 * MAX_SIZE.y / 5.0f});
     opcion3.setFillColor(sf::Color::White);
 
     opcion4.setFont(fuente);
     opcion4.setString("4-SALIR");
-    opcion4.setCharacterSize(30);
-    opcion4.setPosition(sf::Vector2f(0.0,140.0));
+    opcion4.setCharacterSize(40);
+    opcion4.setPosition({(MAX_SIZE.x - opcion4.getLocalBounds().width) / 2, MAX_SIZE.y / 8.0f + 4 * MAX_SIZE.y / 5.0f});
     opcion4.setFillColor(sf::Color::White);
-
 
     while(true){
         sf::Event event;

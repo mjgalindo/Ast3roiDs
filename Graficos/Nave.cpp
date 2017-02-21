@@ -1,126 +1,75 @@
-#include "Nave.hpp"
+//Constructor
+Nave::Nave(sf::Vector2f posicion_inicial){
+    puntos[0] = sf::Vector2f(0.0,0.2);
+    puntos[1] = sf::Vector2f(-0.1,-0.2);
+    puntos[2] = sf::Vector2f(0.1,-0.2);
 
-//Constructores
-Nave::Nave() : Movil() {}
+    direccion = 0;
 
-Nave::Nave(Vector2f posicion, Vector2f vel, float velAng=1.0, int v=3, long int p=0, Estado e=OK)
-        : Movil(posicion, vel) {
-    velocidadAngular = velAng;
-    vidas = v;
-    puntuacion = p;
-
-    estado = e;
-}
-
-Nave::Nave(Vector2f posicion, Vector2f vel, sf::Texture t, float velAng=1.0, int vidas=3, long int puntuacion=0, Estado e=OK)
-        : Movil(posicion, vel, t) {
-    velocidadAngular = velAng;
-    vidas = v;
-    puntuacion = p;
-
-    estado = e;
-}
-
-Nave::Nave(float posX, float posY, float velX, float velY, float velAng=1.0, int vidas=3, long int puntuacion=0, Estado e=OK)
-        : Movil(posX, posY, velX, velY) {
-    velocidadAngular = velAng;
-    vidas = v;
-    puntuacion = p;
-
-    estado = e;
-}
-
-Nave::Nave(float posX, float posY, float velX, float velY, sf::Texture t, float velAng=1.0, int vidas=3, long int puntuacion=0, Estado e=OK)
-        :Movil(posX, posY, velX, velY, t) {
-    velocidadAngular = velAng;
-    vidas = v;
-    puntuacion = p;
-
-    estado = e;
+    //Posicion de la nave
+    posicion = posicion_inicial;
+    //Velocidad de la nave
+    sf::Vector2f velocidad = sf::Vector2f(0.0, 0.0);
+    //Numero de disparos
+    int disparos = 0;
 }
 
 //Destructor
-Nave::~Nave() : ~Movil() {}
-
-//Getters
-float Nave::getVelocidadAngular() {
-    return velocidadAngular;
-}
-
-int Nave::getVidas() {
-    return vidas;
-}
-
-long int Nave::getPuntuacion() {
-    return puntuacion;
-}
-
-Estado Nave::getEstado() {
-    return estado;
-}
-
-const sf::Texture* Nave::getTxtAcelerando() {
-    return naveAcelerando;
-}
-
-const sf::Texture* Nave::getTxtDestruida() {
-    return naveDestruida;
-}
-const sf::Texture* Nave::getTxtReconstruyendo() {
-    return naveReconstruyendo;
-}
+Nave::~Nave(){}
 
 //Setters
-void Nave::setVelocidadAngular(float va) {
-    velocidadAngular = va;
+void Nave::setPuntos(sf::Vector3f ps[3]){
+    puntos = ps;
 }
 
-void Nave::setVidas(int v) {
-    vidas = v;
+void Nave::setDireccion(float dir){
+    direccion = dir;
 }
 
-void Nave::setPuntuacion(long int punt) {
-    puntuacion = punt;
+void Nave::setPosicion(sf::Vector2f posicion){
+    posicion = pos;
 }
 
-void Nave::setEstado(Estado est) {
-    estado = est;
+void Nave::setVelocidad(sf::Vector2f vel){
+    velocidad = vel;
 }
 
-void Nave::setTxtAcelerando(sf::Texture t) {
-    naveAcelerando = t;
+//Getters
+sf::Vector2f* Nave::getPuntos(){
+    return puntos;
 }
 
-void Nave::setTxtDestruida(sf::Texture t) {
-    naveDestruida = t;
+float Nave::getDireccion(){
+    return direccion;
 }
 
-void Nave::setTxtReconstruyendo(sf::Texture t) {
-    naveReconstruyendo = t;
+sf::Vector2f Nave::getPosicion(){
+    return posicion;
+}
+
+sf::Vector2f Nave::getVelocidad(){
+    return velocidad;
 }
 
 //Otros
-void Nave::destruir() {
-    vidas--;
-    estado = DESTRUIDA;
+void Nave::disparar(){
+
 }
 
-void Nave::reconstruir() {
-    estado = RECONSTRUYENDO;
+void Nave::rotarIzda(){
+    direccion += V_ANGULAR;
 }
 
-void Nave::aumentarPuntuacion(int puntos) {
-    puntuacion += puntos;
+void Nave::rotarDcha(){
+    direccion -= V_ANGULAR;
 }
 
-void Nave::disparar() {
-    // PIUM
+void Nave::mover(){
+    posicion.x += velocidad.x;
+    posicion.y += velocidad.y;
 }
 
-void Nave::girar() {
-    rotate(velocidadAngular);
-}
-
-void Nave::saltar() {
-    // setPosition(rand(0,MAX_X), rand(0,MAX_Y));
+void Nave::acelerar(){
+    velocidad.x += sen(direccion);
+    velocidad.y += cos(direccion);
 }
