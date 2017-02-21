@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 
+#include "Graficos/Nave.hpp"
+
 using namespace std;
 
 enum Estado {TITULO, MENU, JUEGO, GAME_OVER, PUNTUACIONES, OPCIONES, ERROR};
@@ -197,6 +199,7 @@ Estado tratarJuego(Estado estado) {
     opcion1.setPosition(sf::Vector2f(0.0, 35.0));
     opcion1.setFillColor(sf::Color::White);
 
+    Nave nave = Nave(sf::Vector2f(MAX_SIZE.x/2.0,MAX_SIZE.y/2.0));
     while (true) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
@@ -205,16 +208,37 @@ Estado tratarJuego(Estado estado) {
                     ventana.close();
                     return ERROR;
                 case sf::Event::KeyPressed:
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+                        nave.rotarIzda();
+                    }
+                    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+                        nave.rotarDcha();
+                    }
+                    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+                        nave.acelerar();
+                    }
+                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
                         return GAME_OVER;
                     }
                 default:
+                    nave.mover(MAX_SIZE);
+                    nave.frenar();
+
+                    ventana.clear(sf::Color::Black);
+                    ventana.draw(texto);
+                    ventana.draw(opcion1);
+                    ventana.draw(nave);
+                    ventana.display();
                     break;
             }
+
+            nave.mover(MAX_SIZE);
+            nave.frenar();
 
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
+            ventana.draw(nave);
             ventana.display();
         }
     }
