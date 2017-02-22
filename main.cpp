@@ -199,7 +199,7 @@ Estado tratarJuego(Estado estado) {
     opcion1.setPosition(sf::Vector2f(0.0, 35.0));
     opcion1.setFillColor(sf::Color::White);
 
-    Nave nave = Nave(sf::Vector2f(MAX_SIZE.x/2.0,MAX_SIZE.y/2.0));
+    Nave nave = Nave(sf::Vector2f(MAX_SIZE.x/2.0f,MAX_SIZE.y/2.0f));
     while (true) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
