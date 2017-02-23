@@ -1,20 +1,31 @@
 #ifndef AST3ROIDS_ASTEROIDE_HPP
 #define AST3ROIDS_ASTEROIDE_HPP
 
+#include <cmath>
 #include <SFML/Graphics.hpp>
 
 class Asteroide {
 
     private:
-        std::vector<sf::Vector2f> puntos;
-        sf::Vector2f posicion;
-        float velocidad;
         float direccion;
+        float size;
+        int version;
+        sf::Vector2f puntos[12];
+        sf::Vector2f posicion;
+        sf::Vector2f velocidad;
 
     public:
-        Asteroide(float, float);
+        Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, int version, float size);
+        ~Asteroide();
+
+
+        sf::Vector2f* getPuntos();
+        float getDireccion();
+        sf::Vector2f getPosicion();
+        sf::Vector2f getVelocidad();
         void explotar();
-        void movimiento();
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
 };
 
 
