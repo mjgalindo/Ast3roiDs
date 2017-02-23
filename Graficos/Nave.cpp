@@ -6,7 +6,7 @@ Nave::Nave(sf::Vector2f posicion_inicial){
     puntos[1] = sf::Vector2f(-0.7071067812,0.7071067812);
     puntos[2] = sf::Vector2f(-0.7071067812,-0.7071067812);
 
-    direccion = PI/2.0;
+    direccion = -PI/2.0;
 
     //Posicion de la nave
     posicion = posicion_inicial;
