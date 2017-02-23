@@ -217,6 +217,9 @@ Estado tratarJuego(Estado estado) {
                     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
                         nave.acelerar();
                     }
+                    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+                        nave.disparar();
+                    }
                     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
                         return GAME_OVER;
                     }
