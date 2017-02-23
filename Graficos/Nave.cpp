@@ -10,10 +10,15 @@ Nave::Nave(sf::Vector2f posicion_inicial){
 
     //Posicion de la nave
     posicion = posicion_inicial;
+
     //Velocidad de la nave
     sf::Vector2f velocidad = sf::Vector2f(0.0, 0.0);
-    //Numero de disparos
-    numDisparos = 0;
+
+    //Disparos
+    num_disparos = 0;
+    for(int i=0 ; i<MAX_DISPAROS ; i++){
+        disparos[i] = Disparo(sf::Vector2f(0.0, 0.0));
+    }
 }
 
 //Destructor
@@ -75,13 +80,22 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     target.draw(linea01, 2, sf::Lines);
     target.draw(linea12, 2, sf::Lines);
     target.draw(linea20, 2, sf::Lines);
+
+    //Dibujar los disparos
+    for(int i=0 ; i<num_disparos ; i++){
+        target.draw(disparos[i]);
+    }
 }
 
 //Otros
 void Nave::disparar(){
-    if(numDisparos < 4) {
-        disparos.push_back(Disparo(posicion.x,posicion.y,direccion));
-        numDisparos++;
+    if(num_disparos<MAX_DISPAROS){
+        sf::Vector2f inicio = puntos[0];
+        inicio.x = puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion);
+        inicio.y = puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion);
+        disparos[num_disparos] = Disparo(posicion+inicio);
+        disparos[num_disparos].setDireccion(direccion);
+        num_disparos++;
     }
 }
 
@@ -100,6 +114,7 @@ void Nave::rotarDcha(){
 }
 
 void Nave::mover(sf::Vector2u limites){
+    //Mover la nave
     posicion.x += velocidad.x;
     if(posicion.x-1>=limites.x){
         posicion.x -= limites.x;
@@ -115,15 +130,26 @@ void Nave::mover(sf::Vector2u limites){
     else if(posicion.y+1<=0.0){
         posicion.y += limites.y;
     }
-    if(numDisparos > 0) {
-        for(int i = 0; i < numDisparos; i++) {
-                disparos.at(i).mover(limites);
-        }
-        if(disparos.at(numDisparos-1).terminado()) {
-            numDisparos--;
-            disparos.pop_back();
+
+    //Mover los disparos
+    for(int i=0 ; i<num_disparos ; i++){
+        disparos[i].mover(limites);
+        if(disparos[i].comprobarAlcance()){
+            if(disparos[i].comprobarAlcance()){
+                recuperarDisparo(i);
+            }
+            else if(disparos[i].comprobarColision()){
+                recuperarDisparo(i);
+            }
         }
     }
+}
+
+void Nave::recuperarDisparo(int d){
+    for(int i=d; i<num_disparos-1 ; i++){
+        disparos[i] = disparos[i+1];
+    }
+    num_disparos--;
 }
 
 void Nave::acelerar(){
@@ -136,7 +162,7 @@ void Nave::frenar(){
         velocidad.x = 0;
     }
     else{
-        velocidad *= DECELERACION;
+        velocidad.x *= DECELERACION;
     }
 
     if((velocidad.y<UMBRAL) && (velocidad.y>-UMBRAL)) {
@@ -145,12 +171,4 @@ void Nave::frenar(){
     else{
         velocidad.y *= DECELERACION;
     }
-}
-
-std::vector<Disparo> Nave::getDisparos() {
-    return disparos;
-}
-
-int Nave::getNumDisparos() {
-    return numDisparos;
 }

@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <SFML/Graphics.hpp>
+
 #include "Disparo.hpp"
 
 #define PI 3.14159265358979323846
@@ -30,9 +31,10 @@ class Nave : public sf::Drawable {
         //Velocidad de la nave
         sf::Vector2f velocidad;
 
-        std::vector<Disparo> disparos;
         //Numero de disparos
-        int numDisparos;
+        int num_disparos;
+        //Vector de disparos
+        Disparo disparos[MAX_DISPAROS];
 
     public:
         //Constructor
@@ -52,15 +54,13 @@ class Nave : public sf::Drawable {
         float getDireccion();
         sf::Vector2f getPosicion();
         sf::Vector2f getVelocidad();
-        std::vector<Disparo> getDisparos();
-        int getNumDisparos();
 
         //Dibujo
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
         //Otros
         void disparar();
-        void recuperarDisparos();
+        void recuperarDisparo(int d);
         void rotarIzda();
         void rotarDcha();
         void mover(sf::Vector2u limites);
