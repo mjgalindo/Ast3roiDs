@@ -1,27 +1,24 @@
-//
-// Created by Jorge on 21/02/2017.
-//
-
 #ifndef AST3ROIDS_DISPARO_HPP
 #define AST3ROIDS_DISPARO_HPP
 
 #include <SFML/Graphics.hpp>
-#include <Math.h>
-class Disparo {
+#include <cmath>
+class Disparo : public sf::Drawable {
 
 private:
     sf::Vector2f posicion;
     sf::Vector2f posicionInicial;
     float direccion;
-    const float velocidad = 10.0;
-    const float distanciaMax = 100.0;
-    sf::Clock reloj;
+    sf::Vector2f velocidad;
+    float distanciaMax;
+    float distanciaRecorrida;
 
 public:
+    Disparo();
     Disparo(float, float, float);
-    void movimiento();
-    float distanciaRecorrida();
-    void desaparecer();
+    void mover(sf::Vector2u limites);
+    bool terminado();
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
 #endif //AST3ROIDS_DISPARO_HPP

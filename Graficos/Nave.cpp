@@ -13,7 +13,7 @@ Nave::Nave(sf::Vector2f posicion_inicial){
     //Velocidad de la nave
     sf::Vector2f velocidad = sf::Vector2f(0.0, 0.0);
     //Numero de disparos
-    int disparos = 0;
+    numDisparos = 0;
 }
 
 //Destructor
@@ -79,7 +79,10 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 
 //Otros
 void Nave::disparar(){
-
+    if(numDisparos < 4) {
+        disparos.push_back(Disparo(posicion.x,posicion.y,direccion));
+        numDisparos++;
+    }
 }
 
 void Nave::rotarIzda(){
@@ -112,6 +115,15 @@ void Nave::mover(sf::Vector2u limites){
     else if(posicion.y+1<=0.0){
         posicion.y += limites.y;
     }
+    if(numDisparos > 0) {
+        for(int i = 0; i < numDisparos; i++) {
+                disparos.at(i).mover(limites);
+        }
+        if(disparos.at(numDisparos-1).terminado()) {
+            numDisparos--;
+            disparos.pop_back();
+        }
+    }
 }
 
 void Nave::acelerar(){
@@ -133,4 +145,12 @@ void Nave::frenar(){
     else{
         velocidad.y *= DECELERACION;
     }
+}
+
+std::vector<Disparo> Nave::getDisparos() {
+    return disparos;
+}
+
+int Nave::getNumDisparos() {
+    return numDisparos;
 }

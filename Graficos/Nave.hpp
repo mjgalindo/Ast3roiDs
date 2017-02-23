@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <SFML/Graphics.hpp>
+#include "Disparo.hpp"
 
 #define PI 3.14159265358979323846
 #define UMBRAL 0.2
@@ -28,8 +29,10 @@ class Nave : public sf::Drawable {
         sf::Vector2f posicion;
         //Velocidad de la nave
         sf::Vector2f velocidad;
+
+        std::vector<Disparo> disparos;
         //Numero de disparos
-        int disparos;
+        int numDisparos;
 
     public:
         //Constructor
@@ -49,6 +52,8 @@ class Nave : public sf::Drawable {
         float getDireccion();
         sf::Vector2f getPosicion();
         sf::Vector2f getVelocidad();
+        std::vector<Disparo> getDisparos();
+        int getNumDisparos();
 
         //Dibujo
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;

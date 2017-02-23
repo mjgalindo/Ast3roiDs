@@ -220,6 +220,9 @@ Estado tratarJuego(Estado estado) {
                     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
                         return GAME_OVER;
                     }
+                    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+                        nave.disparar();
+                    }
                 default:
                     nave.mover(MAX_SIZE);
                     nave.frenar();
@@ -228,10 +231,12 @@ Estado tratarJuego(Estado estado) {
                     ventana.draw(texto);
                     ventana.draw(opcion1);
                     ventana.draw(nave);
+                    for(int i = 0; i < nave.getNumDisparos(); i++) {
+                        ventana.draw(nave.getDisparos().at(i));
+                    }
                     ventana.display();
                     break;
             }
-
             nave.mover(MAX_SIZE);
             nave.frenar();
 
@@ -239,6 +244,10 @@ Estado tratarJuego(Estado estado) {
             ventana.draw(texto);
             ventana.draw(opcion1);
             ventana.draw(nave);
+            for(int i = 0; i < nave.getNumDisparos(); i++) {
+                ventana.draw(nave.getDisparos().at(i));
+            }
+
             ventana.display();
         }
     }
