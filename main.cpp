@@ -200,27 +200,26 @@ Estado tratarJuego(Estado estado) {
     opcion1.setFillColor(sf::Color::White);
 
     Nave nave = Nave(sf::Vector2f(MAX_SIZE.x/2.0f,MAX_SIZE.y/2.0f));
+
+    sf::Clock reloj;
     while (true) {
-        sf::Event event;
-        while (ventana.pollEvent(event)) {
+        if(reloj.getElapsedTime().asMilliseconds()>50) {
+            sf::Event event;
+            ventana.pollEvent(event);
             switch (event.type) {
                 case sf::Event::Closed:
                     ventana.close();
                     return ERROR;
                 case sf::Event::KeyPressed:
-                    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
                         nave.rotarIzda();
-                    }
-                    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+                    } if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
                         nave.rotarDcha();
-                    }
-                    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+                    } if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
                         nave.acelerar();
-                    }
-                    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+                    } if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
                         nave.disparar();
-                    }
-                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                    } if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
                         return GAME_OVER;
                     }
                 default:
@@ -236,6 +235,7 @@ Estado tratarJuego(Estado estado) {
             ventana.draw(nave);
 
             ventana.display();
+            reloj.restart();
         }
     }
 }

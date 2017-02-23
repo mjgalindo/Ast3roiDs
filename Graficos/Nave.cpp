@@ -100,16 +100,16 @@ void Nave::disparar(){
 }
 
 void Nave::rotarIzda(){
-    direccion += V_ANGULAR;
-    if(direccion>2.0*PI){
-        direccion -= 2*PI;
+    direccion -= V_ANGULAR;
+    if(direccion<0.0){
+        direccion += 2*PI;
     }
 }
 
 void Nave::rotarDcha(){
-    direccion -= V_ANGULAR;
-    if(direccion<0.0){
-        direccion += 2*PI;
+    direccion += V_ANGULAR;
+    if(direccion>2.0*PI){
+        direccion -= 2*PI;
     }
 }
 
