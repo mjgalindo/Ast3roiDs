@@ -3,10 +3,10 @@
 //Constructor
 Nave::Nave(sf::Vector2f posicion_inicial){
     puntos[0] = sf::Vector2f(1.0,0.0);
-    puntos[1] = sf::Vector2f(-0.7071067812,0.7071067812);
-    puntos[2] = sf::Vector2f(-0.7071067812,-0.7071067812);
+    puntos[1] = sf::Vector2f(-0.7071067812f,0.7071067812f);
+    puntos[2] = sf::Vector2f(-0.7071067812f,-0.7071067812f);
 
-    direccion = -PI/2.0;
+    direccion = (float)-PI/2.0f;
 
     //Posicion de la nave
     posicion = posicion_inicial;
