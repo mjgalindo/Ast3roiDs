@@ -27,36 +27,36 @@ int main() {
             break;
         }
     }
-
+    ventana.setFramerateLimit(60);
     Estado estado_actual = TITULO;
-    while(ventana.isOpen()){
-        switch(estado_actual){
-            case TITULO:
-                estado_actual = tratarTitulo(estado_actual);
-                break;
-            case MENU:
-                estado_actual = tratarMenu(estado_actual);
-                break;
-            case JUEGO:
-                estado_actual = tratarJuego(estado_actual);
-                break;
-            case GAME_OVER:
-                estado_actual = tratarGameOver(estado_actual);
-                break;
-            case PUNTUACIONES:
-                estado_actual = tratarPuntuaciones(estado_actual);
-                break;
-            case OPCIONES:
-                estado_actual = tratarOpciones(estado_actual);
-                break;
-            default:
-                return 0;
+    while(ventana.isOpen()) {
+        switch(estado_actual) {
+        case TITULO:
+            estado_actual = tratarTitulo(estado_actual);
+            break;
+        case MENU:
+            estado_actual = tratarMenu(estado_actual);
+            break;
+        case JUEGO:
+            estado_actual = tratarJuego(estado_actual);
+            break;
+        case GAME_OVER:
+            estado_actual = tratarGameOver(estado_actual);
+            break;
+        case PUNTUACIONES:
+            estado_actual = tratarPuntuaciones(estado_actual);
+            break;
+        case OPCIONES:
+            estado_actual = tratarOpciones(estado_actual);
+            break;
+        default:
+            return 0;
         }
     }
     return 0;
 }
 
-Estado tratarTitulo(Estado estado){
+Estado tratarTitulo(Estado estado) {
     sf::Text titulo;
     sf::Text instrucciones;
 
@@ -78,25 +78,25 @@ Estado tratarTitulo(Estado estado){
     sf::Clock reloj;
     bool dibujaInstrucciones = true;
 
-    while(true){
+    while(true) {
         sf::Event event;
         while(ventana.pollEvent(event)) {
             switch (event.type) {
-                case sf::Event::Closed:
-                    ventana.close();
-                    return ERROR;
-                case sf::Event::KeyPressed:
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
-                        return MENU;
-                    }
-                default:
-                    break;
+            case sf::Event::Closed:
+                ventana.close();
+                return ERROR;
+            case sf::Event::KeyPressed:
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
+                    return MENU;
+                }
+            default:
+                break;
             }
         }
 
         ventana.clear(sf::Color::Black);
         ventana.draw(titulo);
-        if (reloj.getElapsedTime().asMilliseconds() > 1000){
+        if (reloj.getElapsedTime().asMilliseconds() > 1000) {
             dibujaInstrucciones = !dibujaInstrucciones;
             reloj.restart();
         }
@@ -106,7 +106,7 @@ Estado tratarTitulo(Estado estado){
     }
 }
 
-Estado tratarMenu(Estado estado){
+Estado tratarMenu(Estado estado) {
     sf::Text texto;
     sf::Text opcion1;
     sf::Text opcion2;
@@ -146,28 +146,28 @@ Estado tratarMenu(Estado estado){
     opcion4.setPosition({(MAX_SIZE.x - opcion4.getLocalBounds().width) / 2, MAX_SIZE.y / 8.0f + 4 * MAX_SIZE.y / 5.0f});
     opcion4.setFillColor(sf::Color::White);
 
-    while(true){
+    while(true) {
         sf::Event event;
         while(ventana.pollEvent(event)) {
             switch (event.type) {
-                case sf::Event::Closed:
-                    ventana.close();
+            case sf::Event::Closed:
+                ventana.close();
+                return ERROR;
+            case sf::Event::KeyPressed:
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                    return JUEGO;
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+                    return PUNTUACIONES;
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
+                    return OPCIONES;
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
                     return ERROR;
-                case sf::Event::KeyPressed:
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
-                        return JUEGO;
-                    }
-                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
-                        return PUNTUACIONES;
-                    }
-                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
-                        return OPCIONES;
-                    }
-                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
-                        return ERROR;
-                    }
-                default:
-                    break;
+                }
+            default:
+                break;
             }
 
             ventana.clear(sf::Color::Black);
@@ -203,40 +203,43 @@ Estado tratarJuego(Estado estado) {
 
     sf::Clock reloj;
     while (true) {
-        if(reloj.getElapsedTime().asMilliseconds()>50) {
-            sf::Event event;
-            ventana.pollEvent(event);
-            switch (event.type) {
-                case sf::Event::Closed:
-                    ventana.close();
-                    return ERROR;
-                case sf::Event::KeyPressed:
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                        nave.rotarIzda();
-                    } if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                        nave.rotarDcha();
-                    } if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-                        nave.acelerar();
-                    } if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-                        nave.disparar();
-                    } if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
-                        return GAME_OVER;
-                    }
-                default:
-                    break;
+        sf::Event event;
+        ventana.pollEvent(event);
+        switch (event.type) {
+        case sf::Event::Closed:
+            ventana.close();
+            return ERROR;
+        case sf::Event::KeyReleased:
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                return GAME_OVER;
             }
-
-            nave.mover(MAX_SIZE);
-            nave.frenar();
-
-            ventana.clear(sf::Color::Black);
-            ventana.draw(texto);
-            ventana.draw(opcion1);
-            ventana.draw(nave);
-
-            ventana.display();
-            reloj.restart();
+        default:
+            break;
         }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+            nave.rotarIzda();
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            nave.rotarDcha();
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+            nave.acelerar();
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            nave.disparar();
+        }
+
+        nave.mover(MAX_SIZE);
+        nave.frenar();
+
+        ventana.clear(sf::Color::Black);
+        ventana.draw(texto);
+        ventana.draw(opcion1);
+        ventana.draw(nave);
+
+        ventana.display();
+        reloj.restart();
     }
 }
 
@@ -262,15 +265,15 @@ Estado tratarGameOver(Estado estado) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
             switch (event.type) {
-                case sf::Event::Closed:
-                    ventana.close();
-                    return ERROR;
-                case sf::Event::KeyPressed:
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
-                        return PUNTUACIONES;
-                    }
-                default:
-                    break;
+            case sf::Event::Closed:
+                ventana.close();
+                return ERROR;
+            case sf::Event::KeyPressed:
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                    return PUNTUACIONES;
+                }
+            default:
+                break;
             }
 
             ventana.clear(sf::Color::Black);
@@ -303,15 +306,15 @@ Estado tratarPuntuaciones(Estado estado) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
             switch (event.type) {
-                case sf::Event::Closed:
-                    ventana.close();
-                    return ERROR;
-                case sf::Event::KeyPressed:
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
-                        return MENU;
-                    }
-                default:
-                    break;
+            case sf::Event::Closed:
+                ventana.close();
+                return ERROR;
+            case sf::Event::KeyPressed:
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                    return MENU;
+                }
+            default:
+                break;
             }
 
             ventana.clear(sf::Color::Black);
@@ -344,15 +347,15 @@ Estado tratarOpciones(Estado estado) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
             switch (event.type) {
-                case sf::Event::Closed:
-                    ventana.close();
-                    return ERROR;
-                case sf::Event::KeyPressed:
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
-                        return MENU;
-                    }
-                default:
-                    break;
+            case sf::Event::Closed:
+                ventana.close();
+                return ERROR;
+            case sf::Event::KeyPressed:
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                    return MENU;
+                }
+            default:
+                break;
             }
 
             ventana.clear(sf::Color::Black);
