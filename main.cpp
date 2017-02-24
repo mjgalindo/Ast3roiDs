@@ -28,6 +28,7 @@ int main() {
         }
     }
     ventana.setFramerateLimit(60);
+    ventana.setKeyRepeatEnabled(false);
     Estado estado_actual = TITULO;
     while(ventana.isOpen()) {
         switch(estado_actual) {
@@ -86,7 +87,7 @@ Estado tratarTitulo(Estado estado) {
                 ventana.close();
                 return ERROR;
             case sf::Event::KeyPressed:
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
+                if (event.key.code == sf::Keyboard::Return) {
                     return MENU;
                 }
             default:
@@ -154,16 +155,16 @@ Estado tratarMenu(Estado estado) {
                 ventana.close();
                 return ERROR;
             case sf::Event::KeyPressed:
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                if (event.key.code == sf::Keyboard::Num1) {
                     return JUEGO;
                 }
-                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+                else if (event.key.code ==sf::Keyboard::Num2) {
                     return PUNTUACIONES;
                 }
-                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
+                else if (event.key.code == sf::Keyboard::Num3) {
                     return OPCIONES;
                 }
-                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
+                else if (event.key.code == sf::Keyboard::Num4) {
                     return ERROR;
                 }
             default:
@@ -209,9 +210,12 @@ Estado tratarJuego(Estado estado) {
         case sf::Event::Closed:
             ventana.close();
             return ERROR;
-        case sf::Event::KeyReleased:
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+        case sf::Event::KeyPressed:
+            if (event.key.code == sf::Keyboard::Num1) {
                 return GAME_OVER;
+            }
+            else if (event.key.code == sf::Keyboard::D) {
+                nave.disparar();
             }
         default:
             break;
@@ -226,9 +230,7 @@ Estado tratarJuego(Estado estado) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
             nave.acelerar();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            nave.disparar();
-        }
+
 
         nave.mover(MAX_SIZE);
         nave.frenar();
@@ -269,7 +271,7 @@ Estado tratarGameOver(Estado estado) {
                 ventana.close();
                 return ERROR;
             case sf::Event::KeyPressed:
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                if (event.key.code == sf::Keyboard::Num1) {
                     return PUNTUACIONES;
                 }
             default:
@@ -310,7 +312,7 @@ Estado tratarPuntuaciones(Estado estado) {
                 ventana.close();
                 return ERROR;
             case sf::Event::KeyPressed:
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                if (event.key.code == sf::Keyboard::Num1) {
                     return MENU;
                 }
             default:
@@ -351,7 +353,7 @@ Estado tratarOpciones(Estado estado) {
                 ventana.close();
                 return ERROR;
             case sf::Event::KeyPressed:
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                if (event.key.code == sf::Keyboard::Num1) {
                     return MENU;
                 }
             default:
