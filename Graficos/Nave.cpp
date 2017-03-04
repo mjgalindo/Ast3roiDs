@@ -1,7 +1,22 @@
+#include <iostream>
 #include "Nave.hpp"
 
 //Constructor
 Nave::Nave(sf::Vector2f posicion_inicial){
+    if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")){
+        throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
+    }
+    if (!bufferSonidoPropulsion.loadFromFile("Recursos/Sonido/thrust.wav")){
+        throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/thrust.wav\"");
+    }
+    if (!bufferSonidoDestruccion.loadFromFile("Recursos/Sonido/bangSmall.wav")){
+        throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/bangSmall.wav\"");
+    }
+
+    reproductorDeSonidoPropulsion.setBuffer(bufferSonidoPropulsion);
+    reproductorDeSonidoDisparos.setBuffer(bufferSonidoDisparo);
+    reproductorDeSonidoDestruccion.setBuffer(bufferSonidoDestruccion);
+
     puntos[0] = sf::Vector2f(1.0,0.0);
     puntos[1] = sf::Vector2f(-0.7071067812f,0.7071067812f);
     puntos[2] = sf::Vector2f(-0.7071067812f,-0.7071067812f);
@@ -91,11 +106,12 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 void Nave::disparar(){
     if(num_disparos<MAX_DISPAROS){
         sf::Vector2f inicio = puntos[0];
-        inicio.x = puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion);
-        inicio.y = puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion);
+        inicio.x = (float)(puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion));
+        inicio.y = (float)(puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion));
         disparos[num_disparos] = Disparo(posicion+inicio);
         disparos[num_disparos].setDireccion(direccion);
         num_disparos++;
+        reproductorDeSonidoDisparos.play();
     }
 }
 
@@ -155,6 +171,10 @@ void Nave::recuperarDisparo(int d){
 void Nave::acelerar(){
     velocidad.x += ACELERACION*cos(direccion);
     velocidad.y += ACELERACION*sin(direccion);
+    if (reproductorDeSonidoPropulsion.getStatus() == sf::Sound::Status::Stopped)
+    {
+        reproductorDeSonidoPropulsion.play();
+    }
 }
 
 void Nave::frenar(){

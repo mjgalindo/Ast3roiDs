@@ -3,7 +3,7 @@
 
 #include <cmath>
 #include <SFML/Graphics.hpp>
-
+#include <SFML/Audio.hpp>
 #include "Disparo.hpp"
 
 #define PI 3.14159265358979323846
@@ -35,6 +35,15 @@ class Nave : public sf::Drawable {
         int num_disparos;
         //Vector de disparos
         Disparo disparos[MAX_DISPAROS];
+
+        // Buffers de los distintos sonidos de una nave
+        sf::SoundBuffer bufferSonidoDisparo;
+        sf::SoundBuffer bufferSonidoPropulsion;
+        sf::SoundBuffer bufferSonidoDestruccion;
+        // Reproductores de sonido
+        sf::Sound reproductorDeSonidoDisparos;
+        sf::Sound reproductorDeSonidoPropulsion;
+        sf::Sound reproductorDeSonidoDestruccion;
 
     public:
         //Constructor
