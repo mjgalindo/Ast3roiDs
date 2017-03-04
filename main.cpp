@@ -3,16 +3,24 @@
 #include <thread>
 
 #include "Graficos/Nave.hpp"
+#include "Graficos/Asteroide.hpp"
 
 using namespace std;
 
-enum Estado {TITULO, MENU, JUEGO, GAME_OVER, PUNTUACIONES, OPCIONES, ERROR};
+enum Estado {
+    TITULO, MENU, JUEGO, GAME_OVER, PUNTUACIONES, OPCIONES, ERROR
+};
 
 Estado tratarTitulo(Estado estado);
+
 Estado tratarMenu(Estado estado);
+
 Estado tratarJuego(Estado estado);
+
 Estado tratarGameOver(Estado estado);
+
 Estado tratarPuntuaciones(Estado estado);
+
 Estado tratarOpciones(Estado estado);
 
 //Tamaño de la ventana
@@ -22,8 +30,8 @@ sf::RenderWindow ventana;
 
 int main() {
 
-    for(sf::VideoMode vm : sf::VideoMode::getFullscreenModes()) {
-        if(vm.isValid()) {
+    for (sf::VideoMode vm : sf::VideoMode::getFullscreenModes()) {
+        if (vm.isValid()) {
             ventana.create(sf::VideoMode::getDesktopMode(), "Ast3roiDs", sf::Style::Fullscreen);
             MAX_SIZE = ventana.getSize();
             break;
@@ -32,28 +40,28 @@ int main() {
     ventana.setFramerateLimit(60);
     ventana.setKeyRepeatEnabled(false);
     Estado estado_actual = TITULO;
-    while(ventana.isOpen()) {
-        switch(estado_actual) {
-        case TITULO:
-            estado_actual = tratarTitulo(estado_actual);
-            break;
-        case MENU:
-            estado_actual = tratarMenu(estado_actual);
-            break;
-        case JUEGO:
-            estado_actual = tratarJuego(estado_actual);
-            break;
-        case GAME_OVER:
-            estado_actual = tratarGameOver(estado_actual);
-            break;
-        case PUNTUACIONES:
-            estado_actual = tratarPuntuaciones(estado_actual);
-            break;
-        case OPCIONES:
-            estado_actual = tratarOpciones(estado_actual);
-            break;
-        default:
-            return 0;
+    while (ventana.isOpen()) {
+        switch (estado_actual) {
+            case TITULO:
+                estado_actual = tratarTitulo(estado_actual);
+                break;
+            case MENU:
+                estado_actual = tratarMenu(estado_actual);
+                break;
+            case JUEGO:
+                estado_actual = tratarJuego(estado_actual);
+                break;
+            case GAME_OVER:
+                estado_actual = tratarGameOver(estado_actual);
+                break;
+            case PUNTUACIONES:
+                estado_actual = tratarPuntuaciones(estado_actual);
+                break;
+            case OPCIONES:
+                estado_actual = tratarOpciones(estado_actual);
+                break;
+            default:
+                return 0;
         }
     }
     return 0;
@@ -81,19 +89,19 @@ Estado tratarTitulo(Estado estado) {
     sf::Clock reloj;
     bool dibujaInstrucciones = true;
 
-    while(true) {
+    while (true) {
         sf::Event event;
-        while(ventana.pollEvent(event)) {
+        while (ventana.pollEvent(event)) {
             switch (event.type) {
-            case sf::Event::Closed:
-                ventana.close();
-                return ERROR;
-            case sf::Event::KeyPressed:
-                if (event.key.code == sf::Keyboard::Return) {
-                    return MENU;
-                }
-            default:
-                break;
+                case sf::Event::Closed:
+                    ventana.close();
+                    return ERROR;
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Return) {
+                        return MENU;
+                    }
+                default:
+                    break;
             }
         }
 
@@ -149,28 +157,25 @@ Estado tratarMenu(Estado estado) {
     opcion4.setPosition({(MAX_SIZE.x - opcion4.getLocalBounds().width) / 2, MAX_SIZE.y / 8.0f + 4 * MAX_SIZE.y / 5.0f});
     opcion4.setFillColor(sf::Color::White);
 
-    while(true) {
+    while (true) {
         sf::Event event;
-        while(ventana.pollEvent(event)) {
+        while (ventana.pollEvent(event)) {
             switch (event.type) {
-            case sf::Event::Closed:
-                ventana.close();
-                return ERROR;
-            case sf::Event::KeyPressed:
-                if (event.key.code == sf::Keyboard::Num1) {
-                    return JUEGO;
-                }
-                else if (event.key.code ==sf::Keyboard::Num2) {
-                    return PUNTUACIONES;
-                }
-                else if (event.key.code == sf::Keyboard::Num3) {
-                    return OPCIONES;
-                }
-                else if (event.key.code == sf::Keyboard::Num4) {
+                case sf::Event::Closed:
+                    ventana.close();
                     return ERROR;
-                }
-            default:
-                break;
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Num1) {
+                        return JUEGO;
+                    } else if (event.key.code == sf::Keyboard::Num2) {
+                        return PUNTUACIONES;
+                    } else if (event.key.code == sf::Keyboard::Num3) {
+                        return OPCIONES;
+                    } else if (event.key.code == sf::Keyboard::Num4) {
+                        return ERROR;
+                    }
+                default:
+                    break;
             }
 
             ventana.clear(sf::Color::Black);
@@ -189,19 +194,20 @@ Estado tratarMenu(Estado estado) {
 /// más comunicación con el thread del juego. Además, cada vez
 /// debería ser más rapido dependiendo de la puntuación o del
 /// avance en cada nivel.
-void reproducirMusica(std::shared_ptr<bool> jugando){
+void reproducirMusica(std::shared_ptr<bool> jugando) {
     sf::SoundBuffer sonido1, sonido2;
     sonido1.loadFromFile("Recursos/Sonido/beat1.wav");
     sonido2.loadFromFile("Recursos/Sonido/beat2.wav");
     sf::Sound reproductor1, reproductor2;
     reproductor1.setBuffer(sonido1);
     reproductor2.setBuffer(sonido2);
-
-    while(*jugando){
+    int tiempoEntreSonidos = 1000;
+    while (*jugando) {
         reproductor1.play();
-        sf::sleep(sf::milliseconds(1000));
+        sf::sleep(sf::milliseconds(tiempoEntreSonidos));
         reproductor2.play();
-        sf::sleep(sf::milliseconds(1000));
+        sf::sleep(sf::milliseconds(tiempoEntreSonidos));
+        tiempoEntreSonidos -= 20;
     }
 }
 
@@ -223,7 +229,15 @@ Estado tratarJuego(Estado estado) {
     opcion1.setPosition(sf::Vector2f(0.0, 35.0));
     opcion1.setFillColor(sf::Color::White);
 
-    Nave nave = Nave(sf::Vector2f(MAX_SIZE.x/2.0f,MAX_SIZE.y/2.0f));
+    Nave nave = Nave(sf::Vector2f(MAX_SIZE.x / 2.0f, MAX_SIZE.y / 2.0f));
+
+    /// A modo demo, no tiene sentido que esto esté aqui, deberá ser aleatorio etc
+    vector<Asteroide> asteroides{
+            Asteroide({120, 10}, 0.4, {5, 5}, Asteroide::TIPO_0, 7),
+            Asteroide({10, 400}, 0.4, {2, -5}, Asteroide::TIPO_1, 7),
+            Asteroide({400, 80}, 0.4, {4, 1}, Asteroide::TIPO_2, 7),
+            Asteroide({500, 1080}, 0.4, {3.5f, 4.5f}, Asteroide::TIPO_1, 7),
+    };
     shared_ptr<bool> jugando(new bool(true));
     thread musica(&reproducirMusica, jugando);
     sf::Clock reloj;
@@ -231,22 +245,21 @@ Estado tratarJuego(Estado estado) {
         sf::Event event;
         ventana.pollEvent(event);
         switch (event.type) {
-        case sf::Event::Closed:
-            ventana.close();
-            *jugando = false;
-            musica.join();
-            return ERROR;
-        case sf::Event::KeyPressed:
-            if (event.key.code == sf::Keyboard::Num1) {
+            case sf::Event::Closed:
+                ventana.close();
                 *jugando = false;
                 musica.join();
-                return GAME_OVER;
-            }
-            else if (event.key.code == sf::Keyboard::D) {
-                nave.disparar();
-            }
-        default:
-            break;
+                return ERROR;
+            case sf::Event::KeyPressed:
+                if (event.key.code == sf::Keyboard::Num1) {
+                    *jugando = false;
+                    musica.join();
+                    return GAME_OVER;
+                } else if (event.key.code == sf::Keyboard::D) {
+                    nave.disparar();
+                }
+            default:
+                break;
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
@@ -267,6 +280,11 @@ Estado tratarJuego(Estado estado) {
         ventana.draw(texto);
         ventana.draw(opcion1);
         ventana.draw(nave);
+
+        for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
+            ast->mover(MAX_SIZE);
+            ventana.draw(*ast);
+        }
 
         ventana.display();
         reloj.restart();
@@ -295,15 +313,15 @@ Estado tratarGameOver(Estado estado) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
             switch (event.type) {
-            case sf::Event::Closed:
-                ventana.close();
-                return ERROR;
-            case sf::Event::KeyPressed:
-                if (event.key.code == sf::Keyboard::Num1) {
-                    return PUNTUACIONES;
-                }
-            default:
-                break;
+                case sf::Event::Closed:
+                    ventana.close();
+                    return ERROR;
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Num1) {
+                        return PUNTUACIONES;
+                    }
+                default:
+                    break;
             }
 
             ventana.clear(sf::Color::Black);
@@ -336,15 +354,15 @@ Estado tratarPuntuaciones(Estado estado) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
             switch (event.type) {
-            case sf::Event::Closed:
-                ventana.close();
-                return ERROR;
-            case sf::Event::KeyPressed:
-                if (event.key.code == sf::Keyboard::Num1) {
-                    return MENU;
-                }
-            default:
-                break;
+                case sf::Event::Closed:
+                    ventana.close();
+                    return ERROR;
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Num1) {
+                        return MENU;
+                    }
+                default:
+                    break;
             }
 
             ventana.clear(sf::Color::Black);
@@ -377,15 +395,15 @@ Estado tratarOpciones(Estado estado) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
             switch (event.type) {
-            case sf::Event::Closed:
-                ventana.close();
-                return ERROR;
-            case sf::Event::KeyPressed:
-                if (event.key.code == sf::Keyboard::Num1) {
-                    return MENU;
-                }
-            default:
-                break;
+                case sf::Event::Closed:
+                    ventana.close();
+                    return ERROR;
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Num1) {
+                        return MENU;
+                    }
+                default:
+                    break;
             }
 
             ventana.clear(sf::Color::Black);
