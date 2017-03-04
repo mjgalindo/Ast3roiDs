@@ -24,8 +24,8 @@ class Nave : public sf::Drawable {
         //Velocidad maxima
         static const int MAX_VELOCIDAD = 10;
 
-        //Orden: morro, izquierda, derecha
-        sf::Vector2f puntos[3];
+        //Orden: morro, izquierda, derecha y centro
+        sf::Vector2f puntos[4];
         //Direccion de la nave
         float direccion;
         //Posicion de la nave
@@ -55,7 +55,7 @@ class Nave : public sf::Drawable {
         ~Nave();
 
         //Setters
-        void setPuntos(sf::Vector2f ps[3]);
+        void setPuntos(sf::Vector2f ps[4]);
         void setDireccion(float dir);
         void setPosicion(sf::Vector2f pos);
         void setVelocidad(sf::Vector2f vel);

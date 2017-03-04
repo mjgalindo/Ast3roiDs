@@ -17,9 +17,10 @@ Nave::Nave(sf::Vector2f posicion_inicial){
     reproductorDeSonidoDisparos.setBuffer(bufferSonidoDisparo);
     reproductorDeSonidoDestruccion.setBuffer(bufferSonidoDestruccion);
 
-    puntos[0] = sf::Vector2f(1.0,0.0);
+    puntos[0] = sf::Vector2f(1.0f,0.0f);
     puntos[1] = sf::Vector2f(-0.7071067812f,0.7071067812f);
     puntos[2] = sf::Vector2f(-0.7071067812f,-0.7071067812f);
+    puntos[3] = sf::Vector2f(-0.4f,0.0f);
 
     direccion = (float)-PI/2.0f;
 
@@ -40,10 +41,11 @@ Nave::Nave(sf::Vector2f posicion_inicial){
 Nave::~Nave(){}
 
 //Setters
-void Nave::setPuntos(sf::Vector2f ps[3]){
+void Nave::setPuntos(sf::Vector2f ps[4]){
     puntos[0] = ps[0];
     puntos[1] = ps[1];
     puntos[2] = ps[2];
+    puntos[3] = ps[3];
 }
 
 void Nave::setDireccion(float dir){
@@ -82,8 +84,13 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
             sf::Vertex(sf::Vector2f(posicion.x+puntos[1].x*TAMANO*cos(direccion)-puntos[1].y*TAMANO*sin(direccion),posicion.y+puntos[1].y*TAMANO*cos(direccion)+puntos[1].x*TAMANO*sin(direccion)),sf::Color::White),
     };
 
-    sf::Vertex linea12[] = {
+    sf::Vertex linea13[] = {
             sf::Vertex(sf::Vector2f(posicion.x+puntos[1].x*TAMANO*cos(direccion)-puntos[1].y*TAMANO*sin(direccion),posicion.y+puntos[1].y*TAMANO*cos(direccion)+puntos[1].x*TAMANO*sin(direccion)),sf::Color::White),
+            sf::Vertex(sf::Vector2f(posicion.x+puntos[3].x*TAMANO*cos(direccion)-puntos[3].y*TAMANO*sin(direccion),posicion.y+puntos[3].y*TAMANO*cos(direccion)+puntos[3].x*TAMANO*sin(direccion)),sf::Color::White),
+    };
+
+    sf::Vertex linea32[] = {
+            sf::Vertex(sf::Vector2f(posicion.x+puntos[3].x*TAMANO*cos(direccion)-puntos[3].y*TAMANO*sin(direccion),posicion.y+puntos[3].y*TAMANO*cos(direccion)+puntos[3].x*TAMANO*sin(direccion)),sf::Color::White),
             sf::Vertex(sf::Vector2f(posicion.x+puntos[2].x*TAMANO*cos(direccion)-puntos[2].y*TAMANO*sin(direccion),posicion.y+puntos[2].y*TAMANO*cos(direccion)+puntos[2].x*TAMANO*sin(direccion)),sf::Color::White),
     };
 
@@ -93,7 +100,8 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     };
 
     target.draw(linea01, 2, sf::Lines);
-    target.draw(linea12, 2, sf::Lines);
+    target.draw(linea13, 2, sf::Lines);
+    target.draw(linea32, 2, sf::Lines);
     target.draw(linea20, 2, sf::Lines);
 
     //Dibujar los disparos
