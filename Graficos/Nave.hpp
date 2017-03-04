@@ -7,7 +7,7 @@
 #include "Disparo.hpp"
 
 #define PI 3.14159265358979323846
-#define UMBRAL 0.2
+#define UMBRAL 0.15
 
 class Nave : public sf::Drawable {
     private:
@@ -16,11 +16,13 @@ class Nave : public sf::Drawable {
         //Velocidad de giro (radianes por u.t.)
         static constexpr float V_ANGULAR = PI/30;
         //Aceleracion (pixels por u.t.)
-        static constexpr float ACELERACION = 1;
+        static constexpr float ACELERACION = 0.5;
         //Deceleracion (porcentaje de velocidad que se conserva)
-        static constexpr float DECELERACION = 0.99;
+        static constexpr float DECELERACION = 0.993;
         //Numero maximo de disparos activos
         static const int MAX_DISPAROS = 4;
+        //Velocidad maxima
+        static const int MAX_VELOCIDAD = 10;
 
         //Orden: morro, izquierda, derecha
         sf::Vector2f puntos[3];

@@ -169,26 +169,22 @@ void Nave::recuperarDisparo(int d){
 }
 
 void Nave::acelerar(){
-    velocidad.x += ACELERACION*cos(direccion);
-    velocidad.y += ACELERACION*sin(direccion);
-    if (reproductorDeSonidoPropulsion.getStatus() == sf::Sound::Status::Stopped)
-    {
+    if(velocidad.x*velocidad.x+velocidad.y*velocidad.y<MAX_VELOCIDAD*MAX_VELOCIDAD){
+        velocidad.x += ACELERACION*cos(direccion);
+        velocidad.y += ACELERACION*sin(direccion);
+    }
+    if (reproductorDeSonidoPropulsion.getStatus() == sf::Sound::Status::Stopped){
         reproductorDeSonidoPropulsion.play();
     }
 }
 
 void Nave::frenar(){
-    if((velocidad.x<UMBRAL) && (velocidad.x>-UMBRAL)) {
+    if(velocidad.x*velocidad.x+velocidad.y*velocidad.y<UMBRAL){
         velocidad.x = 0;
-    }
-    else{
-        velocidad.x *= DECELERACION;
-    }
-
-    if((velocidad.y<UMBRAL) && (velocidad.y>-UMBRAL)) {
         velocidad.y = 0;
     }
     else{
+        velocidad.x *= DECELERACION;
         velocidad.y *= DECELERACION;
     }
 }
