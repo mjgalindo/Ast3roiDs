@@ -1,4 +1,6 @@
 #include <SFML/Graphics.hpp>
+#include <memory>
+#include <thread>
 
 #include "Graficos/Nave.hpp"
 
@@ -182,6 +184,27 @@ Estado tratarMenu(Estado estado) {
     }
 }
 
+/// Ejemplo de como reproducir musica. Probablemente queramos
+/// desactivarlo con una tecla de mute por lo que hará falta
+/// más comunicación con el thread del juego. Además, cada vez
+/// debería ser más rapido dependiendo de la puntuación o del
+/// avance en cada nivel.
+void reproducirMusica(std::shared_ptr<bool> jugando){
+    sf::SoundBuffer sonido1, sonido2;
+    sonido1.loadFromFile("Recursos/Sonido/beat1.wav");
+    sonido2.loadFromFile("Recursos/Sonido/beat2.wav");
+    sf::Sound reproductor1, reproductor2;
+    reproductor1.setBuffer(sonido1);
+    reproductor2.setBuffer(sonido2);
+
+    while(*jugando){
+        reproductor1.play();
+        sf::sleep(sf::milliseconds(1000));
+        reproductor2.play();
+        sf::sleep(sf::milliseconds(1000));
+    }
+}
+
 Estado tratarJuego(Estado estado) {
     sf::Text texto;
     sf::Text opcion1;
@@ -201,7 +224,8 @@ Estado tratarJuego(Estado estado) {
     opcion1.setFillColor(sf::Color::White);
 
     Nave nave = Nave(sf::Vector2f(MAX_SIZE.x/2.0f,MAX_SIZE.y/2.0f));
-
+    shared_ptr<bool> jugando(new bool(true));
+    thread musica(&reproducirMusica, jugando);
     sf::Clock reloj;
     while (true) {
         sf::Event event;
@@ -209,9 +233,13 @@ Estado tratarJuego(Estado estado) {
         switch (event.type) {
         case sf::Event::Closed:
             ventana.close();
+            *jugando = false;
+            musica.join();
             return ERROR;
         case sf::Event::KeyPressed:
             if (event.key.code == sf::Keyboard::Num1) {
+                *jugando = false;
+                musica.join();
                 return GAME_OVER;
             }
             else if (event.key.code == sf::Keyboard::D) {
