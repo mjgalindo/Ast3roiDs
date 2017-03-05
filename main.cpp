@@ -39,6 +39,7 @@ int main() {
     }
     ventana.setFramerateLimit(60);
     ventana.setKeyRepeatEnabled(false);
+    ventana.setVerticalSyncEnabled(true);
     Estado estado_actual = TITULO;
     while (ventana.isOpen()) {
         switch (estado_actual) {
@@ -207,7 +208,8 @@ void reproducirMusica(std::shared_ptr<bool> jugando) {
         sf::sleep(sf::milliseconds(tiempoEntreSonidos));
         reproductor2.play();
         sf::sleep(sf::milliseconds(tiempoEntreSonidos));
-        tiempoEntreSonidos -= 20;
+        if (tiempoEntreSonidos > 200)
+            tiempoEntreSonidos -= 10;
     }
 }
 
@@ -233,11 +235,12 @@ Estado tratarJuego(Estado estado) {
 
     /// A modo demo, no tiene sentido que esto esté aqui, deberá ser aleatorio etc
     vector<Asteroide> asteroides{
-            Asteroide({120, 10}, 0.4, {5, 5}, Asteroide::TIPO_0, 7),
-            Asteroide({10, 400}, 0.4, {2, -5}, Asteroide::TIPO_1, 7),
-            Asteroide({400, 80}, 0.4, {4, 1}, Asteroide::TIPO_2, 7),
-            Asteroide({500, 1080}, 0.4, {3.5f, 4.5f}, Asteroide::TIPO_1, 7),
+            Asteroide({120, 10}, 0.4, {5, -5}, Asteroide::TIPO_0, 5),
+            Asteroide({10, 400}, 0.4, {2, -5}, Asteroide::TIPO_1, 5),
+            Asteroide({400, 80}, 0.4, {4, 1}, Asteroide::TIPO_2, 5),
+            Asteroide({500, 1080}, 0.4, {3.5f, 4.5f}, Asteroide::TIPO_1, 5),
     };
+
     shared_ptr<bool> jugando(new bool(true));
     thread musica(&reproducirMusica, jugando);
     sf::Clock reloj;
