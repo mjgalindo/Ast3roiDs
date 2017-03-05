@@ -12,49 +12,50 @@ Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel,
     switch (version) {
         case TIPO_0:
             poligono.resize(11);
-            poligono[0].position = {-12.f, -5.7f};
-            poligono[1].position = {-12.3f, -3.7f};
-            poligono[2].position = {-4.7f, 8.5f};
-            poligono[3].position = {4.3f, 8.7f};
-            poligono[4].position = {13.f, 3.3f};
-            poligono[5].position = {9.7f, -1.f};
-            poligono[6].position = {9.5f, -8.3f};
-            poligono[7].position = {6.3f, -13.5f};
-            poligono[8].position = {0.5f, -7.7f};
-            poligono[9].position = {-5.7f, -13.0f};
-            poligono[10].position = {-12.f, -5.7f};
+            poligono[0].position = {-0.888889f, -0.422222f};
+            poligono[1].position = {-0.911111f, -0.274074f};
+            poligono[2].position = {-0.348148f, 0.62963f};
+            poligono[3].position = {0.318519f, 0.644444f};
+            poligono[4].position = {0.962963f, 0.244444f};
+            poligono[5].position = {0.718519f, -0.0740741f};
+            poligono[6].position = {0.703704f, -0.614815f};
+            poligono[7].position = {0.466667f, -1.f};
+            poligono[8].position = {0.037037f, -0.57037f};
+            poligono[9].position = {-0.422222f, -0.962963f};
+            poligono[10].position = {-0.888889f, -0.422222f};
             break;
         case TIPO_1:
             poligono.resize(13);
-            poligono[0].position = {-6.f, -11.2f};
-            poligono[1].position = {-2.5f, -5.5f};
-            poligono[2].position = {-11.5f, -5.5f};
-            poligono[3].position = {-11.8f, 3.0f};
-            poligono[4].position = {-3.8f, 12.0f};
-            poligono[5].position = {4.0f, 8.8f};
-            poligono[6].position = {6.8f, 12.5f};
-            poligono[7].position = {12.2f, 5.5f};
-            poligono[8].position = {5.2f, 1.f};
-            poligono[9].position = {13.2f, -2.0f};
-            poligono[10].position = {16.2f, -5.5f};
-            poligono[11].position = {4.2f, -10.8f};
-            poligono[12].position = {-6.f, -11.2f};
+            poligono[0].position = {-0.37037f, -0.691358f};
+            poligono[1].position = {-0.154321f, -0.339506f};
+            poligono[2].position = {-0.709877f, -0.339506f};
+            poligono[3].position = {-0.728395f, 0.185185f};
+            poligono[4].position = {-0.234568f, 0.740741f};
+            poligono[5].position = {0.246914f, 0.54321f};
+            poligono[6].position = {0.419753f, 0.771605f};
+            poligono[7].position = {0.753086f, 0.339506f};
+            poligono[8].position = {0.320988f, 0.0617284f};
+            poligono[9].position = {0.814815f, -0.123457f};
+            poligono[10].position = {1.f, -0.339506f};
+            poligono[11].position = {0.259259f, -0.666667f};
+            poligono[12].position = {-0.37037f, -0.691358f};
             break;
         case TIPO_2:
             poligono.resize(12);
-            poligono[0].position = {-4.6f, -11.2f};
-            poligono[1].position = {-11.0f, -5.4f};
-            poligono[2].position = {-7.6f, -1.0f};
-            poligono[3].position = {-10.8f, 5.8f};
-            poligono[4].position = {-4.8f, 11.8f};
-            poligono[5].position = {-1.0f, 8.0f};
-            poligono[6].position = {6.7f, 10.3f};
-            poligono[7].position = {12.7f, 2.6f};
-            poligono[8].position = {7.4f, -2.7f};
-            poligono[9].position = {12.2f, -5.7f};
-            poligono[10].position = {7.0f, -11.0f};
-            poligono[11].position = {-4.6f, -11.2f};
+            poligono[0].position = {-0.362205f, -0.88189f};
+            poligono[1].position = {-0.866142f, -0.425197f};
+            poligono[2].position = {-0.598425f, -0.0787402f};
+            poligono[3].position = {-0.850394f, 0.456693f};
+            poligono[4].position = {-0.377953f, 0.929134f};
+            poligono[5].position = {-0.0787402f, 0.629921f};
+            poligono[6].position = {0.527559f, 0.811024f};
+            poligono[7].position = {1.f, 0.204724f};
+            poligono[8].position = {0.582677f, -0.212598f};
+            poligono[9].position = {0.96063f, -0.448819f};
+            poligono[10].position = {0.551181f, -0.866142f};
+            poligono[11].position = {-0.362205f, -0.88189f};
     }
+
 }
 
 //Getters
@@ -94,19 +95,18 @@ int Asteroide::getPuntuacion() {
 void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     sf::Transform t;
     // El orden en el que se efectuan las transformaciones es importante!
-    t.rotate(direccion).translate(posicion).scale({tamano, tamano});
+    t.rotate(direccion).translate(posicion).scale({(float)tamano, (float)tamano});
     target.draw(poligono, t);
 
     /*
      *
      * PROVISIONAL
      *
-     */
     sf::Transform t2;
-    t2.rotate(direccion).translate(posicion).scale({tamano, tamano});
+    t2.rotate(direccion).translate(posicion).scale({(float)tamano, (float)tamano});
     sf::CircleShape shape(1);
     shape.setFillColor(sf::Color::Red);
-    target.draw(shape,t2);
+    target.draw(shape,t2);*/
 }
 
 void Asteroide::mover(sf::Vector2u limites) {
