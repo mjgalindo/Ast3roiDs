@@ -4,6 +4,8 @@
 #include <cmath>
 #include <SFML/Graphics.hpp>
 
+#include "Asteroide.hpp"
+
 #define PI 3.14159265358979323846
 
 class Disparo : public sf::Drawable {
@@ -50,7 +52,7 @@ class Disparo : public sf::Drawable {
         //Otros
         void mover(sf::Vector2u limites);
         bool comprobarAlcance();
-        bool comprobarColision();
+        bool comprobarColision(Asteroide *a);
 };
 
 #endif //AST3ROIDS_DISPARO_HPP

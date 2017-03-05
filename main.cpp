@@ -216,6 +216,8 @@ void reproducirMusica(std::shared_ptr<bool> jugando) {
 Estado tratarJuego(Estado estado) {
     sf::Text texto;
     sf::Text opcion1;
+    sf::Text puntuacion;
+    sf::Text vidas;
 
     sf::Font fuente;
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
@@ -231,14 +233,24 @@ Estado tratarJuego(Estado estado) {
     opcion1.setPosition(sf::Vector2f(0.0, 35.0));
     opcion1.setFillColor(sf::Color::White);
 
+    puntuacion.setFont(fuente);
+    puntuacion.setCharacterSize(30);
+    puntuacion.setPosition(sf::Vector2f(300.0, 0.0));
+    puntuacion.setFillColor(sf::Color::Blue);
+
+    vidas.setFont(fuente);
+    vidas.setCharacterSize(30);
+    vidas.setPosition(sf::Vector2f(300.0, 35.0));
+    vidas.setFillColor(sf::Color::Blue);
+
     Nave nave = Nave(sf::Vector2f(MAX_SIZE.x / 2.0f, MAX_SIZE.y / 2.0f));
 
     /// A modo demo, no tiene sentido que esto esté aqui, deberá ser aleatorio etc
     vector<Asteroide> asteroides{
-            Asteroide({120, 10}, 0.4, {5, -5}, Asteroide::TIPO_0, 5),
-            Asteroide({10, 400}, 0.4, {2, -5}, Asteroide::TIPO_1, 5),
-            Asteroide({400, 80}, 0.4, {4, 1}, Asteroide::TIPO_2, 5),
-            Asteroide({500, 1080}, 0.4, {3.5f, 4.5f}, Asteroide::TIPO_1, 5),
+            Asteroide({120, 10}, 0.4, {0.1, 0.1}, TIPO_0, TAM_0),
+            Asteroide({10, 400}, 0.4, {-0.1, 0.1}, TIPO_1, TAM_1),
+            Asteroide({400, 80}, 0.4, {0.1, -0.1}, TIPO_2, TAM_2),
+            //Asteroide({500, 1080}, 0.4, {3.5f, 4.5f}, Asteroide::TIPO_1, 5),
     };
 
     shared_ptr<bool> jugando(new bool(true));
@@ -276,12 +288,17 @@ Estado tratarJuego(Estado estado) {
         }
 
 
-        nave.mover(MAX_SIZE);
+        nave.mover(MAX_SIZE, asteroides);
         nave.frenar();
+
+        puntuacion.setString(std::to_string(nave.getPuntuacion()));
+        vidas.setString(std::to_string(nave.getVidas()));
 
         ventana.clear(sf::Color::Black);
         ventana.draw(texto);
         ventana.draw(opcion1);
+        ventana.draw(puntuacion);
+        ventana.draw(vidas);
         ventana.draw(nave);
 
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {

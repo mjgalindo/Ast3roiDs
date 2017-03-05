@@ -77,6 +77,14 @@ sf::Vector2f Nave::getVelocidad(){
     return velocidad;
 }
 
+long int Nave::getPuntuacion(){
+    return puntuacion;
+}
+
+int Nave::getVidas(){
+    return vidas;
+}
+
 //Dibujo
 void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     sf::Vertex linea01[] = {
@@ -137,7 +145,7 @@ void Nave::rotarDcha(){
     }
 }
 
-void Nave::mover(sf::Vector2u limites){
+void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v){
     //Mover la nave
     posicion.x += velocidad.x;
     if(posicion.x-1>=limites.x){
@@ -162,11 +170,10 @@ void Nave::mover(sf::Vector2u limites){
             if(disparos[i].comprobarAlcance()){
                 recuperarDisparo(i);
             }
-            else if(disparos[i].comprobarColision()){
-                recuperarDisparo(i);
-            }
         }
     }
+
+    comprobarColision(v);
 }
 
 void Nave::recuperarDisparo(int d){
@@ -194,5 +201,27 @@ void Nave::frenar(){
     else{
         velocidad.x *= DECELERACION;
         velocidad.y *= DECELERACION;
+    }
+}
+
+bool Nave::comprobarColision(std::vector<Asteroide> v) {
+    for (auto ast = v.begin(); ast != v.end(); ++ast) {
+        //Se comprueba la colision con la nave
+        for (int j=0 ; j<4 ; j++){
+            sf::Vector2f posicion_global(posicion.x+puntos[j].x*TAMANO*cos(direccion)-puntos[j].y*TAMANO*sin(direccion),posicion.y+puntos[j].y*TAMANO*cos(direccion)+puntos[j].x*TAMANO*sin(direccion));
+            if((posicion_global.x-ast->getPosicion().x)*(posicion_global.x-ast->getPosicion().x)+(posicion_global.y-ast->getPosicion().y)*(posicion_global.y-ast->getPosicion().y) < ast->getRadio()*ast->getRadio()){
+                vidas--;
+            }
+        }
+
+        //Se comprueba el impacto de los disparos
+        for (int j=0 ; j<num_disparos ; j++){
+            if(disparos[j].comprobarColision(ast.base())){
+                puntuacion += ast->getPuntuacion();
+                recuperarDisparo(j);
+
+                //Destruir asteroide, dividirlo o lo que sea....
+            }
+        }
     }
 }

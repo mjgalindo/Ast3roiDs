@@ -83,4 +83,18 @@ bool Disparo::comprobarAlcance(){
     }
 }
 
-bool Disparo::comprobarColision() { return true; }
+bool Disparo::comprobarColision(Asteroide *a) {
+    sf::Vector2f posicion_global(posicion.x+puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion),posicion.y+puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion));
+    // (x1-x2)^2 + (y1-y2)^2 < R^2
+    if((posicion_global.x-a->getPosicion().x)*(posicion_global.x-a->getPosicion().x)+(posicion_global.y-a->getPosicion().y)*(posicion_global.y-a->getPosicion().y) < a->getRadio()*a->getRadio()) {
+       return true;
+    }
+
+    posicion_global = sf::Vector2f(posicion.x+puntos[1].x*TAMANO*cos(direccion)-puntos[1].y*TAMANO*sin(direccion),posicion.y+puntos[1].y*TAMANO*cos(direccion)+puntos[1].x*TAMANO*sin(direccion));
+    // (x1-x2)^2 + (y1-y2)^2 < R^2
+    if((posicion_global.x-a->getPosicion().x)*(posicion_global.x-a->getPosicion().x)+(posicion_global.y-a->getPosicion().y)*(posicion_global.y-a->getPosicion().y) < a->getRadio()*a->getRadio()) {
+        return true;
+    }
+
+    return false;
+}

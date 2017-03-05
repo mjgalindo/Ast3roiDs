@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Disparo.hpp"
+#include "Asteroide.hpp"
 
 #define PI 3.14159265358979323846
 #define UMBRAL 0.15
@@ -38,6 +39,11 @@ class Nave : public sf::Drawable {
         //Vector de disparos
         Disparo disparos[MAX_DISPAROS];
 
+        //Numero de autoreapariciones de la nave
+        int vidas = 5;
+        //Puntuacion
+        long int puntuacion = 0;
+
         // Buffers de los distintos sonidos de una nave
         sf::SoundBuffer bufferSonidoDisparo;
         sf::SoundBuffer bufferSonidoPropulsion;
@@ -59,12 +65,16 @@ class Nave : public sf::Drawable {
         void setDireccion(float dir);
         void setPosicion(sf::Vector2f pos);
         void setVelocidad(sf::Vector2f vel);
+        void setVidas(int v);
+        void setPuntuacion(long int puntuacion);
 
         //Getters
         sf::Vector2f* getPuntos();
         float getDireccion();
         sf::Vector2f getPosicion();
         sf::Vector2f getVelocidad();
+        int getVidas();
+        long int getPuntuacion();
 
         //Dibujo
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -74,9 +84,11 @@ class Nave : public sf::Drawable {
         void recuperarDisparo(int d);
         void rotarIzda();
         void rotarDcha();
-        void mover(sf::Vector2u limites);
+        void mover(sf::Vector2u limites, std::vector<Asteroide> v);
         void acelerar();
         void frenar();
+
+        bool comprobarColision(std::vector<Asteroide> v);
 };
 
 #endif //AST3ROIDS_NAVE_HPP

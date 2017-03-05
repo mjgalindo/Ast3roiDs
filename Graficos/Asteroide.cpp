@@ -1,15 +1,15 @@
 #include <iostream>
 #include "Asteroide.hpp"
 
-Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, float size) {
+Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam) {
     posicion = posicion_inicial;
     direccion = dir;
     velocidad = vel;
-    this->size = size;
+    tamano = tam;
     version = tipo;
     // Definimos el asteroide como una serie de puntos conectados por orden
     poligono.setPrimitiveType(sf::LineStrip);
-    switch (tipo) {
+    switch (version) {
         case TIPO_0:
             poligono.resize(11);
             poligono[0].position = {-12.f, -5.7f};
@@ -74,11 +74,39 @@ sf::Vector2f Asteroide::getVelocidad() {
     return velocidad;
 }
 
+float Asteroide::getRadio() {
+    return tamano;
+}
+
+int Asteroide::getPuntuacion() {
+    switch(tamano){
+        case TAM_0:
+            return 100;
+        case TAM_1:
+            return 50;
+        case TAM_2:
+            return 20;
+        default:
+            return 0;
+    }
+}
+
 void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     sf::Transform t;
     // El orden en el que se efectuan las transformaciones es importante!
-    t.rotate(direccion).translate(posicion).scale({size, size});
+    t.rotate(direccion).translate(posicion).scale({tamano, tamano});
     target.draw(poligono, t);
+
+    /*
+     *
+     * PROVISIONAL
+     *
+     */
+    sf::Transform t2;
+    t2.rotate(direccion).translate(posicion).scale({tamano, tamano});
+    sf::CircleShape shape(1);
+    shape.setFillColor(sf::Color::Red);
+    target.draw(shape,t2);
 }
 
 void Asteroide::mover(sf::Vector2u limites) {
