@@ -79,8 +79,6 @@ void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     // El orden en el que se efectuan las transformaciones es importante!
     t.rotate(direccion).translate(posicion).scale({size, size});
     target.draw(poligono, t);
-    sf::CircleShape posicionC(10); posicionC.setPosition(posicion);
-    target.draw(posicionC);
 }
 
 void Asteroide::mover(sf::Vector2u limites) {
