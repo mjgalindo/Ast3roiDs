@@ -97,16 +97,6 @@ void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     // El orden en el que se efectuan las transformaciones es importante!
     t.rotate(direccion).translate(posicion).scale({(float)tamano, (float)tamano});
     target.draw(poligono, t);
-
-    /*
-     *
-     * PROVISIONAL
-     *
-    sf::Transform t2;
-    t2.rotate(direccion).translate(posicion).scale({(float)tamano, (float)tamano});
-    sf::CircleShape shape(1);
-    shape.setFillColor(sf::Color::Red);
-    target.draw(shape,t2);*/
 }
 
 void Asteroide::mover(sf::Vector2u limites) {
