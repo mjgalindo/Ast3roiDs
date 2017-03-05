@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Asteroide.hpp"
 
 Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, float size) {
@@ -6,51 +7,59 @@ Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel,
     velocidad = vel;
     this->size = size;
     version = tipo;
+    // Definimos el asteroide como una serie de puntos conectados por orden
+    poligono.setPrimitiveType(sf::LineStrip);
     switch (tipo) {
         case TIPO_0:
-            puntos[0] = sf::Vector2f(-12.f, -5.7f);
-            puntos[1] = sf::Vector2f(-12.3f, -3.7f);
-            puntos[2] = sf::Vector2f(-4.7f, 8.5f);
-            puntos[3] = sf::Vector2f(4.3f, 8.7f);
-            puntos[4] = sf::Vector2f(13.f, 3.3f);
-            puntos[5] = sf::Vector2f(9.7f, -1.f);
-            puntos[6] = sf::Vector2f(9.5f, -8.3f);
-            puntos[7] = sf::Vector2f(6.3f, -13.5f);
-            puntos[8] = sf::Vector2f(0.5f, -7.7f);
-            puntos[9] = sf::Vector2f(-5.7f, -13.0f);
+            poligono.resize(11);
+            poligono[0].position = {-12.f, -5.7f};
+            poligono[1].position = {-12.3f, -3.7f};
+            poligono[2].position = {-4.7f, 8.5f};
+            poligono[3].position = {4.3f, 8.7f};
+            poligono[4].position = {13.f, 3.3f};
+            poligono[5].position = {9.7f, -1.f};
+            poligono[6].position = {9.5f, -8.3f};
+            poligono[7].position = {6.3f, -13.5f};
+            poligono[8].position = {0.5f, -7.7f};
+            poligono[9].position = {-5.7f, -13.0f};
+            poligono[10].position = {-12.f, -5.7f};
             break;
         case TIPO_1:
-            puntos[0] = sf::Vector2f(-6.f, -11.2f);
-            puntos[1] = sf::Vector2f(-2.5f, -5.5f);
-            puntos[2] = sf::Vector2f(-11.5f, -5.5f);
-            puntos[3] = sf::Vector2f(-11.8f, 3.0f);
-            puntos[4] = sf::Vector2f(-3.8f, 12.0f);
-            puntos[5] = sf::Vector2f(4.0f, 8.8f);
-            puntos[6] = sf::Vector2f(6.8f, 12.5f);
-            puntos[7] = sf::Vector2f(12.2f, 5.5f);
-            puntos[8] = sf::Vector2f(5.2f, 1.f);
-            puntos[9] = sf::Vector2f(13.2f, -2.0f);
-            puntos[10] = sf::Vector2f(16.2f, -5.5f);
-            puntos[11] = sf::Vector2f(4.2f, -10.8f);
+            poligono.resize(13);
+            poligono[0].position = {-6.f, -11.2f};
+            poligono[1].position = {-2.5f, -5.5f};
+            poligono[2].position = {-11.5f, -5.5f};
+            poligono[3].position = {-11.8f, 3.0f};
+            poligono[4].position = {-3.8f, 12.0f};
+            poligono[5].position = {4.0f, 8.8f};
+            poligono[6].position = {6.8f, 12.5f};
+            poligono[7].position = {12.2f, 5.5f};
+            poligono[8].position = {5.2f, 1.f};
+            poligono[9].position = {13.2f, -2.0f};
+            poligono[10].position = {16.2f, -5.5f};
+            poligono[11].position = {4.2f, -10.8f};
+            poligono[12].position = {-6.f, -11.2f};
             break;
         case TIPO_2:
-            puntos[0] = sf::Vector2f(-4.6f, -11.2f);
-            puntos[1] = sf::Vector2f(-11.0f, -5.4f);
-            puntos[2] = sf::Vector2f(-7.6f, -1.0f);
-            puntos[3] = sf::Vector2f(-10.8f, 5.8f);
-            puntos[4] = sf::Vector2f(-4.8f, 11.8f);
-            puntos[5] = sf::Vector2f(-1.0f, 8.0f);
-            puntos[6] = sf::Vector2f(6.7f, 10.3f);
-            puntos[7] = sf::Vector2f(12.7f, 2.6f);
-            puntos[8] = sf::Vector2f(7.4f, -2.7f);
-            puntos[9] = sf::Vector2f(12.2f, -5.7f);
-            puntos[10] = sf::Vector2f(7.0f, -11.0f);
+            poligono.resize(12);
+            poligono[0].position = {-4.6f, -11.2f};
+            poligono[1].position = {-11.0f, -5.4f};
+            poligono[2].position = {-7.6f, -1.0f};
+            poligono[3].position = {-10.8f, 5.8f};
+            poligono[4].position = {-4.8f, 11.8f};
+            poligono[5].position = {-1.0f, 8.0f};
+            poligono[6].position = {6.7f, 10.3f};
+            poligono[7].position = {12.7f, 2.6f};
+            poligono[8].position = {7.4f, -2.7f};
+            poligono[9].position = {12.2f, -5.7f};
+            poligono[10].position = {7.0f, -11.0f};
+            poligono[11].position = {-4.6f, -11.2f};
     }
 }
 
 //Getters
-std::array<sf::Vector2f, 12> Asteroide::getPuntos() {
-    return puntos;
+sf::VertexArray Asteroide::getPuntos() {
+    return sf::VertexArray();
 }
 
 float Asteroide::getDireccion() {
@@ -66,108 +75,12 @@ sf::Vector2f Asteroide::getVelocidad() {
 }
 
 void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-
-    sf::Vertex v1 = sf::Vertex(
-            sf::Vector2f(
-                    (float) (posicion.x + size * puntos[0].x * cos(direccion) - size * puntos[0].y * sin(direccion)),
-                    (float) (posicion.y + size * puntos[0].y * cos(direccion) + size * puntos[0].x * sin(direccion))),
-            sf::Color::White);
-    sf::Vertex v2 = sf::Vertex(
-            sf::Vector2f(
-                    (float) (posicion.x + size * puntos[1].x * cos(direccion) - size * puntos[1].y * sin(direccion)),
-                    (float) (posicion.y + size * puntos[1].y * cos(direccion) + size * puntos[1].x * sin(direccion))),
-            sf::Color::White);
-    sf::Vertex v3 = sf::Vertex(
-            sf::Vector2f(
-                    (float) (posicion.x + size * puntos[2].x * cos(direccion) - size * puntos[2].y * sin(direccion)),
-                    (float) (posicion.y + size * puntos[2].y * cos(direccion) + size * puntos[2].x * sin(direccion))),
-            sf::Color::White);
-    sf::Vertex v4 = sf::Vertex(
-            sf::Vector2f(
-                    (float) (posicion.x + size * puntos[3].x * cos(direccion) - size * puntos[3].y * sin(direccion)),
-                    (float) (posicion.y + size * puntos[3].y * cos(direccion) + size * puntos[3].x * sin(direccion))),
-            sf::Color::White);
-    sf::Vertex v5 = sf::Vertex(
-            sf::Vector2f(
-                    (float) (posicion.x + size * puntos[4].x * cos(direccion) - size * puntos[4].y * sin(direccion)),
-                    (float) (posicion.y + size * puntos[4].y * cos(direccion) + size * puntos[4].x * sin(direccion))),
-            sf::Color::White);
-    sf::Vertex v6 = sf::Vertex(
-            sf::Vector2f(
-                    (float) (posicion.x + size * puntos[5].x * cos(direccion) - size * puntos[5].y * sin(direccion)),
-                    (float) (posicion.y + size * puntos[5].y * cos(direccion) + size * puntos[5].x * sin(direccion))),
-            sf::Color::White);
-    sf::Vertex v7 = sf::Vertex(
-            sf::Vector2f(
-                    (float) (posicion.x + size * puntos[6].x * cos(direccion) - size * puntos[6].y * sin(direccion)),
-                    (float) (posicion.y + size * puntos[6].y * cos(direccion) + size * puntos[6].x * sin(direccion))),
-            sf::Color::White);
-    sf::Vertex v8 = sf::Vertex(
-            sf::Vector2f(
-                    (float) (posicion.x + size * puntos[7].x * cos(direccion) - size * puntos[7].y * sin(direccion)),
-                    (float) (posicion.y + size * puntos[7].y * cos(direccion) + size * puntos[7].x * sin(direccion))),
-            sf::Color::White);
-    sf::Vertex v9 = sf::Vertex(
-            sf::Vector2f(
-                    (float) (posicion.x + size * puntos[8].x * cos(direccion) - size * puntos[8].y * sin(direccion)),
-                    (float) (posicion.y + size * puntos[8].y * cos(direccion) + size * puntos[8].x * sin(direccion))),
-            sf::Color::White);
-    sf::Vertex v10 = sf::Vertex(
-            sf::Vector2f(
-                    (float) (posicion.x + size * puntos[9].x * cos(direccion) - size * puntos[9].y * sin(direccion)),
-                    (float) (posicion.y + size * puntos[9].y * cos(direccion) + size * puntos[9].x * sin(direccion))),
-            sf::Color::White);
-
-    sf::Vertex linea1[] = {v1, v2};
-    sf::Vertex linea2[] = {v2, v3};
-    sf::Vertex linea3[] = {v3, v4};
-    sf::Vertex linea4[] = {v4, v5};
-    sf::Vertex linea5[] = {v5, v6};
-    sf::Vertex linea6[] = {v6, v7};
-    sf::Vertex linea7[] = {v7, v8};
-    sf::Vertex linea8[] = {v8, v9};
-    sf::Vertex linea9[] = {v9, v10};
-
-    if (version < 0) {
-        sf::Vertex v11 = sf::Vertex(
-                sf::Vector2f((float) (posicion.x + size * puntos[10].x * cos(direccion) -
-                                      size * puntos[10].y * sin(direccion)),
-                             (float) (posicion.y + size * puntos[10].y * cos(direccion) +
-                                      size * puntos[10].x * sin(direccion))),
-                sf::Color::White);
-        if (version == 1) {
-            sf::Vertex v12 = sf::Vertex(sf::Vector2f(
-                    (float) (posicion.x + size * puntos[11].x * cos(direccion) - size * puntos[11].y * sin(direccion)),
-                    (float) (posicion.y + size * puntos[11].y * cos(direccion) + size * puntos[11].x * sin(direccion))),
-                                        sf::Color::White);
-            sf::Vertex linea11[] = {v11, v12};
-            sf::Vertex linea12[] = {v12, v1};
-
-            target.draw(linea11, 2, sf::Lines);
-            target.draw(linea12, 2, sf::Lines);
-        } else {
-            sf::Vertex linea11[] = {v11, v1};
-
-            target.draw(linea11, 2, sf::Lines);
-        }
-        sf::Vertex linea10[] = {v10, v11};
-
-        target.draw(linea10, 2, sf::Lines);
-    } else {
-        sf::Vertex linea10[] = {v10, v1};
-
-        target.draw(linea10, 2, sf::Lines);
-    }
-
-    target.draw(linea1, 2, sf::Lines);
-    target.draw(linea2, 2, sf::Lines);
-    target.draw(linea3, 2, sf::Lines);
-    target.draw(linea4, 2, sf::Lines);
-    target.draw(linea5, 2, sf::Lines);
-    target.draw(linea6, 2, sf::Lines);
-    target.draw(linea7, 2, sf::Lines);
-    target.draw(linea8, 2, sf::Lines);
-    target.draw(linea9, 2, sf::Lines);
+    sf::Transform t;
+    // El orden en el que se efectuan las transformaciones es importante!
+    t.rotate(direccion).translate(posicion).scale({size, size});
+    target.draw(poligono, t);
+    sf::CircleShape posicionC(10); posicionC.setPosition(posicion);
+    target.draw(posicionC);
 }
 
 void Asteroide::mover(sf::Vector2u limites) {

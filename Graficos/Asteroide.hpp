@@ -10,7 +10,7 @@ private:
     float direccion;
     float size;
     int version;
-    std::array<sf::Vector2f, 12> puntos;
+    sf::VertexArray poligono;
     sf::Vector2f posicion;
     sf::Vector2f velocidad;
 
@@ -21,7 +21,7 @@ public:
 
     ~Asteroide() {};
 
-    std::array<sf::Vector2f, 12> getPuntos();
+    sf::VertexArray getPuntos();
 
     float getDireccion();
 
