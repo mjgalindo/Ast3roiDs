@@ -5,6 +5,7 @@
 
 #include "Graficos/Nave.hpp"
 #include "Graficos/Asteroide.hpp"
+#include "Graficos/Ovni.hpp"
 
 using namespace std;
 
@@ -225,6 +226,7 @@ Estado tratarJuego(Estado estado) {
     vidas.setFillColor(sf::Color::Blue);
 
     Nave nave = Nave(sf::Vector2f(MAX_SIZE.x / 2.0f, MAX_SIZE.y / 2.0f));
+    Ovni ovni = Ovni(MAX_SIZE);
 
     /// A modo demo, no tiene sentido que esto esté aqui, deberá ser aleatorio etc
     vector<Asteroide> asteroides{
@@ -264,7 +266,7 @@ Estado tratarJuego(Estado estado) {
             nave.acelerar();
         }
 
-
+        ovni.mover(MAX_SIZE);
         nave.mover(MAX_SIZE, asteroides);
         nave.frenar();
 
@@ -273,6 +275,7 @@ Estado tratarJuego(Estado estado) {
             musica.join();
             return GAME_OVER;
         }
+
 
         puntuacion.setString(std::to_string(nave.getPuntuacion()));
         vidas.setString(std::to_string(nave.getVidas()));
@@ -283,6 +286,7 @@ Estado tratarJuego(Estado estado) {
         ventana.draw(puntuacion);
         ventana.draw(vidas);
         ventana.draw(nave);
+        ventana.draw(ovni);
 
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
             ast->mover(MAX_SIZE);
