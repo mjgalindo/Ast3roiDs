@@ -25,16 +25,27 @@ Nave::Nave(sf::Vector2f posicion_inicial){
     direccion = (float)-PI/2.0f;
 
     //Posicion de la nave
+    pos_inicial = posicion_inicial;
     posicion = posicion_inicial;
 
     //Velocidad de la nave
-    sf::Vector2f velocidad = sf::Vector2f(0.0, 0.0);
+    velocidad = sf::Vector2f(0.0, 0.0);
+
+    estado = REPOSO;
 
     //Disparos
     num_disparos = 0;
     for(int i=0 ; i<MAX_DISPAROS ; i++){
         disparos[i] = Disparo(sf::Vector2f(0.0, 0.0));
     }
+}
+
+void Nave::reiniciar() {
+    direccion = (float)-PI/2.0f;
+    //Posicion de la nave
+    posicion = pos_inicial;
+    //Velocidad de la nave
+    velocidad = sf::Vector2f(0.0, 0.0);
 }
 
 //Destructor
@@ -87,30 +98,89 @@ int Nave::getVidas(){
 
 //Dibujo
 void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
-    sf::Vertex linea01[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion),posicion.y+puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion)),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[1].x*TAMANO*cos(direccion)-puntos[1].y*TAMANO*sin(direccion),posicion.y+puntos[1].y*TAMANO*cos(direccion)+puntos[1].x*TAMANO*sin(direccion)),sf::Color::White),
-    };
+    switch(estado){
+        case REPOSO:
+            {
+                sf::Vertex linea01[] = {
+                        sf::Vertex(sf::Vector2f(
+                                posicion.x + puntos[0].x * TAMANO * cos(direccion) - puntos[0].y * TAMANO * sin(direccion),
+                                posicion.y + puntos[0].y * TAMANO * cos(direccion) + puntos[0].x * TAMANO * sin(direccion)),
+                                   sf::Color::White),
+                        sf::Vertex(sf::Vector2f(
+                                posicion.x + puntos[1].x * TAMANO * cos(direccion) - puntos[1].y * TAMANO * sin(direccion),
+                                posicion.y + puntos[1].y * TAMANO * cos(direccion) + puntos[1].x * TAMANO * sin(direccion)),
+                                   sf::Color::White),
+                };
 
-    sf::Vertex linea13[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[1].x*TAMANO*cos(direccion)-puntos[1].y*TAMANO*sin(direccion),posicion.y+puntos[1].y*TAMANO*cos(direccion)+puntos[1].x*TAMANO*sin(direccion)),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[3].x*TAMANO*cos(direccion)-puntos[3].y*TAMANO*sin(direccion),posicion.y+puntos[3].y*TAMANO*cos(direccion)+puntos[3].x*TAMANO*sin(direccion)),sf::Color::White),
-    };
+                sf::Vertex linea13[] = {
+                        sf::Vertex(sf::Vector2f(
+                                posicion.x + puntos[1].x * TAMANO * cos(direccion) - puntos[1].y * TAMANO * sin(direccion),
+                                posicion.y + puntos[1].y * TAMANO * cos(direccion) + puntos[1].x * TAMANO * sin(direccion)),
+                                   sf::Color::White),
+                        sf::Vertex(sf::Vector2f(
+                                posicion.x + puntos[3].x * TAMANO * cos(direccion) - puntos[3].y * TAMANO * sin(direccion),
+                                posicion.y + puntos[3].y * TAMANO * cos(direccion) + puntos[3].x * TAMANO * sin(direccion)),
+                                   sf::Color::White),
+                };
 
-    sf::Vertex linea32[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[3].x*TAMANO*cos(direccion)-puntos[3].y*TAMANO*sin(direccion),posicion.y+puntos[3].y*TAMANO*cos(direccion)+puntos[3].x*TAMANO*sin(direccion)),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[2].x*TAMANO*cos(direccion)-puntos[2].y*TAMANO*sin(direccion),posicion.y+puntos[2].y*TAMANO*cos(direccion)+puntos[2].x*TAMANO*sin(direccion)),sf::Color::White),
-    };
+                sf::Vertex linea32[] = {
+                        sf::Vertex(sf::Vector2f(
+                                posicion.x + puntos[3].x * TAMANO * cos(direccion) - puntos[3].y * TAMANO * sin(direccion),
+                                posicion.y + puntos[3].y * TAMANO * cos(direccion) + puntos[3].x * TAMANO * sin(direccion)),
+                                   sf::Color::White),
+                        sf::Vertex(sf::Vector2f(
+                                posicion.x + puntos[2].x * TAMANO * cos(direccion) - puntos[2].y * TAMANO * sin(direccion),
+                                posicion.y + puntos[2].y * TAMANO * cos(direccion) + puntos[2].x * TAMANO * sin(direccion)),
+                                   sf::Color::White),
+                };
 
-    sf::Vertex linea20[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[2].x*TAMANO*cos(direccion)-puntos[2].y*TAMANO*sin(direccion),posicion.y+puntos[2].y*TAMANO*cos(direccion)+puntos[2].x*TAMANO*sin(direccion)),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion),posicion.y+puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion)),sf::Color::White),
-    };
+                sf::Vertex linea20[] = {
+                        sf::Vertex(sf::Vector2f(
+                                posicion.x + puntos[2].x * TAMANO * cos(direccion) - puntos[2].y * TAMANO * sin(direccion),
+                                posicion.y + puntos[2].y * TAMANO * cos(direccion) + puntos[2].x * TAMANO * sin(direccion)),
+                                   sf::Color::White),
+                        sf::Vertex(sf::Vector2f(
+                                posicion.x + puntos[0].x * TAMANO * cos(direccion) - puntos[0].y * TAMANO * sin(direccion),
+                                posicion.y + puntos[0].y * TAMANO * cos(direccion) + puntos[0].x * TAMANO * sin(direccion)),
+                                   sf::Color::White),
+                };
 
-    target.draw(linea01, 2, sf::Lines);
-    target.draw(linea13, 2, sf::Lines);
-    target.draw(linea32, 2, sf::Lines);
-    target.draw(linea20, 2, sf::Lines);
+                target.draw(linea01, 2, sf::Lines);
+                target.draw(linea13, 2, sf::Lines);
+                target.draw(linea32, 2, sf::Lines);
+                target.draw(linea20, 2, sf::Lines);
+            }
+            break;
+
+        case ACELERANDO:
+            {
+                sf::CircleShape n(TAMANO);
+                n.setPosition(posicion);
+                n.setFillColor(sf::Color::Green);
+                target.draw(n);
+            }
+            break;
+
+        case DESTRUIDA:
+        {
+            sf::CircleShape n(TAMANO);
+            n.setPosition(posicion);
+            n.setFillColor(sf::Color::Red);
+            target.draw(n);
+        }
+        break;
+
+        case REAPARECIENDO:
+        {
+            sf::CircleShape n(TAMANO);
+            n.setPosition(posicion);
+            n.setFillColor(sf::Color::Blue);
+            target.draw(n);
+        }
+        break;
+    }
+
+
 
     //Dibujar los disparos
     for(int i=0 ; i<num_disparos ; i++){
@@ -120,60 +190,66 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 
 //Otros
 void Nave::disparar(){
-    if(num_disparos<MAX_DISPAROS){
-        sf::Vector2f inicio = puntos[0];
-        inicio.x = (float)(puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion));
-        inicio.y = (float)(puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion));
-        disparos[num_disparos] = Disparo(posicion+inicio);
-        disparos[num_disparos].setDireccion(direccion);
-        num_disparos++;
-        reproductorDeSonidoDisparos.play();
+    if(estado==REPOSO || estado==ACELERANDO) {
+        if (num_disparos < MAX_DISPAROS) {
+            sf::Vector2f inicio = puntos[0];
+            inicio.x = (float) (puntos[0].x * TAMANO * cos(direccion) - puntos[0].y * TAMANO * sin(direccion));
+            inicio.y = (float) (puntos[0].y * TAMANO * cos(direccion) + puntos[0].x * TAMANO * sin(direccion));
+            disparos[num_disparos] = Disparo(posicion + inicio);
+            disparos[num_disparos].setDireccion(direccion);
+            num_disparos++;
+            reproductorDeSonidoDisparos.play();
+        }
     }
 }
 
 void Nave::rotarIzda(){
-    direccion -= V_ANGULAR;
-    if(direccion<0.0){
-        direccion += 2*PI;
+    if(estado==REPOSO || estado==ACELERANDO) {
+        direccion -= V_ANGULAR;
+        if (direccion < 0.0) {
+            direccion += 2 * PI;
+        }
     }
 }
 
 void Nave::rotarDcha(){
-    direccion += V_ANGULAR;
-    if(direccion>2.0*PI){
-        direccion -= 2*PI;
+    if(estado==REPOSO || estado==ACELERANDO) {
+        direccion += V_ANGULAR;
+        if (direccion > 2.0 * PI) {
+            direccion -= 2 * PI;
+        }
     }
 }
 
 void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v){
-    //Mover la nave
-    posicion.x += velocidad.x;
-    if(posicion.x-1>=limites.x){
-        posicion.x -= limites.x;
-    }
-    else if(posicion.x+1<=0.0){
-        posicion.x += limites.x;
-    }
+    if(estado==REPOSO || estado==ACELERANDO) {
+        //Mover la nave
+        posicion.x += velocidad.x;
+        if (posicion.x - 1 >= limites.x) {
+            posicion.x -= limites.x;
+        } else if (posicion.x + 1 <= 0.0) {
+            posicion.x += limites.x;
+        }
 
-    posicion.y += velocidad.y;
-    if(posicion.y-1>=limites.y){
-        posicion.y -= limites.y;
-    }
-    else if(posicion.y+1<=0.0){
-        posicion.y += limites.y;
-    }
+        posicion.y += velocidad.y;
+        if (posicion.y - 1 >= limites.y) {
+            posicion.y -= limites.y;
+        } else if (posicion.y + 1 <= 0.0) {
+            posicion.y += limites.y;
+        }
 
-    //Mover los disparos
-    for(int i=0 ; i<num_disparos ; i++){
-        disparos[i].mover(limites);
-        if(disparos[i].comprobarAlcance()){
-            if(disparos[i].comprobarAlcance()){
-                recuperarDisparo(i);
+        //Mover los disparos
+        for (int i = 0; i < num_disparos; i++) {
+            disparos[i].mover(limites);
+            if (disparos[i].comprobarAlcance()) {
+                if (disparos[i].comprobarAlcance()) {
+                    recuperarDisparo(i);
+                }
             }
         }
-    }
 
-    comprobarColision(v);
+        comprobarColision(v);
+    }
 }
 
 void Nave::recuperarDisparo(int d){
@@ -184,12 +260,16 @@ void Nave::recuperarDisparo(int d){
 }
 
 void Nave::acelerar(){
-    if(velocidad.x*velocidad.x+velocidad.y*velocidad.y<MAX_VELOCIDAD*MAX_VELOCIDAD){
-        velocidad.x += ACELERACION*cos(direccion);
-        velocidad.y += ACELERACION*sin(direccion);
-    }
-    if (reproductorDeSonidoPropulsion.getStatus() == sf::Sound::Status::Stopped){
-        reproductorDeSonidoPropulsion.play();
+    if(estado==REPOSO || estado==ACELERANDO) {
+        if (velocidad.x * velocidad.x + velocidad.y * velocidad.y < MAX_VELOCIDAD * MAX_VELOCIDAD) {
+            velocidad.x += ACELERACION * cos(direccion);
+            velocidad.y += ACELERACION * sin(direccion);
+        }
+        if (reproductorDeSonidoPropulsion.getStatus() == sf::Sound::Status::Stopped) {
+            reproductorDeSonidoPropulsion.play();
+        }
+
+        estado = ACELERANDO;
     }
 }
 
@@ -205,23 +285,64 @@ void Nave::frenar(){
 }
 
 bool Nave::comprobarColision(std::vector<Asteroide> v) {
-    for (auto ast = v.begin(); ast != v.end(); ++ast) {
-        //Se comprueba la colision con la nave
-        for (int j=0 ; j<4 ; j++){
-            sf::Vector2f posicion_global(posicion.x+puntos[j].x*TAMANO*cos(direccion)-puntos[j].y*TAMANO*sin(direccion),posicion.y+puntos[j].y*TAMANO*cos(direccion)+puntos[j].x*TAMANO*sin(direccion));
-            if((posicion_global.x-ast->getPosicion().x)*(posicion_global.x-ast->getPosicion().x)+(posicion_global.y-ast->getPosicion().y)*(posicion_global.y-ast->getPosicion().y) < ast->getRadio()*ast->getRadio()){
-                vidas--;
+    if(estado==REPOSO || estado==ACELERANDO) {
+        for (auto ast = v.begin(); ast != v.end(); ++ast) {
+            //Se comprueba la colision con la nave
+            for (int j = 0; j < 4; j++) {
+                sf::Vector2f posicion_global(
+                        posicion.x + puntos[j].x * TAMANO * cos(direccion) - puntos[j].y * TAMANO * sin(direccion),
+                        posicion.y + puntos[j].y * TAMANO * cos(direccion) + puntos[j].x * TAMANO * sin(direccion));
+                if ((posicion_global.x - ast->getPosicion().x) * (posicion_global.x - ast->getPosicion().x) +
+                    (posicion_global.y - ast->getPosicion().y) * (posicion_global.y - ast->getPosicion().y) <
+                    ast->getRadio() * ast->getRadio()) {
+                    estado = DESTRUIDA;
+                    while(num_disparos>0){
+                        recuperarDisparo(0);
+                    }
+                    vidas--;
+                }
+            }
+
+            //Se comprueba el impacto de los disparos
+            for (int j = 0; j < num_disparos; j++) {
+                if (disparos[j].comprobarColision(ast.base())) {
+                    puntuacion += ast->getPuntuacion();
+                    recuperarDisparo(j);
+
+                    //Destruir asteroide, dividirlo o lo que sea....
+                }
             }
         }
+    }
+}
 
-        //Se comprueba el impacto de los disparos
-        for (int j=0 ; j<num_disparos ; j++){
-            if(disparos[j].comprobarColision(ast.base())){
-                puntuacion += ast->getPuntuacion();
-                recuperarDisparo(j);
-
-                //Destruir asteroide, dividirlo o lo que sea....
+void Nave::comprobarEstado(){
+    static int ciclosDestruida = 0;
+    static int ciclosReapareciendo = 0;
+    switch(estado) {
+        case REPOSO:
+            break;
+        case ACELERANDO:
+            estado = REPOSO;
+            break;
+        case DESTRUIDA:
+            if (ciclosDestruida >= 50) {
+                estado = REAPARECIENDO;
+                reiniciar();
+                ciclosDestruida = 0;
             }
-        }
+            else{
+                ciclosDestruida++;
+            }
+            break;
+        case REAPARECIENDO:
+            if (ciclosReapareciendo >= 50) {
+                estado = REPOSO;
+                ciclosReapareciendo = 0;
+            }
+            else{
+                ciclosReapareciendo++;
+            }
+            break;
     }
 }

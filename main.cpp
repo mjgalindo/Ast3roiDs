@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <thread>
+#include <iostream>
 
 #include "Graficos/Nave.hpp"
 #include "Graficos/Asteroide.hpp"
@@ -12,34 +13,25 @@ enum Estado {
 };
 
 Estado tratarTitulo(Estado estado);
-
 Estado tratarMenu(Estado estado);
-
 Estado tratarJuego(Estado estado);
-
 Estado tratarGameOver(Estado estado);
-
 Estado tratarPuntuaciones(Estado estado);
-
 Estado tratarOpciones(Estado estado);
 
 //Tamaño de la ventana
-sf::Vector2u MAX_SIZE;
+sf::Vector2u MAX_SIZE = {800,600};
 //Ventana
 sf::RenderWindow ventana;
 
 int main() {
 
-    for (sf::VideoMode vm : sf::VideoMode::getFullscreenModes()) {
-        if (vm.isValid()) {
-            ventana.create(sf::VideoMode::getDesktopMode(), "Ast3roiDs", sf::Style::Fullscreen);
-            MAX_SIZE = ventana.getSize();
-            break;
-        }
-    }
+    ventana.create(sf::VideoMode(MAX_SIZE.x,MAX_SIZE.y), "Ast3roiDs");
+
     ventana.setFramerateLimit(60);
     ventana.setKeyRepeatEnabled(false);
     ventana.setVerticalSyncEnabled(true);
+
     Estado estado_actual = TITULO;
     while (ventana.isOpen()) {
         switch (estado_actual) {
@@ -222,25 +214,14 @@ Estado tratarJuego(Estado estado) {
     sf::Font fuente;
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
-    texto.setFont(fuente);
-    texto.setString("JUEGO");
-    texto.setCharacterSize(30);
-    texto.setFillColor(sf::Color::White);
-
-    opcion1.setFont(fuente);
-    opcion1.setString("1-GAME OVER");
-    opcion1.setCharacterSize(30);
-    opcion1.setPosition(sf::Vector2f(0.0, 35.0));
-    opcion1.setFillColor(sf::Color::White);
-
     puntuacion.setFont(fuente);
     puntuacion.setCharacterSize(30);
-    puntuacion.setPosition(sf::Vector2f(300.0, 0.0));
+    puntuacion.setPosition(sf::Vector2f(0.0, 0.0));
     puntuacion.setFillColor(sf::Color::Blue);
 
     vidas.setFont(fuente);
     vidas.setCharacterSize(30);
-    vidas.setPosition(sf::Vector2f(300.0, 35.0));
+    vidas.setPosition(sf::Vector2f(0.0, 35.0));
     vidas.setFillColor(sf::Color::Blue);
 
     Nave nave = Nave(sf::Vector2f(MAX_SIZE.x / 2.0f, MAX_SIZE.y / 2.0f));
@@ -266,11 +247,7 @@ Estado tratarJuego(Estado estado) {
                 musica.join();
                 return ERROR;
             case sf::Event::KeyPressed:
-                if (event.key.code == sf::Keyboard::Num1) {
-                    *jugando = false;
-                    musica.join();
-                    return GAME_OVER;
-                } else if (event.key.code == sf::Keyboard::D) {
+                if (event.key.code == sf::Keyboard::D) {
                     nave.disparar();
                 }
             default:
@@ -291,6 +268,12 @@ Estado tratarJuego(Estado estado) {
         nave.mover(MAX_SIZE, asteroides);
         nave.frenar();
 
+        if(nave.getVidas()<0){
+            *jugando = false;
+            musica.join();
+            return GAME_OVER;
+        }
+
         puntuacion.setString(std::to_string(nave.getPuntuacion()));
         vidas.setString(std::to_string(nave.getVidas()));
 
@@ -308,6 +291,7 @@ Estado tratarJuego(Estado estado) {
 
         ventana.display();
         reloj.restart();
+        nave.comprobarEstado();
     }
 }
 

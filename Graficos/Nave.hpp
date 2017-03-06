@@ -10,6 +10,8 @@
 #define PI 3.14159265358979323846
 #define UMBRAL 0.15
 
+enum EstadoNave { REPOSO , ACELERANDO , DESTRUIDA, REAPARECIENDO };
+
 class Nave : public sf::Drawable {
     private:
         //Tamano de la nave en pixeles
@@ -24,6 +26,9 @@ class Nave : public sf::Drawable {
         static const int MAX_DISPAROS = 4;
         //Velocidad maxima
         static const int MAX_VELOCIDAD = 10;
+
+        //Posicion inicial
+        sf::Vector2f pos_inicial;
 
         //Orden: morro, izquierda, derecha y centro
         sf::Vector2f puntos[4];
@@ -44,6 +49,8 @@ class Nave : public sf::Drawable {
         //Puntuacion
         long int puntuacion = 0;
 
+        EstadoNave estado;
+
         // Buffers de los distintos sonidos de una nave
         sf::SoundBuffer bufferSonidoDisparo;
         sf::SoundBuffer bufferSonidoPropulsion;
@@ -52,6 +59,8 @@ class Nave : public sf::Drawable {
         sf::Sound reproductorDeSonidoDisparos;
         sf::Sound reproductorDeSonidoPropulsion;
         sf::Sound reproductorDeSonidoDestruccion;
+
+        void reiniciar();
 
     public:
         //Constructor
@@ -89,6 +98,7 @@ class Nave : public sf::Drawable {
         void frenar();
 
         bool comprobarColision(std::vector<Asteroide> v);
+        void comprobarEstado();
 };
 
 #endif //AST3ROIDS_NAVE_HPP
