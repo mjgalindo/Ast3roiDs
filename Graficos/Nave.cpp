@@ -127,10 +127,6 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 
         case ACELERANDO:
             {
-                //sf::CircleShape n(TAMANO);
-                //n.setPosition(posicion);
-                //n.setFillColor(sf::Color::Green);
-
                 sf::Transform t;
                 t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({(float)TAMANO, (float)TAMANO});
 
@@ -141,19 +137,11 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 
         case DESTRUIDA:
         {
-            sf::CircleShape n(TAMANO);
-            n.setPosition(posicion);
-            n.setFillColor(sf::Color::Red);
-            target.draw(n);
         }
         break;
 
         case REAPARECIENDO:
         {
-            sf::CircleShape n(TAMANO);
-            n.setPosition(posicion);
-            n.setFillColor(sf::Color::Blue);
-            target.draw(n);
         }
         break;
     }
