@@ -22,6 +22,23 @@ Nave::Nave(sf::Vector2f posicion_inicial){
     puntos[2] = sf::Vector2f(-0.7071067812f,-0.7071067812f);
     puntos[3] = sf::Vector2f(-0.4f,0.0f);
 
+
+    poligono.setPrimitiveType(sf::LineStrip);
+    poligono.resize(5);
+    poligono[0].position = {1.0f,0.0f};
+    poligono[1].position = {-0.7071067812f,0.7071067812f};
+    poligono[2].position = {-0.4f,0.0f};
+    poligono[3].position = {-0.7071067812f,-0.7071067812f};
+    poligono[4].position = {1.0f,0.0f};
+
+    //fuego.setPrimitiveType(sf::LineStrip);
+    fuego.setPointCount(4);
+    fuego.setPoint(0, sf::Vector2f(-0.55f, 0.0f));
+    fuego.setPoint(1, sf::Vector2f(-0.7f, 0.5f));
+    fuego.setPoint(2, sf::Vector2f(-1.0f, 0.0f));
+    fuego.setPoint(3, sf::Vector2f(-0.7f, -0.5f));
+    //fuego.setPoint(0, sf::Vector2f(-0.55f, 0.0f));
+
     direccion = (float)-PI/2.0f;
 
     //Posicion de la nave
@@ -101,63 +118,24 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     switch(estado){
         case REPOSO:
             {
-                sf::Vertex linea01[] = {
-                        sf::Vertex(sf::Vector2f(
-                                posicion.x + puntos[0].x * TAMANO * cos(direccion) - puntos[0].y * TAMANO * sin(direccion),
-                                posicion.y + puntos[0].y * TAMANO * cos(direccion) + puntos[0].x * TAMANO * sin(direccion)),
-                                   sf::Color::White),
-                        sf::Vertex(sf::Vector2f(
-                                posicion.x + puntos[1].x * TAMANO * cos(direccion) - puntos[1].y * TAMANO * sin(direccion),
-                                posicion.y + puntos[1].y * TAMANO * cos(direccion) + puntos[1].x * TAMANO * sin(direccion)),
-                                   sf::Color::White),
-                };
+                sf::Transform t;
+                t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({(float)TAMANO, (float)TAMANO});
 
-                sf::Vertex linea13[] = {
-                        sf::Vertex(sf::Vector2f(
-                                posicion.x + puntos[1].x * TAMANO * cos(direccion) - puntos[1].y * TAMANO * sin(direccion),
-                                posicion.y + puntos[1].y * TAMANO * cos(direccion) + puntos[1].x * TAMANO * sin(direccion)),
-                                   sf::Color::White),
-                        sf::Vertex(sf::Vector2f(
-                                posicion.x + puntos[3].x * TAMANO * cos(direccion) - puntos[3].y * TAMANO * sin(direccion),
-                                posicion.y + puntos[3].y * TAMANO * cos(direccion) + puntos[3].x * TAMANO * sin(direccion)),
-                                   sf::Color::White),
-                };
-
-                sf::Vertex linea32[] = {
-                        sf::Vertex(sf::Vector2f(
-                                posicion.x + puntos[3].x * TAMANO * cos(direccion) - puntos[3].y * TAMANO * sin(direccion),
-                                posicion.y + puntos[3].y * TAMANO * cos(direccion) + puntos[3].x * TAMANO * sin(direccion)),
-                                   sf::Color::White),
-                        sf::Vertex(sf::Vector2f(
-                                posicion.x + puntos[2].x * TAMANO * cos(direccion) - puntos[2].y * TAMANO * sin(direccion),
-                                posicion.y + puntos[2].y * TAMANO * cos(direccion) + puntos[2].x * TAMANO * sin(direccion)),
-                                   sf::Color::White),
-                };
-
-                sf::Vertex linea20[] = {
-                        sf::Vertex(sf::Vector2f(
-                                posicion.x + puntos[2].x * TAMANO * cos(direccion) - puntos[2].y * TAMANO * sin(direccion),
-                                posicion.y + puntos[2].y * TAMANO * cos(direccion) + puntos[2].x * TAMANO * sin(direccion)),
-                                   sf::Color::White),
-                        sf::Vertex(sf::Vector2f(
-                                posicion.x + puntos[0].x * TAMANO * cos(direccion) - puntos[0].y * TAMANO * sin(direccion),
-                                posicion.y + puntos[0].y * TAMANO * cos(direccion) + puntos[0].x * TAMANO * sin(direccion)),
-                                   sf::Color::White),
-                };
-
-                target.draw(linea01, 2, sf::Lines);
-                target.draw(linea13, 2, sf::Lines);
-                target.draw(linea32, 2, sf::Lines);
-                target.draw(linea20, 2, sf::Lines);
+                target.draw(poligono, t);
             }
             break;
 
         case ACELERANDO:
             {
-                sf::CircleShape n(TAMANO);
-                n.setPosition(posicion);
-                n.setFillColor(sf::Color::Green);
-                target.draw(n);
+                //sf::CircleShape n(TAMANO);
+                //n.setPosition(posicion);
+                //n.setFillColor(sf::Color::Green);
+
+                sf::Transform t;
+                t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({(float)TAMANO, (float)TAMANO});
+
+                target.draw(poligono, t);
+                target.draw(fuego, t);
             }
             break;
 

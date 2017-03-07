@@ -32,6 +32,8 @@ class Nave : public sf::Drawable {
 
         //Orden: morro, izquierda, derecha y centro
         sf::Vector2f puntos[4];
+        sf::VertexArray poligono;
+        sf::ConvexShape fuego;
         //Direccion de la nave
         float direccion;
         //Posicion de la nave
