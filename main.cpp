@@ -26,8 +26,9 @@ sf::Vector2u MAX_SIZE = {800,600};
 sf::RenderWindow ventana;
 
 int main() {
-
-    ventana.create(sf::VideoMode(MAX_SIZE.x,MAX_SIZE.y), "Ast3roiDs");
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+    ventana.create(sf::VideoMode(MAX_SIZE.x,MAX_SIZE.y), "Ast3roiDs", sf::Style::Default, settings);
 
     ventana.setFramerateLimit(60);
     ventana.setKeyRepeatEnabled(false);
