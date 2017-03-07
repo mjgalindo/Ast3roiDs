@@ -36,6 +36,8 @@ Ovni::Ovni(sf::Vector2u limites) {
     puntos[7] = sf::Vector2f(0.4f,-0.8f);
     direccion = distribution(generator);
     num_disparos = 0;
+    reproductorDeSonidoOvni.setLoop(true);
+    reproductorDeSonidoOvni.play();
 }
 
 Ovni::~Ovni(){}
@@ -57,8 +59,8 @@ void Ovni::disparar() {
         disparos[num_disparos] = Disparo(posicion);
         disparos[num_disparos].setDireccion(distribution(generator));
         num_disparos++;
-        reproductorDeSonidoDisparos.play();
     }
+    reproductorDeSonidoDisparos.play();
 }
 
 void Ovni::draw(sf::RenderTarget& target, sf::RenderStates states) const{
@@ -149,7 +151,6 @@ void Ovni::mover(sf::Vector2u limites) {
     if(num_disparos < 2) {
         disparar();
     }
-    reproductorDeSonidoOvni.play();
 }
 
 
