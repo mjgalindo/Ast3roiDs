@@ -24,7 +24,7 @@ class Ovni : public sf::Drawable {
         //Direccion en que se mueve el ovni
         float direccion;
         sf::Vector2f posicion;
-        sf::Vector2f puntos[8];
+        sf::VertexArray poligono;
 
         sf::Vector2f velocidad;
 
@@ -42,7 +42,7 @@ class Ovni : public sf::Drawable {
         sf::Sound reproductorDeSonidoOvni;
 
     public:
-        Ovni(sf::Vector2u pos);
+        Ovni(sf::Vector2u limites);
         ~Ovni();
 
         //Getters

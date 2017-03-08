@@ -27,7 +27,7 @@ sf::RenderWindow ventana;
 
 int main() {
     sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
+    settings.antialiasingLevel = 4;
     ventana.create(sf::VideoMode(MAX_SIZE.x,MAX_SIZE.y), "Ast3roiDs", sf::Style::Default, settings);
 
     ventana.setFramerateLimit(60);

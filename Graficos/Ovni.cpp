@@ -26,14 +26,22 @@ Ovni::Ovni(sf::Vector2u limites) {
         std::uniform_real_distribution<float> distributionX(0,limites.x);
         posicion = sf::Vector2f(distributionX(generator),0.0f);
     }
-    puntos[0] = sf::Vector2f(-1.0f,0.0f);
-    puntos[1] = sf::Vector2f(1.0f,0.0f);
-    puntos[2] = sf::Vector2f(-0.6f,-0.4f);
-    puntos[3] = sf::Vector2f(0.6f,-0.4f);
-    puntos[4] = sf::Vector2f(-0.6f,0.4f);
-    puntos[5] = sf::Vector2f(0.6f,0.4f);
-    puntos[6] = sf::Vector2f(-0.4f,-0.8f);
-    puntos[7] = sf::Vector2f(0.4f,-0.8f);
+
+    poligono.setPrimitiveType(sf::LineStrip);
+    poligono.resize(12);
+    poligono[0].position = {-1.0f,0.0f};
+    poligono[1].position = {1.0f,0.0f};
+    poligono[2].position = {0.6f,-0.4f};
+    poligono[3].position = {-0.6f,-0.4f};
+    poligono[4].position = {-1.0f,0.0f};
+    poligono[5].position = {-0.6f,0.4f};
+    poligono[6].position = {0.6f,0.4f};
+    poligono[7].position = {1.0f,0.0f};
+    poligono[8].position = {0.6f,-0.4f};
+    poligono[9].position = {0.4f,-0.8f};
+    poligono[10].position = {-0.4f,-0.8f};
+    poligono[11].position = {-0.6f,-0.4f};
+
     direccion = distribution(generator);
     num_disparos = 0;
     reproductorDeSonidoOvni.setLoop(true);
@@ -64,56 +72,9 @@ void Ovni::disparar() {
 }
 
 void Ovni::draw(sf::RenderTarget& target, sf::RenderStates states) const{
-    sf::Vertex linea01[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[0].x*TAMANO,posicion.y+puntos[0].y*TAMANO),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[1].x*TAMANO,posicion.y+puntos[1].y*TAMANO),sf::Color::White)
-    };
-    sf::Vertex linea02[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[0].x*TAMANO,posicion.y+puntos[0].y*TAMANO),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[2].x*TAMANO,posicion.y+puntos[2].y*TAMANO),sf::Color::White)
-    };
-    sf::Vertex linea13[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[1].x*TAMANO,posicion.y+puntos[1].y*TAMANO),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[3].x*TAMANO,posicion.y+puntos[3].y*TAMANO),sf::Color::White)
-    };
-    sf::Vertex linea23[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[2].x*TAMANO,posicion.y+puntos[2].y*TAMANO),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[3].x*TAMANO,posicion.y+puntos[3].y*TAMANO),sf::Color::White)
-    };
-    sf::Vertex linea04[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[0].x*TAMANO,posicion.y+puntos[0].y*TAMANO),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[4].x*TAMANO,posicion.y+puntos[4].y*TAMANO),sf::Color::White)
-    };
-    sf::Vertex linea15[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[1].x*TAMANO,posicion.y+puntos[1].y*TAMANO),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[5].x*TAMANO,posicion.y+puntos[5].y*TAMANO),sf::Color::White)
-    };
-    sf::Vertex linea45[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[4].x*TAMANO,posicion.y+puntos[4].y*TAMANO),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[5].x*TAMANO,posicion.y+puntos[5].y*TAMANO),sf::Color::White)
-    };
-    sf::Vertex linea26[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[2].x*TAMANO,posicion.y+puntos[2].y*TAMANO),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[6].x*TAMANO,posicion.y+puntos[6].y*TAMANO),sf::Color::White)
-    };
-    sf::Vertex linea37[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[3].x*TAMANO,posicion.y+puntos[3].y*TAMANO),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[7].x*TAMANO,posicion.y+puntos[7].y*TAMANO),sf::Color::White)
-    };
-    sf::Vertex linea67[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[6].x*TAMANO,posicion.y+puntos[6].y*TAMANO),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[7].x*TAMANO,posicion.y+puntos[7].y*TAMANO),sf::Color::White)
-    };
-    target.draw(linea01,2,sf::Lines);
-    target.draw(linea02,2,sf::Lines);
-    target.draw(linea13,2,sf::Lines);
-    target.draw(linea23,2,sf::Lines);
-    target.draw(linea04,2,sf::Lines);
-    target.draw(linea15,2,sf::Lines);
-    target.draw(linea45,2,sf::Lines);
-    target.draw(linea26,2,sf::Lines);
-    target.draw(linea37,2,sf::Lines);
-    target.draw(linea67,2,sf::Lines);
+    sf::Transform t;
+    t.translate(posicion).scale((float)TAMANO,(float)TAMANO);
+    target.draw(poligono,t);
     for(int i=0 ; i<num_disparos ; i++){
         target.draw(disparos[i]);
     }
