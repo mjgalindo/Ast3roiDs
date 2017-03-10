@@ -112,6 +112,7 @@ void Ovni::mover(sf::Vector2u limites) {
     if(num_disparos < 2) {
         disparar();
     }
+    reproductorDeSonidoOvni.play();
 }
 
 

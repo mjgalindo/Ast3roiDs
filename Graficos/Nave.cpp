@@ -271,7 +271,7 @@ bool Nave::comprobarColision(std::vector<Asteroide> v) {
 
             //Se comprueba el impacto de los disparos
             for (int j = 0; j < num_disparos; j++) {
-                if (disparos[j].comprobarColision(ast.base())) {
+                if (disparos[j].comprobarColision(*ast)) {
                     puntuacion += ast->getPuntuacion();
                     recuperarDisparo(j);
 

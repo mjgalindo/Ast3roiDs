@@ -1,15 +1,12 @@
-//
-// Created by Jorge on 05/03/2017.
-//
-
 #ifndef AST3ROIDS_OVNI_HPP
 #define AST3ROIDS_OVNI_HPP
 
 #include <cmath>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include "Disparo.hpp"
 #include <random>
+
+#include "Disparo.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -49,6 +46,7 @@ class Ovni : public sf::Drawable {
         float getDireccion();
         sf::Vector2f getPosicion();
         sf::Vector2f getVelocidad();
+        float getRadio();
 
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
