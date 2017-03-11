@@ -31,7 +31,6 @@ class Nave : public sf::Drawable {
         sf::Vector2f pos_inicial;
 
         //Orden: morro, izquierda, derecha y centro
-        sf::Vector2f puntos[4];
         sf::VertexArray poligono;
         sf::ConvexShape fuego;
         //Direccion de la nave
@@ -72,7 +71,7 @@ class Nave : public sf::Drawable {
         ~Nave();
 
         //Setters
-        void setPuntos(sf::Vector2f ps[4]);
+        void setPoligono(sf::Vector2f ps[5]);
         void setDireccion(float dir);
         void setPosicion(sf::Vector2f pos);
         void setVelocidad(sf::Vector2f vel);
@@ -80,7 +79,7 @@ class Nave : public sf::Drawable {
         void setPuntuacion(long int puntuacion);
 
         //Getters
-        sf::Vector2f* getPuntos();
+        sf::VertexArray* getPoligono();
         float getDireccion();
         sf::Vector2f getPosicion();
         sf::Vector2f getVelocidad();

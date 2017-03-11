@@ -21,7 +21,7 @@ class Disparo : public sf::Drawable {
         static constexpr float VELOCIDAD = 21.0;
 
         //Orden: superior, inferior
-        sf::Vector2f puntos[2];
+        sf::VertexArray poligono;
         //Direccion del disparo
         float direccion;
         //Posicion del disparo
@@ -45,7 +45,7 @@ class Disparo : public sf::Drawable {
         void setPosicion(sf::Vector2f pos);
 
         //Getters
-        sf::Vector2f* getPuntos();
+        sf::VertexArray* getPuntos();
         float getDireccion();
         sf::Vector2f getPosicion();
 
