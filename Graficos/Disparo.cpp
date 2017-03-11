@@ -4,8 +4,10 @@
 Disparo::Disparo(){}
 
 Disparo::Disparo(sf::Vector2f pos_inicial){
-    puntos[0] = sf::Vector2f(1.0,0.0);
-    puntos[1] = sf::Vector2f(-1.0,0.0);
+    poligono.setPrimitiveType(sf::LineStrip);
+    poligono.resize(2);
+    poligono[0].position = {1.0,0.0};
+    poligono[1].position = {-1.0,0.0};
 
     direccion = PI/2.0;
 
@@ -19,8 +21,8 @@ Disparo::~Disparo(){}
 
 //Setters
 void Disparo::setPuntos(sf::Vector2f ps[2]){
-    puntos[0] = ps[0];
-    puntos[1] = ps[1];
+    poligono[0].position = ps[0];
+    poligono[1].position = ps[1];
 }
 
 void Disparo::setDireccion(float dir){
@@ -32,8 +34,8 @@ void Disparo::setPosicion(sf::Vector2f pos){
 }
 
 //Getters
-sf::Vector2f* Disparo::getPuntos(){
-    return puntos;
+sf::VertexArray* Disparo::getPuntos(){
+    return &poligono;
 }
 
 float Disparo::getDireccion(){
@@ -46,12 +48,12 @@ sf::Vector2f Disparo::getPosicion(){
 
 //Dibujo
 void Disparo::draw(sf::RenderTarget& target, sf::RenderStates states) const{
-    sf::Vertex linea[] = {
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion),posicion.y+puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion)),sf::Color::White),
-            sf::Vertex(sf::Vector2f(posicion.x+puntos[1].x*TAMANO*cos(direccion)-puntos[1].y*TAMANO*sin(direccion),posicion.y+puntos[1].y*TAMANO*cos(direccion)+puntos[1].x*TAMANO*sin(direccion)),sf::Color::White),
-    };
 
-    target.draw(linea, 2, sf::Lines);
+    sf::Transform t;
+    t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({(float)TAMANO, (float)TAMANO});
+
+    target.draw(poligono, t);
+
 }
 
 //Otros
@@ -84,13 +86,14 @@ bool Disparo::comprobarAlcance(){
 }
 
 bool Disparo::comprobarColision(Asteroide *a) {
-    sf::Vector2f posicion_global(posicion.x+puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion),posicion.y+puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion));
+
+    sf::Vector2f posicion_global(posicion.x+poligono[0].position.x*TAMANO*cos(direccion)-poligono[0].position.y*TAMANO*sin(direccion),posicion.y+poligono[0].position.y*TAMANO*cos(direccion)+poligono[0].position.x*TAMANO*sin(direccion));
     // (x1-x2)^2 + (y1-y2)^2 < R^2
     if((posicion_global.x-a->getPosicion().x)*(posicion_global.x-a->getPosicion().x)+(posicion_global.y-a->getPosicion().y)*(posicion_global.y-a->getPosicion().y) < a->getRadio()*a->getRadio()) {
        return true;
     }
 
-    posicion_global = sf::Vector2f(posicion.x+puntos[1].x*TAMANO*cos(direccion)-puntos[1].y*TAMANO*sin(direccion),posicion.y+puntos[1].y*TAMANO*cos(direccion)+puntos[1].x*TAMANO*sin(direccion));
+    posicion_global = sf::Vector2f(posicion.x+poligono[1].position.x*TAMANO*cos(direccion)-poligono[1].position.y*TAMANO*sin(direccion),posicion.y+poligono[1].position.y*TAMANO*cos(direccion)+poligono[1].position.x*TAMANO*sin(direccion));
     // (x1-x2)^2 + (y1-y2)^2 < R^2
     if((posicion_global.x-a->getPosicion().x)*(posicion_global.x-a->getPosicion().x)+(posicion_global.y-a->getPosicion().y)*(posicion_global.y-a->getPosicion().y) < a->getRadio()*a->getRadio()) {
         return true;

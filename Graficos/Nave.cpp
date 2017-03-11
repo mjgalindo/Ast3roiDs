@@ -17,11 +17,6 @@ Nave::Nave(sf::Vector2f posicion_inicial){
     reproductorDeSonidoDisparos.setBuffer(bufferSonidoDisparo);
     reproductorDeSonidoDestruccion.setBuffer(bufferSonidoDestruccion);
 
-    puntos[0] = sf::Vector2f(1.0f,0.0f);
-    puntos[1] = sf::Vector2f(-0.7071067812f,0.7071067812f);
-    puntos[2] = sf::Vector2f(-0.7071067812f,-0.7071067812f);
-    puntos[3] = sf::Vector2f(-0.4f,0.0f);
-
 
     poligono.setPrimitiveType(sf::LineStrip);
     poligono.resize(5);
@@ -69,11 +64,12 @@ void Nave::reiniciar() {
 Nave::~Nave(){}
 
 //Setters
-void Nave::setPuntos(sf::Vector2f ps[4]){
-    puntos[0] = ps[0];
-    puntos[1] = ps[1];
-    puntos[2] = ps[2];
-    puntos[3] = ps[3];
+void Nave::setPoligono(sf::Vector2f ps[5]){
+    poligono[0].position = ps[0];
+    poligono[1].position = ps[1];
+    poligono[2].position = ps[2];
+    poligono[3].position = ps[3];
+    poligono[4].position = ps[4];
 }
 
 void Nave::setDireccion(float dir){
@@ -89,8 +85,8 @@ void Nave::setVelocidad(sf::Vector2f vel){
 }
 
 //Getters
-sf::Vector2f* Nave::getPuntos(){
-    return puntos;
+sf::VertexArray* Nave::getPoligono(){
+    return &poligono;
 }
 
 float Nave::getDireccion(){
@@ -158,9 +154,9 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 void Nave::disparar(){
     if(estado==REPOSO || estado==ACELERANDO) {
         if (num_disparos < MAX_DISPAROS) {
-            sf::Vector2f inicio = puntos[0];
-            inicio.x = (float) (puntos[0].x * TAMANO * cos(direccion) - puntos[0].y * TAMANO * sin(direccion));
-            inicio.y = (float) (puntos[0].y * TAMANO * cos(direccion) + puntos[0].x * TAMANO * sin(direccion));
+            sf::Vector2f inicio = poligono[0].position;
+            inicio.x = (float) (poligono[0].position.x * TAMANO * cos(direccion) - poligono[0].position.y * TAMANO * sin(direccion));
+            inicio.y = (float) (poligono[0].position.y * TAMANO * cos(direccion) + poligono[0].position.x * TAMANO * sin(direccion));
             disparos[num_disparos] = Disparo(posicion + inicio);
             disparos[num_disparos].setDireccion(direccion);
             num_disparos++;
@@ -256,8 +252,8 @@ bool Nave::comprobarColision(std::vector<Asteroide> v) {
             //Se comprueba la colision con la nave
             for (int j = 0; j < 4; j++) {
                 sf::Vector2f posicion_global(
-                        posicion.x + puntos[j].x * TAMANO * cos(direccion) - puntos[j].y * TAMANO * sin(direccion),
-                        posicion.y + puntos[j].y * TAMANO * cos(direccion) + puntos[j].x * TAMANO * sin(direccion));
+                        posicion.x + poligono[j].position.x * TAMANO * cos(direccion) - poligono[j].position.y * TAMANO * sin(direccion),
+                        posicion.y + poligono[j].position.y * TAMANO * cos(direccion) + poligono[j].position.x * TAMANO * sin(direccion));
                 if ((posicion_global.x - ast->getPosicion().x) * (posicion_global.x - ast->getPosicion().x) +
                     (posicion_global.y - ast->getPosicion().y) * (posicion_global.y - ast->getPosicion().y) <
                     ast->getRadio() * ast->getRadio()) {
