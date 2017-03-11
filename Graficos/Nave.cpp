@@ -48,7 +48,7 @@ Nave::Nave(sf::Vector2f posicion_inicial){
     //Disparos
     num_disparos = 0;
     for(int i=0 ; i<MAX_DISPAROS ; i++){
-        disparos[i] = Disparo(sf::Vector2f(0.0, 0.0));
+        disparos[i] = Disparo(sf::Vector2f(0.0, 0.0),0.0);
     }
 }
 
@@ -157,8 +157,7 @@ void Nave::disparar(){
             sf::Vector2f inicio = poligono[0].position;
             inicio.x = (float) (poligono[0].position.x * TAMANO * cos(direccion) - poligono[0].position.y * TAMANO * sin(direccion));
             inicio.y = (float) (poligono[0].position.y * TAMANO * cos(direccion) + poligono[0].position.x * TAMANO * sin(direccion));
-            disparos[num_disparos] = Disparo(posicion + inicio);
-            disparos[num_disparos].setDireccion(direccion);
+            disparos[num_disparos] = Disparo(posicion + inicio, direccion);
             num_disparos++;
             reproductorDeSonidoDisparos.play();
         }
@@ -183,7 +182,7 @@ void Nave::rotarDcha(){
     }
 }
 
-void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v){
+void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Ovni o){
     if(estado==REPOSO || estado==ACELERANDO) {
         //Mover la nave
         posicion.x += velocidad.x;
@@ -210,7 +209,53 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v){
             }
         }
 
-        comprobarColision(v);
+        if(comprobarColision(o)){
+            estado = DESTRUIDA;
+
+            while(num_disparos>0){
+                recuperarDisparo(0);
+            }
+
+            puntuacion += o.getPuntuacion();
+            vidas--;
+        }
+
+        //Se comprueba el impacto de los disparos
+        for (int j = 0; j < num_disparos; j++) {
+            if (disparos[j].comprobarColision(o)) {
+                puntuacion += o.getPuntuacion();
+                recuperarDisparo(j);
+                j--;
+
+                //Destruir asteroide, dividirlo o lo que sea....
+            }
+        }
+
+        for (auto a = v.begin(); a != v.end(); ++a) {
+            if(comprobarColision(*a)){
+                estado = DESTRUIDA;
+
+                while(num_disparos>0){
+                    recuperarDisparo(0);
+                }
+
+                puntuacion += o.getPuntuacion();
+                vidas--;
+
+                //Destruir asteroide, dividirlo o lo que sea....
+            }
+
+            //Se comprueba el impacto de los disparos
+            for (int j = 0; j < num_disparos; j++) {
+                if (disparos[j].comprobarColision(*a)) {
+                    puntuacion += a->getPuntuacion();
+                    recuperarDisparo(j);
+                    j--;
+
+                    //Destruir asteroide, dividirlo o lo que sea....
+                }
+            }
+        }
     }
 }
 
@@ -246,36 +291,23 @@ void Nave::frenar(){
     }
 }
 
-bool Nave::comprobarColision(std::vector<Asteroide> v) {
-    if(estado==REPOSO || estado==ACELERANDO) {
-        for (auto ast = v.begin(); ast != v.end(); ++ast) {
-            //Se comprueba la colision con la nave
-            for (int j = 0; j < 4; j++) {
-                sf::Vector2f posicion_global(
-                        posicion.x + poligono[j].position.x * TAMANO * cos(direccion) - poligono[j].position.y * TAMANO * sin(direccion),
-                        posicion.y + poligono[j].position.y * TAMANO * cos(direccion) + poligono[j].position.x * TAMANO * sin(direccion));
-                if ((posicion_global.x - ast->getPosicion().x) * (posicion_global.x - ast->getPosicion().x) +
-                    (posicion_global.y - ast->getPosicion().y) * (posicion_global.y - ast->getPosicion().y) <
-                    ast->getRadio() * ast->getRadio()) {
-                    estado = DESTRUIDA;
-                    while(num_disparos>0){
-                        recuperarDisparo(0);
-                    }
-                    vidas--;
-                }
-            }
+bool Nave::comprobarColision(Circular& c){
+    sf::VertexArray poligono_real;
+    poligono_real.setPrimitiveType(sf::LineStrip);
+    poligono_real.resize(3);
 
-            //Se comprueba el impacto de los disparos
-            for (int j = 0; j < num_disparos; j++) {
-                if (disparos[j].comprobarColision(*ast)) {
-                    puntuacion += ast->getPuntuacion();
-                    recuperarDisparo(j);
+    sf::Transform t;
+    t.rotate(direccion).translate(posicion).scale({TAMANO, TAMANO});
 
-                    //Destruir asteroide, dividirlo o lo que sea....
-                }
-            }
-        }
+    poligono_real[0].position = t.transformPoint(poligono[0].position);
+    poligono_real[1].position = t.transformPoint(poligono[1].position);
+    poligono_real[2].position = t.transformPoint(poligono[3].position);
+
+    if(colisionVerticesCirculo(poligono_real,c.posicion, c.radio)){
+        return true;
     }
+
+    return false;
 }
 
 void Nave::comprobarEstado(){

@@ -6,21 +6,21 @@
 #include <SFML/Audio.hpp>
 #include <random>
 
+#include "../Colisiones.hpp"
+#include "Circular.hpp"
 #include "Disparo.hpp"
 
 #define PI 3.14159265358979323846
 
-class Ovni : public sf::Drawable {
+class Ovni : public sf::Drawable, public Circular {
 
     private:
-        //Tamano de la nave en pixeles
-        static constexpr float TAMANO = 30;
         static constexpr float VELOCIDAD = 10.0;
         //Numero maximo de disparos activos
         static const int MAX_DISPAROS = 2;
         //Direccion en que se mueve el ovni
         float direccion;
-        sf::Vector2f posicion;
+
         sf::VertexArray poligono;
 
         sf::Vector2f velocidad;
@@ -44,16 +44,16 @@ class Ovni : public sf::Drawable {
 
         //Getters
         float getDireccion();
-        sf::Vector2f getPosicion();
         sf::Vector2f getVelocidad();
-        float getRadio();
+        virtual int getPuntuacion() const;
 
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
         void disparar();
-        void mover(sf::Vector2u limites);
+        void mover(sf::Vector2u limites, std::vector<Asteroide> v);
 
         void recuperarDisparo(int d);
+        bool comprobarColision(Circular& c);
 };
 
 

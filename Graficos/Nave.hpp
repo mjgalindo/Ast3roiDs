@@ -4,8 +4,10 @@
 #include <cmath>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "../Colisiones.hpp"
 #include "Disparo.hpp"
 #include "Asteroide.hpp"
+#include "Ovni.hpp"
 
 #define PI 3.14159265358979323846
 #define UMBRAL 0.15
@@ -94,11 +96,11 @@ class Nave : public sf::Drawable {
         void recuperarDisparo(int d);
         void rotarIzda();
         void rotarDcha();
-        void mover(sf::Vector2u limites, std::vector<Asteroide> v);
+        void mover(sf::Vector2u limites, std::vector<Asteroide> v, Ovni o);
         void acelerar();
         void frenar();
 
-        bool comprobarColision(std::vector<Asteroide> v);
+        bool comprobarColision(Circular& c);
         void comprobarEstado();
 };
 

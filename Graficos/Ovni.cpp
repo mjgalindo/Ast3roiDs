@@ -26,6 +26,8 @@ Ovni::Ovni(sf::Vector2u limites) {
         std::uniform_real_distribution<float> distributionX(0,limites.x);
         posicion = sf::Vector2f(distributionX(generator),0.0f);
     }
+    radio = 30;
+
 
     poligono.setPrimitiveType(sf::LineStrip);
     poligono.resize(12);
@@ -54,17 +56,17 @@ float Ovni::getDireccion() {
     return direccion;
 }
 
-sf::Vector2f Ovni::getPosicion() {
-    return posicion;
-}
-
 sf::Vector2f Ovni::getVelocidad() {
     return velocidad;
 }
 
+int Ovni::getPuntuacion() const {
+    return 1000;
+}
+
 void Ovni::disparar() {
     if(num_disparos<MAX_DISPAROS) {
-        disparos[num_disparos] = Disparo(posicion);
+        disparos[num_disparos] = Disparo(posicion,direccion);
         disparos[num_disparos].setDireccion(distribution(generator));
         num_disparos++;
     }
@@ -73,14 +75,14 @@ void Ovni::disparar() {
 
 void Ovni::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     sf::Transform t;
-    t.translate(posicion).scale((float)TAMANO,(float)TAMANO);
+    t.translate(posicion).scale(radio,radio);
     target.draw(poligono,t);
     for(int i=0 ; i<num_disparos ; i++){
         target.draw(disparos[i]);
     }
 }
 
-void Ovni::mover(sf::Vector2u limites) {
+void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> v) {
     std::uniform_real_distribution<float> distributionGirar(0,1);
     if(distributionGirar(generator) < 0.01) {
         direccion = distribution(generator);
@@ -105,13 +107,32 @@ void Ovni::mover(sf::Vector2u limites) {
     for(int i=0 ; i<num_disparos ; i++){
         disparos[i].mover(limites);
         if(disparos[i].comprobarAlcance()){
-                recuperarDisparo(i);
+            recuperarDisparo(i);
+            i--;
         }
     }
 
     if(num_disparos < 2) {
         disparar();
     }
+
+    for (auto ast = v.begin(); ast != v.end(); ++ast) {
+        if(comprobarColision(*ast)){
+            //EL OVNI SE DESTRUYE???
+        }
+
+        //Se comprueba el impacto de los disparos
+        for (int j = 0; j < num_disparos; j++) {
+            if (disparos[j].comprobarColision(*ast)) {
+                recuperarDisparo(j);
+                j--;
+
+                //Destruir asteroide, dividirlo o lo que sea....
+            }
+        }
+    }
+
+
     reproductorDeSonidoOvni.play();
 }
 
@@ -122,4 +143,11 @@ void Ovni::recuperarDisparo(int d){
         disparos[i] = disparos[i+1];
     }
     num_disparos--;
+}
+
+bool Ovni::comprobarColision(Circular& c) {
+    if(colisionCirculos(posicion, radio, c.posicion, c.radio)){
+        return true;
+    }
+    return false;
 }

@@ -267,8 +267,8 @@ Estado tratarJuego(Estado estado) {
             nave.acelerar();
         }
 
-        ovni.mover(MAX_SIZE);
-        nave.mover(MAX_SIZE, asteroides);
+        ovni.mover(MAX_SIZE, asteroides);
+        nave.mover(MAX_SIZE, asteroides, ovni);
         nave.frenar();
 
         if(nave.getVidas()<0){

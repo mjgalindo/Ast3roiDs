@@ -5,11 +5,9 @@
 #include <SFML/Graphics.hpp>
 
 #include "Asteroide.hpp"
+#include "../Colisiones.hpp"
 
 #define PI 3.14159265358979323846
-
-class Nave;
-class Ovni;
 
 class Disparo : public sf::Drawable {
     private:
@@ -34,7 +32,7 @@ class Disparo : public sf::Drawable {
     public:
         //Constructor
         Disparo();
-        Disparo(sf::Vector2f pos_inicial);
+        Disparo(sf::Vector2f pos_inicial, float d);
 
         //Destructor
         ~Disparo();
@@ -55,9 +53,7 @@ class Disparo : public sf::Drawable {
         //Otros
         void mover(sf::Vector2u limites);
         bool comprobarAlcance();
-        bool comprobarColision(Asteroide& a);
-        bool comprobarColision(Nave& n);
-        bool comprobarColision(Ovni& o);
+        bool comprobarColision(Circular& c);
 };
 
 #endif //AST3ROIDS_DISPARO_HPP

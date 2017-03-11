@@ -1,11 +1,10 @@
 #include <iostream>
 #include "Asteroide.hpp"
 
-Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam) {
-    posicion = posicion_inicial;
+Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam) :
+                                                                            Circular(posicion_inicial, tam){
     direccion = dir;
     velocidad = vel;
-    tamano = tam;
     version = tipo;
     // Definimos el asteroide como una serie de puntos conectados por orden
     poligono.setPrimitiveType(sf::LineStrip);
@@ -67,20 +66,12 @@ float Asteroide::getDireccion() {
     return direccion;
 }
 
-sf::Vector2f Asteroide::getPosicion() {
-    return posicion;
-}
-
 sf::Vector2f Asteroide::getVelocidad() {
     return velocidad;
 }
 
-float Asteroide::getRadio() {
-    return tamano;
-}
-
-int Asteroide::getPuntuacion() {
-    switch(tamano){
+int Asteroide::getPuntuacion() const {
+    switch((int)radio){
         case TAM_0:
             return 100;
         case TAM_1:
@@ -95,7 +86,7 @@ int Asteroide::getPuntuacion() {
 void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     sf::Transform t;
     // El orden en el que se efectuan las transformaciones es importante!
-    t.rotate(direccion).translate(posicion).scale({(float)tamano, (float)tamano});
+    t.rotate(direccion).translate(posicion).scale({radio, radio});
     target.draw(poligono, t);
 }
 

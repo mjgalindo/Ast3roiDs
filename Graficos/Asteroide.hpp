@@ -4,21 +4,20 @@
 #include <cmath>
 #include <SFML/Graphics.hpp>
 
+#include "Circular.hpp"
+
 enum Tipo {TIPO_0, TIPO_1, TIPO_2};
 enum Tamano {TAM_0 = 10, TAM_1 = 20, TAM_2 = 40};
 
-class Asteroide : public sf::Drawable {
+class Asteroide : public sf::Drawable, public Circular {
 
 private:
     float direccion;
-    Tamano tamano;
     Tipo version;
     sf::VertexArray poligono;
-    sf::Vector2f posicion;
     sf::Vector2f velocidad;
 
 public:
-
 
     Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam);
 
@@ -28,13 +27,9 @@ public:
 
     float getDireccion();
 
-    sf::Vector2f getPosicion();
-
     sf::Vector2f getVelocidad();
 
-    float getRadio();
-
-    int getPuntuacion();
+    virtual int getPuntuacion() const;
 
     void mover(sf::Vector2u limites);
 

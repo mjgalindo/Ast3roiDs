@@ -3,13 +3,14 @@
 //Constructores
 Disparo::Disparo(){}
 
-Disparo::Disparo(sf::Vector2f pos_inicial){
+Disparo::Disparo(sf::Vector2f pos_inicial, float d){
+
+    direccion = d;
+
     poligono.setPrimitiveType(sf::LineStrip);
     poligono.resize(2);
     poligono[0].position = {1.0,0.0};
     poligono[1].position = {-1.0,0.0};
-
-    direccion = PI/2.0;
 
     //Posicion de la nave
     posicion = pos_inicial;
@@ -85,20 +86,15 @@ bool Disparo::comprobarAlcance(){
     }
 }
 
-bool Disparo::comprobarColision(Asteroide& a) {
-    sf::Vector2f posicion_global(posicion.x+puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion),posicion.y+puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion));
-    // (x1-x2)^2 + (y1-y2)^2 < R^2
-    if((posicion_global.x-a.getPosicion().x)*(posicion_global.x-a.getPosicion().x)+(posicion_global.y-a.getPosicion().y)*(posicion_global.y-a.getPosicion().y) < a.getRadio()*a.getRadio()) {
-       return true;
-    }
+bool Disparo::comprobarColision(Circular& c) {
+    sf::VertexArray poligono_real = poligono;
 
-    posicion_global = sf::Vector2f(posicion.x+puntos[1].x*TAMANO*cos(direccion)-puntos[1].y*TAMANO*sin(direccion),posicion.y+puntos[1].y*TAMANO*cos(direccion)+puntos[1].x*TAMANO*sin(direccion));
-    // (x1-x2)^2 + (y1-y2)^2 < R^2
-    if((posicion_global.x-a.getPosicion().x)*(posicion_global.x-a.getPosicion().x)+(posicion_global.y-a.getPosicion().y)*(posicion_global.y-a.getPosicion().y) < a.getRadio()*a.getRadio()) {
-        return true;
-    }
+    sf::Transform t;
+    t.rotate(direccion).translate(posicion).scale({TAMANO, TAMANO});
+    poligono_real[0].position = t.transformPoint(poligono[0].position);
+    poligono_real[1].position = t.transformPoint(poligono[1].position);
 
-    return false;
+    return colisionVerticesCirculo(poligono_real,c.getPosicion(),c.getRadio());
 }
 
 
@@ -117,19 +113,3 @@ bool Disparo::comprobarColision(Asteroide& a) {
 
     return false;
 }*/
-
-bool Disparo::comprobarColision(Ovni& o){
-    sf::Vector2f posicion_global(posicion.x+puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion),posicion.y+puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion));
-    // (x1-x2)^2 + (y1-y2)^2 < R^2
-    if((posicion_global.x-o.getPosicion().x)*(posicion_global.x-o.getPosicion().x)+(posicion_global.y-o.getPosicion().y)*(posicion_global.y-o.getPosicion().y) < o.getRadio()*o.getRadio()) {
-        return true;
-    }
-
-    posicion_global = sf::Vector2f(posicion.x+puntos[1].x*TAMANO*cos(direccion)-puntos[1].y*TAMANO*sin(direccion),posicion.y+puntos[1].y*TAMANO*cos(direccion)+puntos[1].x*TAMANO*sin(direccion));
-    // (x1-x2)^2 + (y1-y2)^2 < R^2
-    if((posicion_global.x-o.getPosicion().x)*(posicion_global.x-o.getPosicion().x)+(posicion_global.y-o.getPosicion().y)*(posicion_global.y-o.getPosicion().y) < o.getRadio()*o.getRadio()) {
-        return true;
-    }
-
-    return false;
-}
