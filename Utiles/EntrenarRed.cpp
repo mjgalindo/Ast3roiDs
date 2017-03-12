@@ -10,13 +10,18 @@ sf::Vector2u MAX_SIZE = {800, 600};
 
 vector<Asteroide> asteroides;
 
+inline float distanciaEuclidea(sf::Vector2f a, sf::Vector2f b) {
+    return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+}
+
 void aleatorizaAsteroides(unsigned int numAsteroides) {
     vector<Tipo> tipos = {TIPO_0, TIPO_1, TIPO_2};
     vector<Tamano> tamanos = {TAM_0, TAM_1, TAM_2};
     asteroides.clear();
+    float vMax = 5;
     for (int i = 0; i < numAsteroides; ++i) {
-        asteroides.push_back(Asteroide({rand() % MAX_SIZE.x*1.0f, rand() % MAX_SIZE.y*1.0f}, 0.4,
-                                       {(rand() % 50 / 50.0f) * 2, (rand() % 50 / 50.0f) * 2},
+        asteroides.push_back(Asteroide({rand() % MAX_SIZE.x * 1.0f, rand() % MAX_SIZE.y * 1.0f}, 0.4,
+                                       {vMax * ((rand() % 50 - 25) / 25.0f), vMax * ((rand() % 50 - 25) / 25.0f)},
                                        TIPO_1, tamanos.at((unsigned int) (rand() % 3))));
     }
 }
@@ -25,8 +30,7 @@ Asteroide *asteroideMasCercano(sf::Vector2f posicion) {
     double distanciaMenor = 99999999.0;
     Asteroide *masCercano = 0;
     for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
-        double distanciatmp = (posicion.x - ast->getPosicion().x) * (posicion.x - ast->getPosicion().x) +
-                              (posicion.y - ast->getPosicion().y) * (posicion.y - ast->getPosicion().y);
+        double distanciatmp = distanciaEuclidea(ast->getPosicion(), posicion);
         if (distanciatmp < distanciaMenor) {
             distanciaMenor = distanciatmp;
             masCercano = ast.base();
@@ -36,6 +40,7 @@ Asteroide *asteroideMasCercano(sf::Vector2f posicion) {
 }
 
 int main() {
+    srand((unsigned long) time(NULL));
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
     ventana.create(sf::VideoMode(MAX_SIZE.x, MAX_SIZE.y), "Ast3roiDs", sf::Style::Default, settings);
@@ -46,13 +51,15 @@ int main() {
 
     sf::Clock reloj;
     sf::CircleShape sustitutoOvni(15);
-    sustitutoOvni.setFillColor({200,10,10});
+    sustitutoOvni.setFillColor({200, 10, 10});
+    sustitutoOvni.setOrigin(sustitutoOvni.getRadius(), sustitutoOvni.getRadius());
     sustitutoOvni.setPosition({rand() % MAX_SIZE.x * 1.0f, rand() % MAX_SIZE.y * 1.0f});
+
     bool continua = true;
 
     // Inicializa una red neuronal nueva
     neural::Network red(6, 1, {20});
-    aleatorizaAsteroides(5);
+    aleatorizaAsteroides(10);
     while (continua) {
         sf::Event event;
         if (ventana.pollEvent(event)) {
@@ -76,34 +83,45 @@ int main() {
 
         ventana.draw(sustitutoOvni);
         sf::Vector2f posicionOvni = sustitutoOvni.getPosition();
-        Asteroide *asteroidePeligroso = asteroideMasCercano(
-                {posicionOvni.x + sustitutoOvni.getRadius(), posicionOvni.y + sustitutoOvni.getRadius()});
+        Asteroide *asteroidePeligroso = asteroideMasCercano(posicionOvni);
         vector<double> entradasRed{posicionOvni.x, posicionOvni.y, asteroidePeligroso->getPosicion().x,
                                    asteroidePeligroso->getPosicion().y, asteroidePeligroso->getVelocidad().x,
                                    asteroidePeligroso->getVelocidad().y};
 
         double salida = (red.run(entradasRed)[0] + 1) / 2.0;
-
+        double angulo = 0;
         if (salida < 1 * (1.0 / 8.0)) {
-            sustitutoOvni.move({0, 1});
+            angulo = PI / 2;
+            cout << "U ";
         } else if (salida < 2 * (1.0 / 8.0)) {
-            sustitutoOvni.move({1, 1});
+            angulo = PI / 4;
+            cout << "UR ";
         } else if (salida < 3 * (1.0 / 8.0)) {
-            sustitutoOvni.move({1, 0});
+            angulo = 0;
+            cout << "R ";
         } else if (salida < 4 * (1.0 / 8.0)) {
-            sustitutoOvni.move({1, -1});
+            angulo = -PI / 4;
+            cout << "DR ";
         } else if (salida < 5 * (1.0 / 8.0)) {
-            sustitutoOvni.move({0, -1});
+            angulo = -PI / 2;
+            cout << "D ";
         } else if (salida < 6 * (1.0 / 8.0)) {
-            sustitutoOvni.move({-1, -1});
+            angulo = -PI * 3 / 4;
+            cout << "DL ";
         } else if (salida < 7 * (1.0 / 8.0)) {
-            sustitutoOvni.move({-1, 0});
+            angulo = PI;
+            cout << "L ";
         } else if (salida < 8 * (1.0 / 8.0)) {
-            sustitutoOvni.move({-1, -1});
+            angulo = PI * 3 / 4;
+            cout << "UL ";
         }
+        float vMax = 3.0f;
+        // Niega el eje Y porque está invertido (valores de Y mayores dan posiciones mas abajo)
+        sustitutoOvni.move({vMax * (float) cos(angulo), vMax * (float) -sin(angulo)});
 
         posicionOvni = sustitutoOvni.getPosition();
 
+        // Evita los limites del espacio
         if (posicionOvni.x < 0) {
             posicionOvni.x = MAX_SIZE.x;
             sustitutoOvni.setPosition(posicionOvni);
@@ -120,21 +138,18 @@ int main() {
             sustitutoOvni.setPosition(posicionOvni);
         }
 
-        posicionOvni.x += sustitutoOvni.getRadius();
-        posicionOvni.y += sustitutoOvni.getRadius();
-
         cout << salida << ' ' << posicionOvni.x << ' ' << posicionOvni.y << '\n';
 
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
             ast->mover(MAX_SIZE);
             ventana.draw(*ast);
-            if ((posicionOvni.x - ast->getPosicion().x) * (posicionOvni.x - ast->getPosicion().x) +
-                (posicionOvni.y - ast->getPosicion().y) * (posicionOvni.y - ast->getPosicion().y) <
-                ast->getRadio() * ast->getRadio() + sustitutoOvni.getRadius() * sustitutoOvni.getRadius()) {
+            if (distanciaEuclidea(ast->getPosicion(), posicionOvni) < ast->getRadio() + sustitutoOvni.getRadius()) {
                 // Hay colision, se informa a la red y se reinicia la escena aleatoriamente
 
             }
         }
+        ventana.draw(sustitutoOvni);
+
         ventana.display();
     }
 }
