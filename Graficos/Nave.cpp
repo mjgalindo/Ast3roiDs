@@ -209,15 +209,17 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Ovni o){
             }
         }
 
-        if(comprobarColision(o)){
-            estado = DESTRUIDA;
+        if(o.getEstado()==VIVO) {
+            if(comprobarColision(o)){
+                estado = DESTRUIDA;
+                o.morir();
+                while(num_disparos>0){
+                    recuperarDisparo(0);
+                }
 
-            while(num_disparos>0){
-                recuperarDisparo(0);
+                puntuacion += o.getPuntuacion();
+                vidas--;
             }
-
-            puntuacion += o.getPuntuacion();
-            vidas--;
         }
 
         //Se comprueba el impacto de los disparos

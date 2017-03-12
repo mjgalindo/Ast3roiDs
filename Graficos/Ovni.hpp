@@ -12,6 +12,8 @@
 
 #define PI 3.14159265358979323846
 
+enum EstadoOvni {VIVO, MUERTO, EXPLOSION1, EXPLOSION2, EXPLOSION3};
+
 class Ovni : public sf::Drawable, public Circular {
 
     private:
@@ -20,6 +22,9 @@ class Ovni : public sf::Drawable, public Circular {
         static const int MAX_DISPAROS = 2;
         //Direccion en que se mueve el ovni
         float direccion;
+
+        //Estado en el que se encuentra el ovni.
+        EstadoOvni estado;
 
         sf::VertexArray poligono;
 
@@ -39,7 +44,7 @@ class Ovni : public sf::Drawable, public Circular {
         sf::Sound reproductorDeSonidoOvni;
 
     public:
-        Ovni(sf::Vector2u limites);
+        Ovni();
         ~Ovni();
 
         //Getters
@@ -54,6 +59,11 @@ class Ovni : public sf::Drawable, public Circular {
 
         void recuperarDisparo(int d);
         bool comprobarColision(Circular& c);
+
+        void aparecer(sf::Vector2u limites);
+        void morir();
+        EstadoOvni getEstado();
+        void setEstado(EstadoOvni nuevoEstado);
 };
 
 

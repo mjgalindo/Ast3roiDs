@@ -227,7 +227,7 @@ Estado tratarJuego(Estado estado) {
     vidas.setFillColor(sf::Color::Blue);
 
     Nave nave = Nave(sf::Vector2f(MAX_SIZE.x / 2.0f, MAX_SIZE.y / 2.0f));
-    Ovni ovni = Ovni(MAX_SIZE);
+    Ovni ovni = Ovni();
 
     /// A modo demo, no tiene sentido que esto esté aqui, deberá ser aleatorio etc
     vector<Asteroide> asteroides{
@@ -266,8 +266,14 @@ Estado tratarJuego(Estado estado) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
             nave.acelerar();
         }
-
-        ovni.mover(MAX_SIZE, asteroides);
+        if(ovni.getEstado() == MUERTO) {
+            if(rand()%500==0) {
+                ovni.aparecer(MAX_SIZE);
+            }
+        }
+        if(ovni.getEstado()==VIVO) {
+            ovni.mover(MAX_SIZE, asteroides);
+        }
         nave.mover(MAX_SIZE, asteroides, ovni);
         nave.frenar();
 
@@ -287,7 +293,9 @@ Estado tratarJuego(Estado estado) {
         ventana.draw(puntuacion);
         ventana.draw(vidas);
         ventana.draw(nave);
-        ventana.draw(ovni);
+        if(ovni.getEstado()==VIVO) {
+            ventana.draw(ovni);
+        }
 
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
             ast->mover(MAX_SIZE);
