@@ -104,7 +104,7 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
         case REPOSO:
             {
                 sf::Transform t;
-                t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({tamano, tamano});
+                t.rotate(direccion* (180.0f/3.14f), posicion).translate(posicion).scale({tamano, tamano});
 
                 target.draw(poligono, t);
             }
@@ -113,7 +113,7 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
         case ACELERANDO:
             {
                 sf::Transform t;
-                t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({tamano, tamano});
+                t.rotate(direccion* (180.0f/3.14f), posicion).translate(posicion).scale({tamano, tamano});
 
                 target.draw(poligono, t);
                 target.draw(fuego, t);
@@ -280,22 +280,16 @@ void Nave::frenar(){
 }
 
 bool Nave::comprobarColision(Circular& c){
-    sf::VertexArray poligono_real;
-    poligono_real.setPrimitiveType(sf::LineStrip);
-    poligono_real.resize(3);
+    sf::VertexArray poligono_real(sf::LineStrip, 3);
 
     sf::Transform t;
-    t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({tamano, tamano});
+    t.rotate(direccion* (180.0f/3.14f), posicion).translate(posicion).scale({tamano, tamano});
 
     poligono_real[0].position = t.transformPoint(poligono[0].position);
     poligono_real[1].position = t.transformPoint(poligono[1].position);
     poligono_real[2].position = t.transformPoint(poligono[3].position);
 
-    if(colisionVerticesCirculo(poligono_real,c.posicion, c.radio)){
-        return true;
-    }
-
-    return false;
+    return colisionVerticesCirculo(poligono_real,c.posicion, c.radio);
 }
 
 void Nave::cambiarEstado(int nuevoEstado, sf::Vector2u lim){
