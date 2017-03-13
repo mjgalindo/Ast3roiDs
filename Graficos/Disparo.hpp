@@ -4,6 +4,8 @@
 #include <cmath>
 #include <SFML/Graphics.hpp>
 
+#include "Triangular.hpp"
+#include "Circular.hpp"
 #include "Asteroide.hpp"
 #include "../Colisiones.hpp"
 
@@ -54,6 +56,7 @@ class Disparo : public sf::Drawable {
         void mover(sf::Vector2u limites);
         bool comprobarAlcance();
         bool comprobarColision(Circular& c);
+        bool comprobarColision(Triangular& tri);
 };
 
 #endif //AST3ROIDS_DISPARO_HPP

@@ -88,6 +88,14 @@ void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     // El orden en el que se efectuan las transformaciones es importante!
     t.rotate(direccion).translate(posicion).scale({radio, radio});
     target.draw(poligono, t);
+
+    sf::CircleShape c;
+    c.setRadius(radio);
+    c.setOrigin(radio,radio);
+    c.setPosition(posicion);
+    c.setFillColor(sf::Color::Blue);
+    target.draw(c);
+
 }
 
 void Asteroide::mover(sf::Vector2u limites) {
@@ -102,4 +110,8 @@ void Asteroide::mover(sf::Vector2u limites) {
     } else if (posicion.y + 1 <= 0.0) {
         posicion.y += limites.y;
     }
+}
+
+void Asteroide::cambiarEstado(int nuevoEstado, sf::Vector2u lim){
+    // De momento no se usa
 }

@@ -4,10 +4,8 @@
 #include <cmath>
 #include <SFML/Graphics.hpp>
 
+#include "../Estados.hpp"
 #include "Circular.hpp"
-
-enum Tipo {TIPO_0, TIPO_1, TIPO_2};
-enum Tamano {TAM_0 = 10, TAM_1 = 20, TAM_2 = 40};
 
 class Asteroide : public sf::Drawable, public Circular {
 
@@ -37,6 +35,8 @@ public:
 
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 
+    //Otros
+    virtual void cambiarEstado(int nuevoEstado, sf::Vector2u lim);
 };
 
 

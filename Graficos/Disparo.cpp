@@ -1,4 +1,5 @@
 #include "Disparo.hpp"
+#include <iostream>
 
 //Constructores
 Disparo::Disparo(){}
@@ -90,11 +91,25 @@ bool Disparo::comprobarColision(Circular& c) {
     sf::VertexArray poligono_real = poligono;
 
     sf::Transform t;
-    t.rotate(direccion).translate(posicion).scale({TAMANO, TAMANO});
+    t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({(float)TAMANO, (float)TAMANO});
+
     poligono_real[0].position = t.transformPoint(poligono[0].position);
     poligono_real[1].position = t.transformPoint(poligono[1].position);
 
     return colisionVerticesCirculo(poligono_real,c.getPosicion(),c.getRadio());
+}
+
+bool Disparo::comprobarColision(Triangular &tri) {
+    sf::VertexArray triangulo = tri.getTriangulo();
+    sf::VertexArray poligono_real = poligono;
+
+    sf::Transform t;
+    t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({(float)TAMANO, (float)TAMANO});
+
+    poligono_real[0].position = t.transformPoint(poligono[0].position);
+    poligono_real[1].position = t.transformPoint(poligono[1].position);
+
+    return colisionVerticesTriangulo(poligono_real,triangulo);
 }
 
 

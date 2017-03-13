@@ -2,7 +2,8 @@
 #include "Nave.hpp"
 
 //Constructor
-Nave::Nave(sf::Vector2f posicion_inicial){
+Nave::Nave(sf::Vector2f posicion_inicial)
+        : Triangular(posicion_inicial, -PI/2.0f, 15){
     if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")){
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
     }
@@ -16,6 +17,12 @@ Nave::Nave(sf::Vector2f posicion_inicial){
     reproductorDeSonidoPropulsion.setBuffer(bufferSonidoPropulsion);
     reproductorDeSonidoDisparos.setBuffer(bufferSonidoDisparo);
     reproductorDeSonidoDestruccion.setBuffer(bufferSonidoDestruccion);
+
+    vs.setPrimitiveType(sf::LineStrip);
+    vs.resize(3);
+    vs[0].position = {1.0f,0.0f};
+    vs[1].position = {-0.7071067812f,0.7071067812f};
+    vs[2].position = {-0.7071067812f,-0.7071067812f};
 
 
     poligono.setPrimitiveType(sf::LineStrip);
@@ -34,11 +41,9 @@ Nave::Nave(sf::Vector2f posicion_inicial){
     fuego.setPoint(3, sf::Vector2f(-0.7f, -0.5f));
     //fuego.setPoint(0, sf::Vector2f(-0.55f, 0.0f));
 
-    direccion = (float)-PI/2.0f;
 
     //Posicion de la nave
     pos_inicial = posicion_inicial;
-    posicion = posicion_inicial;
 
     //Velocidad de la nave
     velocidad = sf::Vector2f(0.0, 0.0);
@@ -72,14 +77,6 @@ void Nave::setPoligono(sf::Vector2f ps[5]){
     poligono[4].position = ps[4];
 }
 
-void Nave::setDireccion(float dir){
-    direccion = dir;
-}
-
-void Nave::setPosicion(sf::Vector2f pos){
-    posicion = pos;
-}
-
 void Nave::setVelocidad(sf::Vector2f vel){
     velocidad = vel;
 }
@@ -87,14 +84,6 @@ void Nave::setVelocidad(sf::Vector2f vel){
 //Getters
 sf::VertexArray* Nave::getPoligono(){
     return &poligono;
-}
-
-float Nave::getDireccion(){
-    return direccion;
-}
-
-sf::Vector2f Nave::getPosicion(){
-    return posicion;
 }
 
 sf::Vector2f Nave::getVelocidad(){
@@ -115,7 +104,7 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
         case REPOSO:
             {
                 sf::Transform t;
-                t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({(float)TAMANO, (float)TAMANO});
+                t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({tamano, tamano});
 
                 target.draw(poligono, t);
             }
@@ -124,7 +113,7 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
         case ACELERANDO:
             {
                 sf::Transform t;
-                t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({(float)TAMANO, (float)TAMANO});
+                t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({tamano, tamano});
 
                 target.draw(poligono, t);
                 target.draw(fuego, t);
@@ -155,8 +144,8 @@ void Nave::disparar(){
     if(estado==REPOSO || estado==ACELERANDO) {
         if (num_disparos < MAX_DISPAROS) {
             sf::Vector2f inicio = poligono[0].position;
-            inicio.x = (float) (poligono[0].position.x * TAMANO * cos(direccion) - poligono[0].position.y * TAMANO * sin(direccion));
-            inicio.y = (float) (poligono[0].position.y * TAMANO * cos(direccion) + poligono[0].position.x * TAMANO * sin(direccion));
+            inicio.x = (float) (poligono[0].position.x * tamano * cos(direccion) - poligono[0].position.y * tamano * sin(direccion));
+            inicio.y = (float) (poligono[0].position.y * tamano * cos(direccion) + poligono[0].position.x * tamano * sin(direccion));
             disparos[num_disparos] = Disparo(posicion + inicio, direccion);
             num_disparos++;
             reproductorDeSonidoDisparos.play();
@@ -182,7 +171,7 @@ void Nave::rotarDcha(){
     }
 }
 
-void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Ovni o){
+void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Circular &o){
     if(estado==REPOSO || estado==ACELERANDO) {
         //Mover la nave
         posicion.x += velocidad.x;
@@ -212,13 +201,11 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Ovni o){
         if(o.getEstado()==VIVO) {
             if(comprobarColision(o)){
                 estado = DESTRUIDA;
-                o.morir();
+                o.cambiarEstado(EXP1,{0,0});
                 while(num_disparos>0){
                     recuperarDisparo(0);
                 }
-
                 puntuacion += o.getPuntuacion();
-                vidas--;
             }
         }
 
@@ -229,7 +216,7 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Ovni o){
                 recuperarDisparo(j);
                 j--;
 
-                //Destruir asteroide, dividirlo o lo que sea....
+                o.cambiarEstado(EXP1,{0,0});
             }
         }
 
@@ -242,7 +229,6 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Ovni o){
                 }
 
                 puntuacion += o.getPuntuacion();
-                vidas--;
 
                 //Destruir asteroide, dividirlo o lo que sea....
             }
@@ -299,7 +285,7 @@ bool Nave::comprobarColision(Circular& c){
     poligono_real.resize(3);
 
     sf::Transform t;
-    t.rotate(direccion).translate(posicion).scale({TAMANO, TAMANO});
+    t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({tamano, tamano});
 
     poligono_real[0].position = t.transformPoint(poligono[0].position);
     poligono_real[1].position = t.transformPoint(poligono[1].position);
@@ -312,9 +298,9 @@ bool Nave::comprobarColision(Circular& c){
     return false;
 }
 
-void Nave::comprobarEstado(){
-    static int ciclosDestruida = 0;
-    static int ciclosReapareciendo = 0;
+void Nave::cambiarEstado(int nuevoEstado, sf::Vector2u lim){
+    static int ciclos = 0;
+    estado = nuevoEstado;
     switch(estado) {
         case REPOSO:
             break;
@@ -322,22 +308,25 @@ void Nave::comprobarEstado(){
             estado = REPOSO;
             break;
         case DESTRUIDA:
-            if (ciclosDestruida >= 50) {
+            if(ciclos==0){
+                vidas--;
+            }
+            if (ciclos >= 50) {
                 estado = REAPARECIENDO;
                 reiniciar();
-                ciclosDestruida = 0;
+                ciclos = 0;
             }
             else{
-                ciclosDestruida++;
+                ciclos++;
             }
             break;
         case REAPARECIENDO:
-            if (ciclosReapareciendo >= 50) {
+            if (ciclos >= 50) {
                 estado = REPOSO;
-                ciclosReapareciendo = 0;
+                ciclos = 0;
             }
             else{
-                ciclosReapareciendo++;
+                ciclos++;
             }
             break;
     }

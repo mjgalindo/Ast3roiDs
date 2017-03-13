@@ -5,19 +5,17 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "../Colisiones.hpp"
+#include "../Estados.hpp"
+#include "Triangular.hpp"
+#include "Circular.hpp"
 #include "Disparo.hpp"
 #include "Asteroide.hpp"
-#include "Ovni.hpp"
 
 #define PI 3.14159265358979323846
 #define UMBRAL 0.15
 
-enum EstadoNave { REPOSO , ACELERANDO , DESTRUIDA, REAPARECIENDO };
-
-class Nave : public sf::Drawable {
+class Nave : public sf::Drawable, public Triangular {
     private:
-        //Tamano de la nave en pixeles
-        static constexpr float TAMANO = 20;
         //Velocidad de giro (radianes por u.t.)
         static constexpr float V_ANGULAR = PI/30;
         //Aceleracion (pixels por u.t.)
@@ -35,10 +33,7 @@ class Nave : public sf::Drawable {
         //Orden: morro, izquierda, derecha y centro
         sf::VertexArray poligono;
         sf::ConvexShape fuego;
-        //Direccion de la nave
-        float direccion;
-        //Posicion de la nave
-        sf::Vector2f posicion;
+
         //Velocidad de la nave
         sf::Vector2f velocidad;
 
@@ -51,8 +46,6 @@ class Nave : public sf::Drawable {
         int vidas = 5;
         //Puntuacion
         long int puntuacion = 0;
-
-        EstadoNave estado;
 
         // Buffers de los distintos sonidos de una nave
         sf::SoundBuffer bufferSonidoDisparo;
@@ -74,16 +67,12 @@ class Nave : public sf::Drawable {
 
         //Setters
         void setPoligono(sf::Vector2f ps[5]);
-        void setDireccion(float dir);
-        void setPosicion(sf::Vector2f pos);
         void setVelocidad(sf::Vector2f vel);
         void setVidas(int v);
         void setPuntuacion(long int puntuacion);
 
         //Getters
         sf::VertexArray* getPoligono();
-        float getDireccion();
-        sf::Vector2f getPosicion();
         sf::Vector2f getVelocidad();
         int getVidas();
         long int getPuntuacion();
@@ -96,12 +85,12 @@ class Nave : public sf::Drawable {
         void recuperarDisparo(int d);
         void rotarIzda();
         void rotarDcha();
-        void mover(sf::Vector2u limites, std::vector<Asteroide> v, Ovni o);
+        void mover(sf::Vector2u limites, std::vector<Asteroide> v, Circular &o);
         void acelerar();
         void frenar();
 
         bool comprobarColision(Circular& c);
-        void comprobarEstado();
+        virtual void cambiarEstado(int nuevoEstado, sf::Vector2u lim);
 };
 
 #endif //AST3ROIDS_NAVE_HPP

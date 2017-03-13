@@ -3,6 +3,7 @@
 #include <thread>
 #include <iostream>
 
+#include "Estados.hpp"
 #include "Graficos/Nave.hpp"
 #include "Graficos/Asteroide.hpp"
 #include "Graficos/Ovni.hpp"
@@ -234,7 +235,6 @@ Estado tratarJuego(Estado estado) {
             Asteroide({120, 10}, 0.4, {0.1, 0.1}, TIPO_0, TAM_0),
             Asteroide({10, 400}, 0.4, {-0.1, 0.1}, TIPO_1, TAM_1),
             Asteroide({400, 80}, 0.4, {0.1, -0.1}, TIPO_2, TAM_2),
-            //Asteroide({500, 1080}, 0.4, {3.5f, 4.5f}, Asteroide::TIPO_1, 5),
     };
 
     shared_ptr<bool> jugando(new bool(true));
@@ -266,14 +266,8 @@ Estado tratarJuego(Estado estado) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
             nave.acelerar();
         }
-        if(ovni.getEstado() == MUERTO) {
-            if(rand()%500==0) {
-                ovni.aparecer(MAX_SIZE);
-            }
-        }
-        if(ovni.getEstado()==VIVO) {
-            ovni.mover(MAX_SIZE, asteroides);
-        }
+
+        ovni.mover(MAX_SIZE, asteroides, nave);
         nave.mover(MAX_SIZE, asteroides, ovni);
         nave.frenar();
 
@@ -293,9 +287,7 @@ Estado tratarJuego(Estado estado) {
         ventana.draw(puntuacion);
         ventana.draw(vidas);
         ventana.draw(nave);
-        if(ovni.getEstado()==VIVO) {
-            ventana.draw(ovni);
-        }
+        ventana.draw(ovni);
 
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
             ast->mover(MAX_SIZE);
@@ -304,7 +296,8 @@ Estado tratarJuego(Estado estado) {
 
         ventana.display();
         reloj.restart();
-        nave.comprobarEstado();
+        nave.cambiarEstado(nave.getEstado(),MAX_SIZE);
+        ovni.cambiarEstado(ovni.getEstado(),MAX_SIZE);
     }
 }
 

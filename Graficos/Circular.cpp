@@ -25,6 +25,10 @@ sf::Vector2f Circular::getPosicion(){
     return posicion;
 }
 
+int Circular::getEstado(){
+    return estado;
+}
+
 float Circular::getRadio(){
     return radio;
 }

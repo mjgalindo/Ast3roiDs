@@ -1,13 +1,11 @@
-//
-// Created by Jorge on 05/03/2017.
-//
-
 #include "Ovni.hpp"
+#include <iostream>
 
 std::default_random_engine generator;
 std::uniform_real_distribution<float> distribution(-3.14159,3.14159);
 
-Ovni::Ovni() {
+Ovni::Ovni() :
+        Circular({0,0}, 15){
     estado = MUERTO;
     if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")){
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
@@ -19,8 +17,7 @@ Ovni::Ovni() {
     reproductorDeSonidoOvni.setBuffer(bufferSonidoOvni);
     reproductorDeSonidoDisparos.setBuffer(bufferSonidoDisparo);
 
-    radio = 30;
-
+    num_disparos = 0;
 
     poligono.setPrimitiveType(sf::LineStrip);
     poligono.resize(12);
@@ -36,8 +33,6 @@ Ovni::Ovni() {
     poligono[9].position = {0.4f,-0.8f};
     poligono[10].position = {-0.4f,-0.8f};
     poligono[11].position = {-0.6f,-0.4f};
-
-
 }
 
 Ovni::~Ovni(){}
@@ -55,45 +50,56 @@ int Ovni::getPuntuacion() const {
 }
 
 void Ovni::disparar() {
-    if(num_disparos<MAX_DISPAROS) {
-        disparos[num_disparos] = Disparo(posicion,direccion);
-        disparos[num_disparos].setDireccion(distribution(generator));
-        num_disparos++;
+    if(estado==VIVO) {
+        if (num_disparos < MAX_DISPAROS) {
+            disparos[num_disparos] = Disparo(posicion, direccion);
+            disparos[num_disparos].setDireccion(distribution(generator));
+            num_disparos++;
+        }
+        reproductorDeSonidoDisparos.play();
     }
-    reproductorDeSonidoDisparos.play();
 }
 
 void Ovni::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     if(estado == VIVO) {
         sf::Transform t;
-        t.translate(posicion).scale(radio, radio);
+        t.translate(posicion).scale({radio, radio});
         target.draw(poligono, t);
-    } /*else if(estado==EXPLOSION1) {
-        sf::CircleShape punto1(10);
-        punto1.setFillColor(sf::Color::White);
-        punto1.setPosition(-0.6f*radio+posicion.x,-0.2*radio+posicion.y);
-        sf::CircleShape punto2(10);
-        punto2.setFillColor(sf::Color::White);
-        punto2.setPosition(-0.3f*radio+posicion.x,-0.4*radio+posicion.y);
-        sf::CircleShape punto3(10);
-        punto3.setFillColor(sf::Color::White);
-        punto3.setPosition(-0.0f*radio+posicion.x,-0.6*radio+posicion.y);
-        sf::CircleShape punto4(10);
-        punto4.setFillColor(sf::Color::White);
-        punto4.setPosition(0.2f*radio+posicion.x,-0.5*radio+posicion.y);
-        sf::CircleShape punto5(10);
-        punto5.setFillColor(sf::Color::White);
-        punto5.setPosition(0.4f*radio+posicion.x,-0.4*radio+posicion.y);
-        sf::CircleShape punto6(10);
-        punto6.setFillColor(sf::Color::White);
-        punto6.setPosition(0.6f*radio+posicion.x,-0.2*radio+posicion.y);
-    }*/
+        sf::CircleShape c;
+        c.setRadius(radio);
+        c.setOrigin(radio,radio);
+        c.setPosition(posicion);
+        c.setFillColor(sf::Color::Green);
+        target.draw(c);
+    }else if(estado == EXP1) {
+        sf::CircleShape c;
+        c.setRadius(radio);
+        c.setOrigin(radio,radio);
+        c.setPosition(posicion);
+        c.setFillColor(sf::Color::White);
+        target.draw(c);
+    }else if(estado == EXP2) {
+        sf::CircleShape c;
+        c.setRadius(radio);
+        c.setOrigin(radio,radio);
+        c.setPosition(posicion);
+        c.setFillColor(sf::Color::Yellow);
+        target.draw(c);
+    }else if(estado == EXP3){
+        sf::CircleShape c;
+        c.setRadius(radio);
+        c.setOrigin(radio,radio);
+        c.setPosition(posicion);
+        c.setFillColor(sf::Color::Red);
+        target.draw(c);
+    }
+
     for (int i = 0; i < num_disparos; i++) {
         target.draw(disparos[i]);
     }
 }
 
-void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> v) {
+void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> v, Triangular &n) {
     if(estado == VIVO) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
         if (distributionGirar(generator) < 0.01) {
@@ -114,38 +120,45 @@ void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> v) {
         }
     }
 
-    //Mover los disparos
-    for(int i=0 ; i<num_disparos ; i++){
-        disparos[i].mover(limites);
-        if(disparos[i].comprobarAlcance()){
-            recuperarDisparo(i);
-            i--;
-        }
-    }
-
-    if(num_disparos < 2 && estado == VIVO) {
+    if(num_disparos < 2) {
         disparar();
     }
 
-    for (auto ast = v.begin(); ast != v.end() && num_disparos>0; ++ast) {
-        if(estado == VIVO && comprobarColision(*ast)){
-            //El ovni se destruye
-            morir();
+    //Mover los disparos
+    for(int i=0 ; i<num_disparos ; i++){
+        disparos[i].mover(limites);
+
+        if(disparos[i].comprobarAlcance()){
+            recuperarDisparo(i);
+            i--;
+            continue;
         }
 
         //Se comprueba el impacto de los disparos
-        for (int j = 0; j < num_disparos; j++) {
-            if (disparos[j].comprobarColision(*ast)) {
-                recuperarDisparo(j);
-                j--;
+        if (disparos[i].comprobarColision(n)) {
+            recuperarDisparo(i);
+            i--;
+            n.cambiarEstado(DESTRUIDA,{0,0});
+            continue;
+        }
 
-                //Destruir asteroide, dividirlo o lo que sea....
+        for (auto ast = v.begin(); ast != v.end() && num_disparos>0; ++ast) {
+            if(comprobarColision(*ast)){
+                cambiarEstado(EXP1,{0,0});
+            }
+
+            //Se comprueba el impacto de los disparos
+            for (int j = 0; j < num_disparos; j++) {
+                if (disparos[j].comprobarColision(*ast)) {
+                    recuperarDisparo(j);
+                    j--;
+                    //Destruir asteroide, dividirlo o lo que sea....
+                    continue;
+                }
             }
         }
     }
 }
-
-
 
 void Ovni::recuperarDisparo(int d){
     for(int i=d; i<num_disparos-1 ; i++){
@@ -161,28 +174,55 @@ bool Ovni::comprobarColision(Circular& c) {
     return false;
 }
 
-void Ovni::aparecer(sf::Vector2u limites) {
-    estado = VIVO;
-    std::uniform_real_distribution<float> distributionPos(0,1);
-    if(distributionPos(generator) < 0.5) {
-        std::uniform_real_distribution<float> distributionY(0,limites.y);
-        posicion = sf::Vector2f(0.0f,distributionY(generator));
-    } else {
-        std::uniform_real_distribution<float> distributionX(0,limites.x);
-        posicion = sf::Vector2f(distributionX(generator),0.0f);
+bool Ovni::comprobarColision(Triangular& t) {
+    if(colisionVerticesCirculo(t.getVertices(),posicion,radio)){
+        return true;
     }
-    direccion = distribution(generator);
-    num_disparos = 0;
-    reproductorDeSonidoOvni.setLoop(true);
-    reproductorDeSonidoOvni.play();
+    return false;
 }
 
-void Ovni::morir() {
-    estado = MUERTO;
-    reproductorDeSonidoOvni.setLoop(false);
-    reproductorDeSonidoOvni.stop();
-}
-
-EstadoOvni Ovni::getEstado() {
-    return estado;
+void Ovni::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
+    static int ciclo = 0;
+    estado = nuevoEstado;
+    switch(nuevoEstado){
+        case VIVO:
+            ciclo = 0;
+            break;
+        case EXP1:
+            num_disparos=0;
+            reproductorDeSonidoOvni.setLoop(false);
+            reproductorDeSonidoOvni.stop();
+            if(ciclo>=5){
+                estado = EXP2;
+            }
+            break;
+        case EXP2:
+            if(ciclo>=10){
+                estado = EXP3;
+            }
+            break;
+        case EXP3:
+            if(ciclo>=15){
+                estado = MUERTO;
+            }
+            break;
+        case MUERTO:
+            if(rand()%200==0) {
+                estado = VIVO;
+                std::uniform_real_distribution<float> distributionPos(0,1);
+                if(distributionPos(generator) < 0.5) {
+                    std::uniform_real_distribution<float> distributionY(0,lim.y);
+                    posicion = sf::Vector2f(30.0f,distributionY(generator));
+                } else {
+                    std::uniform_real_distribution<float> distributionX(0,lim.x);
+                    posicion = sf::Vector2f(distributionX(generator),30.0f);
+                }
+                direccion = distribution(generator);
+                num_disparos = 0;
+                reproductorDeSonidoOvni.setLoop(true);
+                reproductorDeSonidoOvni.play();
+            }
+            break;
+    }
+    ciclo++;
 }
