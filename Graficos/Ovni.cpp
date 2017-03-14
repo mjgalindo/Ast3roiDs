@@ -110,42 +110,48 @@ void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n)
         } else if (posicion.y + 1 <= 0.0) {
             posicion.y += limites.y;
         }
-    }
 
-    if (num_disparos < 2) {
-        disparar();
-    }
-
-    //Mover los disparos
-    for (int i = 0; i < num_disparos; i++) {
-        disparos[i].mover(limites);
-
-        if (disparos[i].comprobarAlcance()) {
-            recuperarDisparo(i);
-            i--;
-            continue;
+        if(num_disparos < 2) {
+            disparar();
         }
 
-        //Se comprueba el impacto de los disparos
-        if (disparos[i].comprobarColision(n)) {
-            recuperarDisparo(i);
-            i--;
-            n.cambiarEstado(DESTRUIDA, {0, 0});
-            continue;
-        }
-
-        for (auto ast = v.begin(); ast != v.end() && num_disparos > 0; ++ast) {
-            if (comprobarColision(*ast)) {
+        //Colision del ovni con un asteroide
+        for (int i=0 ; i<v.size() ; i--) {
+            if (comprobarColision(v[i])) {
                 cambiarEstado(EXP1, {0, 0});
+                //Destruir asteroide, dividirlo o lo que sea....
+                v[i].gestionarDestruccion(v);
+                v.erase(v.begin() + i);
+                i--;
+            }
+        }
+
+        //Mover los disparos
+        for(int i=0 ; i<num_disparos ; i++){
+            disparos[i].mover(limites);
+
+            if(disparos[i].comprobarAlcance()){
+                recuperarDisparo(i);
+                i--;
+                continue;
             }
 
             //Se comprueba el impacto de los disparos
-            for (int j = 0; j < num_disparos; j++) {
-                if (disparos[j].comprobarColision(*ast)) {
-                    recuperarDisparo(j);
-                    j--;
+            if ((n.getEstado()==REPOSO || n.getEstado()==ACELERANDO) && disparos[i].comprobarColision(n)) {
+                recuperarDisparo(i);
+                i--;
+                n.cambiarEstado(DESTRUIDA,{0,0});
+                continue;
+            }
+
+            for (int j=0 ; j<v.size() ; j--) {
+                if (disparos[i].comprobarColision(v[j])) {
+                    recuperarDisparo(i);
+                    i--;
                     //Destruir asteroide, dividirlo o lo que sea....
-                    continue;
+                    v[j].gestionarDestruccion(v);
+                    v.erase(v.begin()+j);
+                    j--;
                 }
             }
         }
@@ -163,8 +169,11 @@ bool Ovni::comprobarColision(Circular &c) {
     return colisionCirculos(posicion, radio, c.posicion, c.radio);
 }
 
-bool Ovni::comprobarColision(Triangular &t) {
-    return colisionVerticesCirculo(t.getVertices(), posicion, radio);
+bool Ovni::comprobarColision(Triangular& t) {
+    if(colisionVerticesCirculo(t.getTriangulo(),posicion,radio)){
+        return true;
+    }
+    return false;
 }
 
 void Ovni::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
