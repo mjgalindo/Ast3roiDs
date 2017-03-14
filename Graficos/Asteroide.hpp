@@ -41,7 +41,7 @@ public:
     void gestionarDestruccion(std::vector<Asteroide> &v);
 
     static void nuevosAsteroidesAleatorios(std::vector<Asteroide> &vectorAsteroides, unsigned int numAsteroides,
-                                                      sf::Vector2u limitesPantalla) {
+                                           sf::Vector2u limitesPantalla) {
         vectorAsteroides.clear();
         for (int i = 0; i < numAsteroides; ++i) {
             vectorAsteroides.push_back(Asteroide(

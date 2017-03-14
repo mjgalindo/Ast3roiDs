@@ -104,21 +104,29 @@ void Asteroide::mover(sf::Vector2u limites) {
     }
 }
 
-void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v){
-    switch((int)radio){
+void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v) {
+    switch ((int) radio) {
         case TAM_0:
             break;
         case TAM_1:
-            v.push_back(Asteroide(posicion, direccion, {velocidad.x+distribution2(generator2),velocidad.y+distribution2(generator2)}, TIPO_0, TAM_0));
-            v.push_back(Asteroide(posicion, direccion, {velocidad.x-distribution2(generator2),velocidad.y-distribution2(generator2)}, TIPO_0, TAM_0));
+            v.push_back(Asteroide(posicion, direccion,
+                                  {velocidad.x + valorAleatorio(0, (float)PI/2), velocidad.y + valorAleatorio(0, (float)PI/2)},
+                                  TIPO_0, TAM_0));
+            v.push_back(Asteroide(posicion, direccion,
+                                  {velocidad.x - valorAleatorio(0, (float)PI/2), velocidad.y - valorAleatorio(0, (float)PI/2)},
+                                  TIPO_0, TAM_0));
             break;
         case TAM_2:
-            v.push_back(Asteroide(posicion, direccion, {velocidad.x+distribution2(generator2),velocidad.y+distribution2(generator2)}, TIPO_0, TAM_1));
-            v.push_back(Asteroide(posicion, direccion, {velocidad.x-distribution2(generator2),velocidad.y-distribution2(generator2)}, TIPO_0, TAM_1));
+            v.push_back(Asteroide(posicion, direccion,
+                                  {velocidad.x + valorAleatorio(0, (float)PI/2), velocidad.y + valorAleatorio(0, (float)PI/2)},
+                                  TIPO_0, TAM_1));
+            v.push_back(Asteroide(posicion, direccion,
+                                  {velocidad.x - valorAleatorio(0, (float)PI/2), velocidad.y - valorAleatorio(0, (float)PI/2)},
+                                  TIPO_0, TAM_1));
             break;
     }
 }
 
-void Asteroide::cambiarEstado(int nuevoEstado, sf::Vector2u lim){
+void Asteroide::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
     // De momento no se usa
 }
