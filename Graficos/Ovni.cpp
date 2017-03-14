@@ -1,6 +1,5 @@
 #include "Ovni.hpp"
 #include <iostream>
-#include "../matematicas.hpp"
 
 Ovni::Ovni() :
         Circular({0, 0}, 15) {
@@ -111,12 +110,12 @@ void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n)
             posicion.y += limites.y;
         }
 
-        if(num_disparos < 2) {
+        if (num_disparos < 2) {
             disparar();
         }
 
         //Colision del ovni con un asteroide
-        for (int i=0 ; i<v.size() ; i--) {
+        for (int i = 0; i < v.size(); i--) {
             if (comprobarColision(v[i])) {
                 cambiarEstado(EXP1, {0, 0});
                 //Destruir asteroide, dividirlo o lo que sea....
@@ -127,30 +126,30 @@ void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n)
         }
 
         //Mover los disparos
-        for(int i=0 ; i<num_disparos ; i++){
+        for (int i = 0; i < num_disparos; i++) {
             disparos[i].mover(limites);
 
-            if(disparos[i].comprobarAlcance()){
+            if (disparos[i].comprobarAlcance()) {
                 recuperarDisparo(i);
                 i--;
                 continue;
             }
 
             //Se comprueba el impacto de los disparos
-            if ((n.getEstado()==REPOSO || n.getEstado()==ACELERANDO) && disparos[i].comprobarColision(n)) {
+            if ((n.getEstado() == REPOSO || n.getEstado() == ACELERANDO) && disparos[i].comprobarColision(n)) {
                 recuperarDisparo(i);
                 i--;
-                n.cambiarEstado(DESTRUIDA,{0,0});
+                n.cambiarEstado(DESTRUIDA, {0, 0});
                 continue;
             }
 
-            for (int j=0 ; j<v.size() ; j--) {
+            for (int j = 0; j < v.size(); j--) {
                 if (disparos[i].comprobarColision(v[j])) {
                     recuperarDisparo(i);
                     i--;
                     //Destruir asteroide, dividirlo o lo que sea....
                     v[j].gestionarDestruccion(v);
-                    v.erase(v.begin()+j);
+                    v.erase(v.begin() + j);
                     j--;
                 }
             }
@@ -169,17 +168,14 @@ bool Ovni::comprobarColision(Circular &c) {
     return colisionCirculos(posicion, radio, c.posicion, c.radio);
 }
 
-bool Ovni::comprobarColision(Triangular& t) {
-    if(colisionVerticesCirculo(t.getTriangulo(),posicion,radio)){
-        return true;
-    }
-    return false;
+bool Ovni::comprobarColision(Triangular &t) {
+    return colisionVerticesCirculo(t.getTriangulo(), posicion, radio);
 }
 
 void Ovni::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
     static int ciclo = 0;
     estado = nuevoEstado;
-    switch (nuevoEstado) {
+    switch ((EstadoOvni) nuevoEstado) {
         case VIVO:
             ciclo = 0;
             break;

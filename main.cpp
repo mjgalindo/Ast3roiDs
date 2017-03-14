@@ -5,8 +5,8 @@
 
 #include "Estados.hpp"
 #include "Graficos/Nave.hpp"
-#include "Graficos/Asteroide.hpp"
 #include "Graficos/Ovni.hpp"
+#include "matematicas.hpp"
 
 using namespace std;
 
@@ -228,14 +228,12 @@ Estado tratarJuego(Estado estado) {
     vidas.setFillColor(sf::Color::Blue);
 
     Nave nave = Nave(sf::Vector2f(MAX_SIZE.x / 2.0f, MAX_SIZE.y / 2.0f));
-    Ovni ovni = Ovni();
+    Ovni ovni;
 
-    /// A modo demo, no tiene sentido que esto esté aqui, deberá ser aleatorio etc
-    vector<Asteroide> asteroides{
-            Asteroide({120, 10}, 0.4, {0.1, 0.1}, TIPO_0, TAM_0),
-            Asteroide({10, 400}, 0.4, {-0.1, 0.1}, TIPO_1, TAM_1),
-            Asteroide({400, 80}, 0.4, {0.1, -0.1}, TIPO_2, TAM_2),
-    };
+    vector<Asteroide> asteroides;
+
+    unsigned int numeroDeAsteroides = 5;
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, MAX_SIZE);
 
     shared_ptr<bool> jugando(new bool(true));
     thread musica(&reproducirMusica, jugando);

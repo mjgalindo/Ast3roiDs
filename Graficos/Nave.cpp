@@ -3,7 +3,7 @@
 
 //Constructor
 Nave::Nave(sf::Vector2f posicion_inicial)
-        : Triangular(posicion_inicial, -PI / 2.0f, 17) {
+        : Triangular(posicion_inicial, (float) -PI / 2.0f, 17) {
     if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")) {
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
     }
@@ -30,17 +30,17 @@ Nave::Nave(sf::Vector2f posicion_inicial)
     linea3.setPrimitiveType(sf::LineStrip);
 
     linea0.resize(2);
-    linea0[0].position = {1.0f,0.0f};
-    linea0[1].position = {-0.7071067812f,0.7071067812f};
+    linea0[0].position = {1.0f, 0.0f};
+    linea0[1].position = {-0.7071067812f, 0.7071067812f};
     linea1.resize(2);
-    linea1[0].position = {-0.7071067812f,0.7071067812f};
-    linea1[1].position = {-0.4f,0.0f};
+    linea1[0].position = {-0.7071067812f, 0.7071067812f};
+    linea1[1].position = {-0.4f, 0.0f};
     linea2.resize(2);
-    linea2[0].position = {-0.4f,0.0f};
-    linea2[1].position = {-0.7071067812f,-0.7071067812f};
+    linea2[0].position = {-0.4f, 0.0f};
+    linea2[1].position = {-0.7071067812f, -0.7071067812f};
     linea3.resize(2);
-    linea3[0].position = {-0.7071067812f,-0.7071067812f};
-    linea3[1].position = {1.0f,0.0f};
+    linea3[0].position = {-0.7071067812f, -0.7071067812f};
+    linea3[1].position = {1.0f, 0.0f};
 
     poligono.setPrimitiveType(sf::LineStrip);
     poligono.resize(5);
@@ -139,15 +139,14 @@ void Nave::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         }
             break;
 
-        case DESTRUIDA:
-        {
+        case DESTRUIDA: {
 
 
             sf::Transform t0, t1, t2, t3;
-            t0.rotate(direccion* (180.0f/3.14f), posicion).translate(posicion0).scale({tamano, tamano});
-            t1.rotate(direccion* (180.0f/3.14f), posicion).translate(posicion1).scale({tamano, tamano});
-            t2.rotate(direccion* (180.0f/3.14f), posicion).translate(posicion2).scale({tamano, tamano});
-            t3.rotate(direccion* (180.0f/3.14f), posicion).translate(posicion3).scale({tamano, tamano});
+            t0.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion0).scale({tamano, tamano});
+            t1.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion1).scale({tamano, tamano});
+            t2.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion2).scale({tamano, tamano});
+            t3.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion3).scale({tamano, tamano});
 
 
             target.draw(linea0, t0);
@@ -236,8 +235,8 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
                 puntuacion += o.getPuntuacion();
                 recienDestruida = true;
 
-                o.cambiarEstado(EXP1,{0,0});
-                cambiarEstado(DESTRUIDA, {0,0});
+                o.cambiarEstado(EXP1, {0, 0});
+                cambiarEstado(DESTRUIDA, {0, 0});
             }
         }
 
@@ -255,14 +254,14 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
         for (int i = 0; i < v.size(); i++) {
             if (comprobarColision(v[i])) {
                 puntuacion += v[i].getPuntuacion();
-                cambiarEstado(DESTRUIDA, {0,0});
+                cambiarEstado(DESTRUIDA, {0, 0});
                 recienDestruida = true;
                 //Destruir asteroide, dividirlo o lo que sea....
                 std::cout << v.size() << std::endl;
 
                 //Destruir asteroide, dividirlo o lo que sea...
                 v[i].gestionarDestruccion(v);
-                v.erase(v.begin()+i);
+                v.erase(v.begin() + i);
                 i--;
             }
 
@@ -281,19 +280,19 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
             }
         }
     }
-    if(estado==DESTRUIDA) {
-        if(recienDestruida){
+    if (estado == DESTRUIDA) {
+        if (recienDestruida) {
             posicion0 = posicion;
             posicion1 = posicion;
             posicion2 = posicion;
             posicion3 = posicion;
-            recienDestruida=false;
+            recienDestruida = false;
         }
 
-        posicion0 = {posicion0.x+1, posicion0.y +1};
-        posicion1 = {posicion1.x-0.5, posicion1.y +1};
-        posicion2 = {posicion2.x+1, posicion2.y -1};
-        posicion3 = {posicion3.x-0.5, posicion3.y -1};
+        posicion0 = {posicion0.x + 1.0f, posicion0.y + 1};
+        posicion1 = {posicion1.x - 0.5f, posicion1.y + 1};
+        posicion2 = {posicion2.x + 1.0f, posicion2.y - 1};
+        posicion3 = {posicion3.x - 0.5f, posicion3.y - 1};
     }
 }
 
@@ -345,9 +344,9 @@ bool Nave::comprobarColision(Circular &c) {
 void Nave::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
     static int ciclos = 0;
 
-    if(nuevoEstado==DESTRUIDA && estado!=nuevoEstado){
+    if (nuevoEstado == DESTRUIDA && estado != nuevoEstado) {
         vidas--;
-        num_disparos=0;
+        num_disparos = 0;
     }
 
 

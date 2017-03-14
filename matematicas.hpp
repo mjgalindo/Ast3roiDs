@@ -31,4 +31,9 @@ static T distanciaEuclidea(sf::Vector2<T> a, sf::Vector2<T> b){
     return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }
 
+template <typename T>
+static int rad2deg(T radianes){
+    return (int)((radianes < 0 ? radianes + 2 * PI : radianes) * 180 / PI);
+}
+
 #endif //AST3ROIDS_MATEMATICAS_HPP
