@@ -9,8 +9,6 @@ bool colisionVerticesTriangulo(sf::VertexArray vs, sf::VertexArray triangulo);
 
 //Funciones auxiliares
 
-float distancia2(sf::Vector2f v1, sf::Vector2f v2);
-float distancia2(sf::Vertex v1, sf::Vector2f v2);
 float orientacionTriangular(sf::Vertex v1, sf::Vertex v2, sf::Vertex v3);
 
 #endif //AST3ROIDS_COLISIONES_HPP

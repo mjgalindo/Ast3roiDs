@@ -2,7 +2,7 @@
 #include "Asteroide.hpp"
 
 Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam) :
-                                                                            Circular(posicion_inicial, tam){
+        Circular(posicion_inicial, tam) {
     direccion = dir;
     velocidad = vel;
     version = tipo;
@@ -71,7 +71,7 @@ sf::Vector2f Asteroide::getVelocidad() {
 }
 
 int Asteroide::getPuntuacion() const {
-    switch((int)radio){
+    switch ((int) radio) {
         case TAM_0:
             return 100;
         case TAM_1:
@@ -91,7 +91,7 @@ void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 
     sf::CircleShape c;
     c.setRadius(radio);
-    c.setOrigin(radio,radio);
+    c.setOrigin(radio, radio);
     c.setPosition(posicion);
     c.setFillColor(sf::Color::Blue);
     target.draw(c);
@@ -112,6 +112,6 @@ void Asteroide::mover(sf::Vector2u limites) {
     }
 }
 
-void Asteroide::cambiarEstado(int nuevoEstado, sf::Vector2u lim){
+void Asteroide::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
     // De momento no se usa
 }

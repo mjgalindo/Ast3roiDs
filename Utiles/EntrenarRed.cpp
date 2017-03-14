@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "../Graficos/Nave.hpp"
 #include "../neural/include/neural/Network.h"
+#include "../matematicas.hpp"
 
 using namespace std;
 
@@ -9,22 +10,6 @@ sf::RenderWindow ventana;
 sf::Vector2u MAX_SIZE = {800, 600};
 
 vector<Asteroide> asteroides;
-
-inline float distanciaEuclidea(sf::Vector2f a, sf::Vector2f b) {
-    return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
-}
-
-void aleatorizaAsteroides(unsigned int numAsteroides) {
-    vector<Tipo> tipos = {TIPO_0, TIPO_1, TIPO_2};
-    vector<Tamano> tamanos = {TAM_0, TAM_1, TAM_2};
-    asteroides.clear();
-    float vMax = 5;
-    for (int i = 0; i < numAsteroides; ++i) {
-        asteroides.push_back(Asteroide({rand() % MAX_SIZE.x * 1.0f, rand() % MAX_SIZE.y * 1.0f}, 0.4,
-                                       {vMax * ((rand() % 50 - 25) / 25.0f), vMax * ((rand() % 50 - 25) / 25.0f)},
-                                       TIPO_1, tamanos.at((unsigned int) (rand() % 3))));
-    }
-}
 
 Asteroide *asteroideMasCercano(sf::Vector2f posicion) {
     double distanciaMenor = 99999999.0;
@@ -46,9 +31,6 @@ int main() {
     ventana.create(sf::VideoMode(MAX_SIZE.x, MAX_SIZE.y), "Ast3roiDs", sf::Style::Default, settings);
 
     ventana.setFramerateLimit(60);
-    ventana.setKeyRepeatEnabled(false);
-    ventana.setVerticalSyncEnabled(true);
-
     sf::Clock reloj;
     sf::CircleShape sustitutoOvni(15);
     sustitutoOvni.setFillColor({200, 10, 10});
@@ -58,9 +40,17 @@ int main() {
     bool continua = true;
 
     // Inicializa una red neuronal nueva
-    neural::Network red(6, 1, {20});
-    aleatorizaAsteroides(10);
+    neural::Network red(4, 1, {120});
+    // Opcionalmente la lee desde fichero
+    // (descomentando las dos lineas siguientes y poniendo el nombre correcto)
+    //string inputRed = "entrenado.nn";
+    //red = red.read(inputRed);
+    unsigned int numAsteroides = 10;
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, MAX_SIZE);
+    int reinicios = 1;
+    unsigned int iteraciones = 0;
     while (continua) {
+        iteraciones++;
         sf::Event event;
         if (ventana.pollEvent(event)) {
             switch (event.type) {
@@ -72,6 +62,8 @@ int main() {
                     if (event.key.code == sf::Keyboard::Escape) {
                         ventana.close();
                         continua = false;
+                        string nombreFichero = "entrenando.nn";
+                        red.write(nombreFichero);
                     }
                     break;
                 default:
@@ -81,39 +73,38 @@ int main() {
 
         ventana.clear(sf::Color::Black);
 
-        ventana.draw(sustitutoOvni);
         sf::Vector2f posicionOvni = sustitutoOvni.getPosition();
         Asteroide *asteroidePeligroso = asteroideMasCercano(posicionOvni);
-        vector<double> entradasRed{posicionOvni.x, posicionOvni.y, asteroidePeligroso->getPosicion().x,
-                                   asteroidePeligroso->getPosicion().y, asteroidePeligroso->getVelocidad().x,
+        vector<double> entradasRed{asteroidePeligroso->getPosicion().x - posicionOvni.x,
+                                   posicionOvni.y - asteroidePeligroso->getPosicion().y, asteroidePeligroso->getVelocidad().x,
                                    asteroidePeligroso->getVelocidad().y};
 
-        double salida = (red.run(entradasRed)[0] + 1) / 2.0;
+        double salida = red.run(entradasRed)[0];
         double angulo = 0;
-        if (salida < 1 * (1.0 / 8.0)) {
-            angulo = PI / 2;
-            cout << "U ";
-        } else if (salida < 2 * (1.0 / 8.0)) {
-            angulo = PI / 4;
-            cout << "UR ";
-        } else if (salida < 3 * (1.0 / 8.0)) {
-            angulo = 0;
-            cout << "R ";
-        } else if (salida < 4 * (1.0 / 8.0)) {
-            angulo = -PI / 4;
-            cout << "DR ";
-        } else if (salida < 5 * (1.0 / 8.0)) {
-            angulo = -PI / 2;
-            cout << "D ";
-        } else if (salida < 6 * (1.0 / 8.0)) {
-            angulo = -PI * 3 / 4;
-            cout << "DL ";
-        } else if (salida < 7 * (1.0 / 8.0)) {
-            angulo = PI;
-            cout << "L ";
-        } else if (salida < 8 * (1.0 / 8.0)) {
+        if (salida < -3 * (2.0 / 8.0)) {
             angulo = PI * 3 / 4;
-            cout << "UL ";
+            //cout << "UL ";
+        } else if (salida < -2 * (2.0 / 8.0)) {
+            angulo = PI;
+            //cout << "L ";
+        } else if (salida < -1 * (2.0 / 8.0)) {
+            angulo = -PI * 3 / 4;
+            //cout << "DL ";
+        } else if (salida < 0 * (2.0 / 8.0)) {
+            angulo = PI;
+            //cout << "U ";
+        } else if (salida < 1 * (2.0 / 8.0)) {
+            angulo = PI / 4;
+            //cout << "UR ";
+        } else if (salida < 2 * (2.0 / 8.0)) {
+            angulo = 0;
+            //cout << "R ";
+        } else if (salida < 3 * (2.0 / 8.0)) {
+            angulo = -PI / 4;
+            //cout << "DR ";
+        } else if (salida < 4 * (2.0 / 8.0)) {
+            angulo = -PI / 2;
+            //cout << "D ";
         }
         float vMax = 3.0f;
         // Niega el eje Y porque está invertido (valores de Y mayores dan posiciones mas abajo)
@@ -138,20 +129,33 @@ int main() {
             sustitutoOvni.setPosition(posicionOvni);
         }
 
-        cout << salida << ' ' << posicionOvni.x << ' ' << posicionOvni.y << '\n';
-
+        //cout << salida << ' ' << posicionOvni.x << ' ' << posicionOvni.y << '\n';
+        bool choque = false;
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
             ast->mover(MAX_SIZE);
             ventana.draw(*ast);
             if (distanciaEuclidea(ast->getPosicion(), posicionOvni) < ast->getRadio() + sustitutoOvni.getRadius()) {
                 // Hay colision, se informa a la red y se reinicia la escena aleatoriamente
-
+                choque = true;
+                break;
             }
         }
+        if (choque) {
+            double salidaPre = red.run(entradasRed)[0];
+            red.trainSingle(entradasRed, {-1.0*red.run(entradasRed)[0]}, 0.3);
+            Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, MAX_SIZE);
+            sustitutoOvni.setPosition({valorAleatorio(0, MAX_SIZE.x), valorAleatorio(0, MAX_SIZE.y)});
+            //cout << "La salida era: " << salidaPre << " y ahora es: " << red.run(entradasRed)[0] << '\n';
+            cout << reinicios << " " << iteraciones / 60.0f << '\n';
+            reinicios++;
+            if (iteraciones / 60.0f > 10) numAsteroides++;
+            iteraciones = 0;
+        }
         ventana.draw(sustitutoOvni);
-
         ventana.display();
     }
+
+    cout << "Reinicios: " << reinicios << " tiempo: " << reloj.getElapsedTime().asSeconds() << endl;
 }
 
 

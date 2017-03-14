@@ -9,8 +9,6 @@
 #include "Asteroide.hpp"
 #include "../Colisiones.hpp"
 
-#define PI 3.14159265358979323846
-
 class Disparo : public sf::Drawable {
     private:
         //Tamano del disparo en pixeles

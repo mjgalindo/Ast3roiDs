@@ -11,8 +11,6 @@
 #include "Circular.hpp"
 #include "Disparo.hpp"
 
-#define PI 3.14159265358979323846
-
 class Ovni : public sf::Drawable, public Circular {
 
     private:

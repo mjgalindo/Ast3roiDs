@@ -10,14 +10,13 @@
 #include "Circular.hpp"
 #include "Disparo.hpp"
 #include "Asteroide.hpp"
-
-#define PI 3.14159265358979323846
+#include "../matematicas.hpp"
 #define UMBRAL 0.15
 
 class Nave : public sf::Drawable, public Triangular {
     private:
         //Velocidad de giro (radianes por u.t.)
-        static constexpr float V_ANGULAR = PI/30;
+        static constexpr float V_ANGULAR = (float)PI/30;
         //Aceleracion (pixels por u.t.)
         static constexpr float ACELERACION = 0.4;
         //Deceleracion (porcentaje de velocidad que se conserva)
