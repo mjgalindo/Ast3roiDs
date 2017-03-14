@@ -65,12 +65,6 @@ void Ovni::draw(sf::RenderTarget& target, sf::RenderStates states) const{
         sf::Transform t;
         t.translate(posicion).scale({radio, radio});
         target.draw(poligono, t);
-        sf::CircleShape c;
-        c.setRadius(radio);
-        c.setOrigin(radio,radio);
-        c.setPosition(posicion);
-        c.setFillColor(sf::Color::Green);
-        target.draw(c);
     }else if(estado == EXP1) {
         sf::CircleShape c;
         c.setRadius(radio);
@@ -204,6 +198,7 @@ void Ovni::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
         case EXP3:
             if(ciclo>=15){
                 estado = MUERTO;
+                posicion = {-100,-100};
             }
             break;
         case MUERTO:

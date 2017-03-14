@@ -21,7 +21,7 @@ class Nave : public sf::Drawable, public Triangular {
         //Aceleracion (pixels por u.t.)
         static constexpr float ACELERACION = 0.4;
         //Deceleracion (porcentaje de velocidad que se conserva)
-        static constexpr float DECELERACION = 0.993;
+        static constexpr float DECELERACION = 0.987;
         //Numero maximo de disparos activos
         static const int MAX_DISPAROS = 4;
         //Velocidad maxima

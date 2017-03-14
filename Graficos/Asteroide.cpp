@@ -1,5 +1,8 @@
-#include <iostream>
 #include "Asteroide.hpp"
+#include <random>
+
+std::default_random_engine generator2;
+std::uniform_real_distribution<float> distribution2(0,3.14159/2.0);
 
 Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam) :
                                                                             Circular(posicion_inicial, tam){
@@ -86,16 +89,8 @@ int Asteroide::getPuntuacion() const {
 void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     sf::Transform t;
     // El orden en el que se efectuan las transformaciones es importante!
-    t.rotate(direccion).translate(posicion).scale({radio, radio});
+    t.translate(posicion).scale({radio, radio});
     target.draw(poligono, t);
-
-    sf::CircleShape c;
-    c.setRadius(radio);
-    c.setOrigin(radio,radio);
-    c.setPosition(posicion);
-    c.setFillColor(sf::Color::Blue);
-    target.draw(c);
-
 }
 
 void Asteroide::mover(sf::Vector2u limites) {
@@ -109,6 +104,21 @@ void Asteroide::mover(sf::Vector2u limites) {
         posicion.y -= limites.y;
     } else if (posicion.y + 1 <= 0.0) {
         posicion.y += limites.y;
+    }
+}
+
+void Asteroide::gestionarDestruccion(std::vector<Asteroide> v){
+    switch((int)radio){
+        case TAM_0:
+            break;
+        case TAM_1:
+            v.push_back(Asteroide(posicion, direccion+distribution2(generator2), velocidad, TIPO_0, TAM_0));
+            v.push_back(Asteroide(posicion, direccion-distribution2(generator2), velocidad, TIPO_0, TAM_0));
+            break;
+        case TAM_2:
+            v.push_back(Asteroide(posicion, direccion+distribution2(generator2), velocidad, TIPO_0, TAM_1));
+            v.push_back(Asteroide(posicion, direccion-distribution2(generator2), velocidad, TIPO_0, TAM_1));
+            break;
     }
 }
 

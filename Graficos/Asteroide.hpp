@@ -37,6 +37,7 @@ public:
 
     //Otros
     virtual void cambiarEstado(int nuevoEstado, sf::Vector2u lim);
+    void gestionarDestruccion(std::vector<Asteroide> v);
 };
 
 

@@ -111,20 +111,3 @@ bool Disparo::comprobarColision(Triangular &tri) {
 
     return colisionVerticesTriangulo(poligono_real,triangulo);
 }
-
-
-/*bool Disparo::comprobarColision(Nave& n){
-    sf::Vector2f posicion_global(posicion.x+puntos[0].x*TAMANO*cos(direccion)-puntos[0].y*TAMANO*sin(direccion),posicion.y+puntos[0].y*TAMANO*cos(direccion)+puntos[0].x*TAMANO*sin(direccion));
-    // (x1-x2)^2 + (y1-y2)^2 < R^2
-    if((posicion_global.x-n.getPosicion().x)*(posicion_global.x-n.getPosicion().x)+(posicion_global.y-n.getPosicion().y)*(posicion_global.y-n.getPosicion().y) < n.getRadio()*n.getRadio()) {
-        return true;
-    }
-
-    posicion_global = sf::Vector2f(posicion.x+puntos[1].x*TAMANO*cos(direccion)-puntos[1].y*TAMANO*sin(direccion),posicion.y+puntos[1].y*TAMANO*cos(direccion)+puntos[1].x*TAMANO*sin(direccion));
-    // (x1-x2)^2 + (y1-y2)^2 < R^2
-    if((posicion_global.x-n.getPosicion().x)*(posicion_global.x-n.getPosicion().x)+(posicion_global.y-n.getPosicion().y)*(posicion_global.y-n.getPosicion().y) < n.getRadio()*n.getRadio()) {
-        return true;
-    }
-
-    return false;
-}*/
