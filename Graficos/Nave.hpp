@@ -30,6 +30,12 @@ class Nave : public sf::Drawable, public Triangular {
         //Posicion inicial
         sf::Vector2f pos_inicial;
 
+        //Vectores para cuando se destruye
+        sf::VertexArray linea0, linea1, linea2, linea3;
+        sf::Vector2f posicion0, posicion1, posicion2, posicion3;
+
+        bool recienDestruida = false;
+
         //Orden: morro, izquierda, derecha y centro
         sf::VertexArray poligono;
         sf::ConvexShape fuego;
