@@ -81,6 +81,10 @@ void Nave::setVelocidad(sf::Vector2f vel){
     velocidad = vel;
 }
 
+void Nave::setVidas(int v) {
+    vidas = v;
+}
+
 //Getters
 sf::VertexArray* Nave::getPoligono(){
     return &poligono;
@@ -221,10 +225,8 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o){
                 puntuacion += v[i].getPuntuacion();
                 cambiarEstado(DESTRUIDA, {0,0});
 
-                //Destruir asteroide, dividirlo o lo que sea....
-                std::cout << v.size() << std::endl;
+                //Destruir asteroide, dividirlo o lo que sea...
                 v[i].gestionarDestruccion(v);
-                std::cout << v.size() << std::endl;
                 v.erase(v.begin()+i);
                 i--;
             }
@@ -294,6 +296,13 @@ bool Nave::comprobarColision(Circular& c){
 
 void Nave::cambiarEstado(int nuevoEstado, sf::Vector2u lim){
     static int ciclos = 0;
+
+    if(nuevoEstado==DESTRUIDA && estado!=nuevoEstado){
+        vidas--;
+        num_disparos=0;
+    }
+
+
     estado = nuevoEstado;
     switch(estado) {
         case REPOSO:
@@ -309,10 +318,6 @@ void Nave::cambiarEstado(int nuevoEstado, sf::Vector2u lim){
             }
             break;
         case DESTRUIDA:
-            if(ciclos==0){
-                vidas--;
-                num_disparos=0;
-            }
             if (ciclos >= 50) {
                 estado = REAPARECIENDO;
                 reiniciar();
