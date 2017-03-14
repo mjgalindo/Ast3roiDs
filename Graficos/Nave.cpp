@@ -169,7 +169,7 @@ void Nave::rotarDcha(){
     }
 }
 
-void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Circular &o){
+void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o){
     if(estado==REPOSO || estado==ACELERANDO) {
         //Mover la nave
         posicion.x += velocidad.x;
@@ -216,30 +216,30 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Circular &o){
             }
         }
 
-        for(auto a = v.begin(); a != v.end(); ++a) {
-            if(comprobarColision(*a)){
-                puntuacion += a->getPuntuacion();
+        for(int i=0 ; i<v.size() ; i++) {
+            if(comprobarColision(v[i])){
+                puntuacion += v[i].getPuntuacion();
                 cambiarEstado(DESTRUIDA, {0,0});
 
                 //Destruir asteroide, dividirlo o lo que sea....
                 std::cout << v.size() << std::endl;
-                a->gestionarDestruccion(v);
+                v[i].gestionarDestruccion(v);
                 std::cout << v.size() << std::endl;
-                v.erase(a);
-                a--;
+                v.erase(v.begin()+i);
+                i--;
             }
 
             //Se comprueba el impacto de los disparos
             for (int j = 0; j < num_disparos; j++) {
-                if (disparos[j].comprobarColision(*a)) {
-                    puntuacion += a->getPuntuacion();
+                if (disparos[j].comprobarColision(v[i])) {
+                    puntuacion += v[i].getPuntuacion();
                     recuperarDisparo(j);
                     j--;
 
                     //Destruir asteroide, dividirlo o lo que sea....
-                    a->gestionarDestruccion(v);
-                    v.erase(a);
-                    a--;
+                    v[i].gestionarDestruccion(v);
+                    v.erase(v.begin()+i);
+                    i--;
                 }
             }
         }

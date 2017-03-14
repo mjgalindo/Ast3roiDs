@@ -1,5 +1,6 @@
 #include "Asteroide.hpp"
 #include <random>
+#include <iostream>
 
 std::default_random_engine generator2;
 std::uniform_real_distribution<float> distribution2(0,3.14159/2.0);
@@ -107,17 +108,17 @@ void Asteroide::mover(sf::Vector2u limites) {
     }
 }
 
-void Asteroide::gestionarDestruccion(std::vector<Asteroide> v){
+void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v){
     switch((int)radio){
         case TAM_0:
             break;
         case TAM_1:
-            v.push_back(Asteroide(posicion, direccion+distribution2(generator2), velocidad, TIPO_0, TAM_0));
-            v.push_back(Asteroide(posicion, direccion-distribution2(generator2), velocidad, TIPO_0, TAM_0));
+            v.push_back(Asteroide(posicion, direccion, {velocidad.x+distribution2(generator2),velocidad.y+distribution2(generator2)}, TIPO_0, TAM_0));
+            v.push_back(Asteroide(posicion, direccion, {velocidad.x-distribution2(generator2),velocidad.y-distribution2(generator2)}, TIPO_0, TAM_0));
             break;
         case TAM_2:
-            v.push_back(Asteroide(posicion, direccion+distribution2(generator2), velocidad, TIPO_0, TAM_1));
-            v.push_back(Asteroide(posicion, direccion-distribution2(generator2), velocidad, TIPO_0, TAM_1));
+            v.push_back(Asteroide(posicion, direccion, {velocidad.x+distribution2(generator2),velocidad.y+distribution2(generator2)}, TIPO_0, TAM_1));
+            v.push_back(Asteroide(posicion, direccion, {velocidad.x-distribution2(generator2),velocidad.y-distribution2(generator2)}, TIPO_0, TAM_1));
             break;
     }
 }

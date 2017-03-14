@@ -93,7 +93,7 @@ void Ovni::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     }
 }
 
-void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> v, Triangular &n) {
+void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n) {
     if(estado == VIVO) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
         if (distributionGirar(generator) < 0.01) {

@@ -85,7 +85,7 @@ class Nave : public sf::Drawable, public Triangular {
         void recuperarDisparo(int d);
         void rotarIzda();
         void rotarDcha();
-        void mover(sf::Vector2u limites, std::vector<Asteroide> v, Circular &o);
+        void mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o);
         void acelerar();
         void frenar();
 

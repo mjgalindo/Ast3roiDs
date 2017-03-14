@@ -51,7 +51,7 @@ class Ovni : public sf::Drawable, public Circular {
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
         void disparar();
-        void mover(sf::Vector2u limites, std::vector<Asteroide> v, Triangular &n);
+        void mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n);
 
         void recuperarDisparo(int d);
         bool comprobarColision(Circular& c);
