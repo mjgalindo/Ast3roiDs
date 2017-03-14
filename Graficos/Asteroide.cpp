@@ -86,16 +86,8 @@ int Asteroide::getPuntuacion() const {
 void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     sf::Transform t;
     // El orden en el que se efectuan las transformaciones es importante!
-    t.rotate(direccion).translate(posicion).scale({radio, radio});
+    t.translate(posicion).scale({radio, radio});
     target.draw(poligono, t);
-
-    sf::CircleShape c;
-    c.setRadius(radio);
-    c.setOrigin(radio, radio);
-    c.setPosition(posicion);
-    c.setFillColor(sf::Color::Blue);
-    target.draw(c);
-
 }
 
 void Asteroide::mover(sf::Vector2u limites) {
@@ -112,6 +104,21 @@ void Asteroide::mover(sf::Vector2u limites) {
     }
 }
 
-void Asteroide::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
+void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v){
+    switch((int)radio){
+        case TAM_0:
+            break;
+        case TAM_1:
+            v.push_back(Asteroide(posicion, direccion, {velocidad.x+distribution2(generator2),velocidad.y+distribution2(generator2)}, TIPO_0, TAM_0));
+            v.push_back(Asteroide(posicion, direccion, {velocidad.x-distribution2(generator2),velocidad.y-distribution2(generator2)}, TIPO_0, TAM_0));
+            break;
+        case TAM_2:
+            v.push_back(Asteroide(posicion, direccion, {velocidad.x+distribution2(generator2),velocidad.y+distribution2(generator2)}, TIPO_0, TAM_1));
+            v.push_back(Asteroide(posicion, direccion, {velocidad.x-distribution2(generator2),velocidad.y-distribution2(generator2)}, TIPO_0, TAM_1));
+            break;
+    }
+}
+
+void Asteroide::cambiarEstado(int nuevoEstado, sf::Vector2u lim){
     // De momento no se usa
 }

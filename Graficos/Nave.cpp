@@ -3,7 +3,7 @@
 
 //Constructor
 Nave::Nave(sf::Vector2f posicion_inicial)
-        : Triangular(posicion_inicial, -PI/2.0f, 15){
+        : Triangular(posicion_inicial, -PI/2.0f, 17){
     if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")){
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
     }
@@ -131,8 +131,6 @@ void Nave::draw(sf::RenderTarget& target, sf::RenderStates states) const{
         break;
     }
 
-
-
     //Dibujar los disparos
     for(int i=0 ; i<num_disparos ; i++){
         target.draw(disparos[i]);
@@ -171,7 +169,7 @@ void Nave::rotarDcha(){
     }
 }
 
-void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Circular &o){
+void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o){
     if(estado==REPOSO || estado==ACELERANDO) {
         //Mover la nave
         posicion.x += velocidad.x;
@@ -194,24 +192,22 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Circular &o){
             if (disparos[i].comprobarAlcance()) {
                 if (disparos[i].comprobarAlcance()) {
                     recuperarDisparo(i);
+                    i--;
                 }
             }
         }
 
         if(o.getEstado()==VIVO) {
             if(comprobarColision(o)){
-                estado = DESTRUIDA;
-                o.cambiarEstado(EXP1,{0,0});
-                while(num_disparos>0){
-                    recuperarDisparo(0);
-                }
                 puntuacion += o.getPuntuacion();
+                o.cambiarEstado(EXP1,{0,0});
+                cambiarEstado(DESTRUIDA, {0,0});
             }
         }
 
         //Se comprueba el impacto de los disparos
         for (int j = 0; j < num_disparos; j++) {
-            if (disparos[j].comprobarColision(o)) {
+            if (o.getEstado()==VIVO && disparos[j].comprobarColision(o)) {
                 puntuacion += o.getPuntuacion();
                 recuperarDisparo(j);
                 j--;
@@ -220,27 +216,30 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> v, Circular &o){
             }
         }
 
-        for (auto a = v.begin(); a != v.end(); ++a) {
-            if(comprobarColision(*a)){
-                estado = DESTRUIDA;
-
-                while(num_disparos>0){
-                    recuperarDisparo(0);
-                }
-
-                puntuacion += o.getPuntuacion();
+        for(int i=0 ; i<v.size() ; i++) {
+            if(comprobarColision(v[i])){
+                puntuacion += v[i].getPuntuacion();
+                cambiarEstado(DESTRUIDA, {0,0});
 
                 //Destruir asteroide, dividirlo o lo que sea....
+                std::cout << v.size() << std::endl;
+                v[i].gestionarDestruccion(v);
+                std::cout << v.size() << std::endl;
+                v.erase(v.begin()+i);
+                i--;
             }
 
             //Se comprueba el impacto de los disparos
             for (int j = 0; j < num_disparos; j++) {
-                if (disparos[j].comprobarColision(*a)) {
-                    puntuacion += a->getPuntuacion();
+                if (disparos[j].comprobarColision(v[i])) {
+                    puntuacion += v[i].getPuntuacion();
                     recuperarDisparo(j);
                     j--;
 
                     //Destruir asteroide, dividirlo o lo que sea....
+                    v[i].gestionarDestruccion(v);
+                    v.erase(v.begin()+i);
+                    i--;
                 }
             }
         }
@@ -264,7 +263,8 @@ void Nave::acelerar(){
             reproductorDeSonidoPropulsion.play();
         }
 
-        estado = ACELERANDO;
+        cambiarEstado(REPOSO, {0,0});
+        cambiarEstado(ACELERANDO, {0,0});
     }
 }
 
@@ -297,13 +297,21 @@ void Nave::cambiarEstado(int nuevoEstado, sf::Vector2u lim){
     estado = nuevoEstado;
     switch(estado) {
         case REPOSO:
+            ciclos = 0;
             break;
         case ACELERANDO:
-            estado = REPOSO;
+            if(ciclos>3){
+                ciclos = 0;
+                estado = REPOSO;
+            }
+            else{
+                ciclos++;
+            }
             break;
         case DESTRUIDA:
             if(ciclos==0){
                 vidas--;
+                num_disparos=0;
             }
             if (ciclos >= 50) {
                 estado = REAPARECIENDO;

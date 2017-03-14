@@ -1,7 +1,6 @@
 #ifndef AST3ROIDS_ASTEROIDE_HPP
 #define AST3ROIDS_ASTEROIDE_HPP
 
-#include <cmath>
 #include <SFML/Graphics.hpp>
 
 #include "../Estados.hpp"
@@ -38,6 +37,8 @@ public:
 
     //Otros
     virtual void cambiarEstado(int nuevoEstado, sf::Vector2u lim);
+
+    void gestionarDestruccion(std::vector<Asteroide> &v);
 
     static void nuevosAsteroidesAleatorios(std::vector<Asteroide> &vectorAsteroides, unsigned int numAsteroides,
                                                       sf::Vector2u limitesPantalla) {
