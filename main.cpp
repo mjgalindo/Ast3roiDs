@@ -227,18 +227,33 @@ Estado tratarJuego(Estado estado) {
     vidas.setPosition(sf::Vector2f(0.0, 35.0));
     vidas.setFillColor(sf::Color::Blue);
 
+
+
+    shared_ptr<bool> jugando(new bool(true));
+
+    thread musica(&reproducirMusica, jugando);
+    sf::Clock reloj;
+    int nivel = 0;
+
     Nave nave = Nave(sf::Vector2f(MAX_SIZE.x / 2.0f, MAX_SIZE.y / 2.0f));
     Ovni ovni;
-
     vector<Asteroide> asteroides;
-
     unsigned int numeroDeAsteroides = 5;
     Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, MAX_SIZE);
 
-    shared_ptr<bool> jugando(new bool(true));
-    thread musica(&reproducirMusica, jugando);
-    sf::Clock reloj;
     while (true) {
+        if(nave.getVidas()<0){
+            *jugando = false;
+            musica.join();
+            return GAME_OVER;
+        }
+
+        if(asteroides.size()==0){
+            nivel++;
+            numeroDeAsteroides+=2;
+            Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, MAX_SIZE);
+        }
+
         sf::Event event;
         ventana.pollEvent(event);
         switch (event.type) {
@@ -268,13 +283,6 @@ Estado tratarJuego(Estado estado) {
         ovni.mover(MAX_SIZE, asteroides, nave);
         nave.mover(MAX_SIZE, asteroides, ovni);
         nave.frenar();
-
-        if(nave.getVidas()<0){
-            *jugando = false;
-            musica.join();
-            return GAME_OVER;
-        }
-
 
         puntuacion.setString(std::to_string(nave.getPuntuacion()));
         vidas.setString(std::to_string(nave.getVidas()));
