@@ -48,7 +48,7 @@ public:
                     {(float) enteroAleatorio(0, limitesPantalla.x), (float) enteroAleatorio(0, limitesPantalla.y)},
                     anguloAleatorio(), {(float) (valorAleatorio() * cos(anguloAleatorio())),
                                         (float) (valorAleatorio() * sin(anguloAleatorio()))},
-                    (Tipo) enteroAleatorio(0, 3), TAM_2));
+                    (Tipo) enteroAleatorio(0, 2), TAM_2));
         }
 
     }
