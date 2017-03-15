@@ -57,8 +57,6 @@ public:
 
     bool comprobarColision(Circular &c);
 
-    bool comprobarColision(Triangular &t);
-
     virtual void cambiarEstado(int nuevoEstado, sf::Vector2u lim);
 };
 

@@ -110,12 +110,12 @@ void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n)
             posicion.y += limites.y;
         }
 
-        if (num_disparos < 2) {
+        if (num_disparos<2 && enteroAleatorio(0, 100)==0) {
             disparar();
         }
 
         //Colision del ovni con un asteroide
-        for (int i = 0; i < v.size(); i--) {
+        for (int i = 0; i < v.size(); i++) {
             if (comprobarColision(v[i])) {
                 cambiarEstado(EXP1, {0, 0});
                 //Destruir asteroide, dividirlo o lo que sea....
@@ -166,10 +166,6 @@ void Ovni::recuperarDisparo(int d) {
 
 bool Ovni::comprobarColision(Circular &c) {
     return colisionCirculos(posicion, radio, c.posicion, c.radio);
-}
-
-bool Ovni::comprobarColision(Triangular &t) {
-    return colisionVerticesCirculo(t.getTriangulo(), posicion, radio);
 }
 
 void Ovni::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {

@@ -230,14 +230,12 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
             }
         }
 
-        if (o.getEstado() == VIVO) {
-            if (comprobarColision(o)) {
-                puntuacion += o.getPuntuacion();
-                recienDestruida = true;
+        if (o.getEstado()== VIVO && comprobarColision(o)) {
+            puntuacion += o.getPuntuacion();
+            recienDestruida = true;
 
-                o.cambiarEstado(EXP1, {0, 0});
-                cambiarEstado(DESTRUIDA, {0, 0});
-            }
+            o.cambiarEstado(EXP1, {0, 0});
+            cambiarEstado(DESTRUIDA, {0, 0});
         }
 
         //Se comprueba el impacto de los disparos
@@ -255,27 +253,26 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
             if (comprobarColision(v[i])) {
                 puntuacion += v[i].getPuntuacion();
                 cambiarEstado(DESTRUIDA, {0, 0});
-                recienDestruida = true;
-                //Destruir asteroide, dividirlo o lo que sea....
-                std::cout << v.size() << std::endl;
 
                 //Destruir asteroide, dividirlo o lo que sea...
                 v[i].gestionarDestruccion(v);
                 v.erase(v.begin() + i);
                 i--;
+                continue;
             }
 
+            bool detectada = false;
             //Se comprueba el impacto de los disparos
-            for (int j = 0; j < num_disparos; j++) {
+            for (int j = 0; j < num_disparos && !detectada ; j++) {
                 if (disparos[j].comprobarColision(v[i])) {
                     puntuacion += v[i].getPuntuacion();
                     recuperarDisparo(j);
-                    j--;
 
                     //Destruir asteroide, dividirlo o lo que sea....
                     v[i].gestionarDestruccion(v);
                     v.erase(v.begin() + i);
                     i--;
+                    detectada = true;
                 }
             }
         }
@@ -329,16 +326,8 @@ void Nave::frenar() {
 }
 
 bool Nave::comprobarColision(Circular &c) {
-    sf::VertexArray poligono_real(sf::LineStrip, 3);
 
-    sf::Transform t;
-    t.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion).scale({tamano, tamano});
-
-    poligono_real[0].position = t.transformPoint(poligono[0].position);
-    poligono_real[1].position = t.transformPoint(poligono[1].position);
-    poligono_real[2].position = t.transformPoint(poligono[3].position);
-
-    return colisionVerticesCirculo(poligono_real, c.posicion, c.radio);
+    return colisionTrianguloCirculo(getTriangulo(), c.posicion, c.radio);
 }
 
 void Nave::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
@@ -347,6 +336,7 @@ void Nave::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
     if (nuevoEstado == DESTRUIDA && estado != nuevoEstado) {
         vidas--;
         num_disparos = 0;
+        recienDestruida = true;
     }
 
 

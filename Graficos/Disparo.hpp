@@ -12,7 +12,7 @@
 class Disparo : public sf::Drawable {
 private:
     //Tamano del disparo en pixeles
-    static constexpr float TAMANO = 2.0;
+    static constexpr float TAMANO = 2.5;
     //Distancia maxima a la que llega un disparo
     static constexpr float ALCANCE = 600.0;
     //Velocidad del disparo (total)

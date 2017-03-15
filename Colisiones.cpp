@@ -18,6 +18,20 @@ bool colisionVerticesCirculo(sf::VertexArray vs, sf::Vector2f c, float r) {
     return false;
 }
 
+//Colision entre una lista de vertices y un circulo, VS(v1,v2,...) y C(c,r)
+bool colisionTrianguloCirculo(sf::VertexArray vs, sf::Vector2f c, float r) {
+    vs.append(sf::Vertex(sf::Vector2f((vs[0].position.x+vs[1].position.x)/2.0,(vs[0].position.y+vs[1].position.y)/2.0)));
+    vs.append(sf::Vertex(sf::Vector2f((vs[1].position.x+vs[2].position.x)/2.0,(vs[1].position.y+vs[2].position.y)/2.0)));
+    vs.append(sf::Vertex(sf::Vector2f((vs[2].position.x+vs[0].position.x)/2.0,(vs[2].position.y+vs[0].position.y)/2.0)));
+    for (int i = 0; i < vs.getVertexCount(); i++) {
+        float distancia_centro = distanciaEuclidea(vs[i].position, c);
+        if (distancia_centro < r) {
+            return true;
+        }
+    }
+    return false;
+}
+
 //Colision entre una lista de vertices y un triangulo, VS(v1,v2,...) y triangulo(v1,v2,v3)
 bool colisionVerticesTriangulo(sf::VertexArray vs, sf::VertexArray triangulo) {
     float orientacion_triangulo = orientacionTriangular(triangulo[0], triangulo[1], triangulo[2]);
