@@ -1,11 +1,14 @@
 #include <iostream>
 #include "Asteroide.hpp"
 
+static constexpr float tamanosReales[] = {6.25f, 12.5f, 25.0f};
+
 Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam) :
-        Circular(posicion_inicial, tam) {
+        Circular(posicion_inicial, tamanosReales[tam]) {
     direccion = dir;
     velocidad = vel;
     version = tipo;
+    tipoTamano = tam;
     // Definimos el asteroide como una serie de puntos conectados por orden
     poligono.setPrimitiveType(sf::LineStrip);
     switch (version) {
@@ -71,7 +74,7 @@ sf::Vector2f Asteroide::getVelocidad() {
 }
 
 int Asteroide::getPuntuacion() const {
-    switch ((int) radio) {
+    switch (tipoTamano) {
         case TAM_0:
             return 100;
         case TAM_1:
@@ -105,7 +108,7 @@ void Asteroide::mover(sf::Vector2u limites) {
 }
 
 void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v) {
-    switch ((int) radio) {
+    switch (tipoTamano) {
         case TAM_0:
             break;
         case TAM_1:

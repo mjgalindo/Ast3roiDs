@@ -14,6 +14,7 @@ private:
     Tipo version;
     sf::VertexArray poligono;
     sf::Vector2f velocidad;
+    Tamano tipoTamano;
 
 public:
 

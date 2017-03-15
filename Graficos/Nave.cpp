@@ -3,7 +3,7 @@
 
 //Constructor
 Nave::Nave(sf::Vector2f posicion_inicial)
-        : Triangular(posicion_inicial, (float) -PI / 2.0f, 17) {
+        : Triangular(posicion_inicial, (float) -PI / 2.0f, 10) {
     if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")) {
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
     }

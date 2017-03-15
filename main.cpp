@@ -3,10 +3,8 @@
 #include <thread>
 #include <iostream>
 
-#include "Estados.hpp"
 #include "Graficos/Nave.hpp"
 #include "Graficos/Ovni.hpp"
-#include "matematicas.hpp"
 
 using namespace std;
 
@@ -238,7 +236,7 @@ Estado tratarJuego(Estado estado) {
     Nave nave = Nave(sf::Vector2f(MAX_SIZE.x / 2.0f, MAX_SIZE.y / 2.0f));
     Ovni ovni;
     vector<Asteroide> asteroides;
-    unsigned int numeroDeAsteroides = 5;
+    unsigned int numeroDeAsteroides = 4;
     Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, MAX_SIZE);
 
     while (true) {
