@@ -12,20 +12,20 @@
 #include "Asteroide.hpp"
 #include "../matematicas.hpp"
 
-#define UMBRAL 0.15
+#define UMBRAL 0.07
 
 class Nave : public sf::Drawable, public Triangular {
 private:
     //Velocidad de giro (radianes por u.t.)
     static constexpr float V_ANGULAR = PI / 30;
     //Aceleracion (pixels por u.t.)
-    static constexpr float ACELERACION = 0.4;
+    static constexpr float ACELERACION = 0.3;
     //Deceleracion (porcentaje de velocidad que se conserva)
-    static constexpr float DECELERACION = 0.987;
+    static constexpr float DECELERACION = 0.985;
     //Numero maximo de disparos activos
     static const int MAX_DISPAROS = 4;
     //Velocidad maxima
-    static const int MAX_VELOCIDAD = 7;
+    static const int MAX_VELOCIDAD = 8;
 
     //Posicion inicial
     sf::Vector2f pos_inicial;
