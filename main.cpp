@@ -218,14 +218,12 @@ Estado tratarJuego(Estado estado) {
     puntuacion.setFont(fuente);
     puntuacion.setCharacterSize(30);
     puntuacion.setPosition(sf::Vector2f(0.0, 0.0));
-    puntuacion.setFillColor(sf::Color::Blue);
+    puntuacion.setFillColor(sf::Color::White);
 
     vidas.setFont(fuente);
     vidas.setCharacterSize(30);
     vidas.setPosition(sf::Vector2f(0.0, 35.0));
-    vidas.setFillColor(sf::Color::Blue);
-
-
+    vidas.setFillColor(sf::Color::White);
 
     shared_ptr<bool> jugando(new bool(true));
 
