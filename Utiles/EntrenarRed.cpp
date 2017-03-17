@@ -8,8 +8,58 @@ using namespace std;
 
 sf::RenderWindow ventana;
 sf::Vector2u MAX_SIZE = {800, 600};
+vector<float> direcciones = {PI * 3 / 4,PI,-PI * 3 / 4,PI / 2,PI / 4,0,-PI / 4,-PI / 2};
+vector<float> salidas = {-3 * (2.0 / 8.0),-2 * (2.0 / 8.0),-1 * (2.0 / 8.0),0,(2.0 / 8.0),
+                         2 * (2.0 / 8.0),3 * (2.0 / 8.0),4 * (2.0 / 8.0)};
 
 vector<Asteroide> asteroides;
+
+double direccionSegura(sf::CircleShape ovni,sf::Vector2f posicionSegura, double direccionObtenida) {
+    float vMax = 3.0f;
+    float radioPeligro = 30.0f;
+    for(int i = 0; i < direcciones.size(); i++) {
+        ovni.setPosition(posicionSegura);
+        bool choque = false;
+        float distanciaRecorrida = 0.0f;
+        while(distanciaRecorrida < radioPeligro && !choque) {
+            //MOVER OVNI Y COMPROBAR QUE CHOCA
+            ovni.move({vMax * (float) cos(direcciones.at(i)), vMax * (float) -sin(direcciones.at(i))});
+            sf::Vector2f posicionOvni = ovni.getPosition();
+            // Evita los limites del espacio
+            if (posicionOvni.x < 0) {
+                posicionOvni.x = MAX_SIZE.x;
+                ovni.setPosition(posicionOvni);
+            } else if (posicionOvni.x > MAX_SIZE.x) {
+                posicionOvni.x = 0;
+                ovni.setPosition(posicionOvni);
+            }
+
+            if (posicionOvni.y < 0) {
+                posicionOvni.y = MAX_SIZE.y;
+                ovni.setPosition(posicionOvni);
+            } else if (posicionOvni.y > MAX_SIZE.y) {
+                posicionOvni.y = 0;
+                ovni.setPosition(posicionOvni);
+            }
+            for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
+                if (distanciaEuclidea(ast->getPosicion(), posicionOvni) < ast->getRadio() + ovni.getRadius()) {
+                    // Hay colision, se informa a la red y se reinicia la escena aleatoriamente
+                    choque = true;
+                    break;
+                }
+            }
+            distanciaRecorrida += 3.0f;
+        }
+        if(!choque) {
+            if(i == 0) {
+                return valorAleatorio(-1,direcciones.at(i));
+            } else {
+                return valorAleatorio(salidas.at(i-1),salidas.at(i));
+            }
+        }
+    }
+    return direccionObtenida;
+}
 
 Asteroide *asteroideMasCercano(sf::Vector2f posicion) {
     double distanciaMenor = 99999999.0;
@@ -29,7 +79,7 @@ int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
     ventana.create(sf::VideoMode(MAX_SIZE.x, MAX_SIZE.y), "Ast3roiDs", sf::Style::Default, settings);
-
+    sf::Vector2f posicionAnterior;
     ventana.setFramerateLimit(60);
     sf::Clock reloj;
     sf::CircleShape sustitutoOvni(15);
@@ -91,7 +141,7 @@ int main() {
             angulo = -PI * 3 / 4;
             //cout << "DL ";
         } else if (salida < 0 * (2.0 / 8.0)) {
-            angulo = PI;
+            angulo = PI / 2;
             //cout << "U ";
         } else if (salida < 1 * (2.0 / 8.0)) {
             angulo = PI / 4;
@@ -109,7 +159,7 @@ int main() {
         float vMax = 3.0f;
         // Niega el eje Y porque está invertido (valores de Y mayores dan posiciones mas abajo)
         sustitutoOvni.move({vMax * (float) cos(angulo), vMax * (float) -sin(angulo)});
-
+        posicionAnterior = posicionOvni;
         posicionOvni = sustitutoOvni.getPosition();
 
         // Evita los limites del espacio
@@ -142,7 +192,8 @@ int main() {
         }
         if (choque) {
             double salidaPre = red.run(entradasRed)[0];
-            red.trainSingle(entradasRed, {-1.0*red.run(entradasRed)[0]}, 0.3);
+            red.trainSingle(entradasRed, {direccionSegura(sustitutoOvni,posicionAnterior,salida)}, 0.3);
+            //red.trainSingle(entradasRed, {-1.0*red.run(entradasRed)[0]}, 0.3);
             Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, MAX_SIZE);
             sustitutoOvni.setPosition({valorAleatorio(0, MAX_SIZE.x), valorAleatorio(0, MAX_SIZE.y)});
             //cout << "La salida era: " << salidaPre << " y ahora es: " << red.run(entradasRed)[0] << '\n';
