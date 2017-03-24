@@ -128,28 +128,31 @@ Estado tratarMenu(Estado estado) {
     texto.setFillColor(sf::Color::White);
 
     opcion1.setFont(fuente);
-    opcion1.setString("1-JUEGO");
+    opcion1.setString("JUGAR");
     opcion1.setCharacterSize(40);
     opcion1.setPosition({(MAX_SIZE.x - opcion1.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 8 + MAX_SIZE.y / 5.0f});
     opcion1.setFillColor(sf::Color::White);
 
     opcion2.setFont(fuente);
-    opcion2.setString("2-PUNTUACIONES");
+    opcion2.setString("PUNTUACIONES");
     opcion2.setCharacterSize(40);
     opcion2.setPosition({(MAX_SIZE.x - opcion2.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 8 + 2 * MAX_SIZE.y / 5.0f});
     opcion2.setFillColor(sf::Color::White);
 
     opcion3.setFont(fuente);
-    opcion3.setString("3-OPCIONES");
+    opcion3.setString("OPCIONES");
     opcion3.setCharacterSize(40);
     opcion3.setPosition({(MAX_SIZE.x - opcion3.getLocalBounds().width) / 2, MAX_SIZE.y / 8.0f + 3 * MAX_SIZE.y / 5.0f});
     opcion3.setFillColor(sf::Color::White);
 
     opcion4.setFont(fuente);
-    opcion4.setString("4-SALIR");
+    opcion4.setString("SALIR");
     opcion4.setCharacterSize(40);
     opcion4.setPosition({(MAX_SIZE.x - opcion4.getLocalBounds().width) / 2, MAX_SIZE.y / 8.0f + 4 * MAX_SIZE.y / 5.0f});
     opcion4.setFillColor(sf::Color::White);
+
+    array<Estado, 4> opciones = {JUEGO, PUNTUACIONES, OPCIONES, ERROR};
+    int seleccion = 0;
 
     while (true) {
         sf::Event event;
@@ -159,20 +162,37 @@ Estado tratarMenu(Estado estado) {
                     ventana.close();
                     return ERROR;
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Num1) {
-                        return JUEGO;
-                    } else if (event.key.code == sf::Keyboard::Num2) {
-                        return PUNTUACIONES;
-                    } else if (event.key.code == sf::Keyboard::Num3) {
-                        return OPCIONES;
-                    } else if (event.key.code == sf::Keyboard::Num4) {
-                        return ERROR;
+                    if (event.key.code == sf::Keyboard::Return) {
+                        return opciones[seleccion];
+                    } else if (event.key.code == sf::Keyboard::Up) {
+                        seleccion = (seleccion - 1) % (unsigned int) opciones.size();
+                    } else if (event.key.code == sf::Keyboard::Down) {
+                        seleccion = (seleccion + 1) % (unsigned int) opciones.size();
                     }
                 default:
                     break;
             }
 
+            sf::RectangleShape indicador({MAX_SIZE.x / 15.0f, MAX_SIZE.x / 15.0f});
+            switch (seleccion) {
+                case 0:
+                    indicador.setPosition({opcion1.getPosition().x - MAX_SIZE.x / 10, opcion1.getPosition().y});
+                    break;
+                case 1:
+                    indicador.setPosition({opcion2.getPosition().x - MAX_SIZE.x / 10, opcion2.getPosition().y});
+                    break;
+                case 2:
+                    indicador.setPosition({opcion3.getPosition().x - MAX_SIZE.x / 10, opcion3.getPosition().y});
+                    break;
+                case 3:
+                    indicador.setPosition({opcion4.getPosition().x - MAX_SIZE.x / 10, opcion4.getPosition().y});
+                    break;
+                default:
+                    break;
+            }
+
             ventana.clear(sf::Color::Black);
+            ventana.draw(indicador);
             ventana.draw(texto);
             ventana.draw(opcion1);
             ventana.draw(opcion2);
@@ -188,7 +208,7 @@ Estado tratarMenu(Estado estado) {
 /// más comunicación con el thread del juego. Además, cada vez
 /// debería ser más rapido dependiendo de la puntuación o del
 /// avance en cada nivel.
-void reproducirMusica(std::shared_ptr<bool> jugando) {
+void reproducirMusica(std::shared_ptr<bool> jugando, std::shared_ptr<bool> silencio) {
     sf::SoundBuffer sonido1, sonido2;
     sonido1.loadFromFile("Recursos/Sonido/beat1.wav");
     sonido2.loadFromFile("Recursos/Sonido/beat2.wav");
@@ -197,9 +217,9 @@ void reproducirMusica(std::shared_ptr<bool> jugando) {
     reproductor2.setBuffer(sonido2);
     int tiempoEntreSonidos = 1000;
     while (*jugando) {
-        reproductor1.play();
+        if (!*silencio) reproductor1.play();
         sf::sleep(sf::milliseconds(tiempoEntreSonidos));
-        reproductor2.play();
+        if (!*silencio) reproductor2.play();
         sf::sleep(sf::milliseconds(tiempoEntreSonidos));
         if (tiempoEntreSonidos > 200)
             tiempoEntreSonidos -= 10;
@@ -226,8 +246,9 @@ Estado tratarJuego(Estado estado) {
     vidas.setFillColor(sf::Color::White);
 
     shared_ptr<bool> jugando(new bool(true));
+    shared_ptr<bool> silencioMusica(new bool(false));
 
-    thread musica(&reproducirMusica, jugando);
+    thread musica(&reproducirMusica, jugando, silencioMusica);
     sf::Clock reloj;
     int nivel = 0;
 
@@ -261,6 +282,8 @@ Estado tratarJuego(Estado estado) {
             case sf::Event::KeyPressed:
                 if (event.key.code == sf::Keyboard::D) {
                     nave.disparar();
+                } else if (event.key.code == sf::Keyboard::M) {
+                    (*silencioMusica) = !*silencioMusica;
                 }
             default:
                 break;
