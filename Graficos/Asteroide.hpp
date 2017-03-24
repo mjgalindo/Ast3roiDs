@@ -45,10 +45,22 @@ public:
                                            sf::Vector2u limitesPantalla) {
         vectorAsteroides.clear();
         for (int i = 0; i < numAsteroides; ++i) {
+            float velocidad = valorAleatorio(0.2,2.0);
+            float direccion = anguloAleatorio();
+
+            int posX = limitesPantalla.x/2.0;
+            int posY = limitesPantalla.y/2.0;
+
+            while(abs(posX-limitesPantalla.x/2.0)<limitesPantalla.x*0.05){
+                posX =  enteroAleatorio(0, limitesPantalla.x);
+            }
+            while(abs(posY-limitesPantalla.y/2.0)<limitesPantalla.y*0.05){
+                posY =  enteroAleatorio(0, limitesPantalla.y);
+            }
+
             vectorAsteroides.push_back(Asteroide(
-                    {(float) enteroAleatorio(0, limitesPantalla.x), (float) enteroAleatorio(0, limitesPantalla.y)},
-                    anguloAleatorio(), {(float) (valorAleatorio() * cos(anguloAleatorio())),
-                                        (float) (valorAleatorio() * sin(anguloAleatorio()))},
+                    {(float) posX, (float) posY},
+                    direccion, { velocidad * (float)cos(direccion),velocidad * (float)sin(direccion) },
                     (Tipo) enteroAleatorio(0, 2), TAM_2));
         }
 

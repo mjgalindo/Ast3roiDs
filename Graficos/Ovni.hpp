@@ -12,7 +12,7 @@
 class Ovni : public sf::Drawable, public Circular {
 
 private:
-    static constexpr float VELOCIDAD = 6.0;
+    static constexpr float VELOCIDAD = 4.0;
     //Numero maximo de disparos activos
     static const int MAX_DISPAROS = 2;
     //Direccion en que se mueve el ovni
