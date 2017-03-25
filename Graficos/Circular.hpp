@@ -29,7 +29,7 @@ class Circular {
         virtual int getPuntuacion() const=0;
 
         //Otros
-        virtual void cambiarEstado(int nuevoEstado, sf::Vector2u lim)=0;
+        virtual void cambiarEstado(int nuevoEstado)=0;
 };
 
 #endif //AST3ROIDS_CIRCULAR_HPP

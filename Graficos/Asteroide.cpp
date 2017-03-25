@@ -132,6 +132,6 @@ void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v) {
     }
 }
 
-void Asteroide::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
+void Asteroide::cambiarEstado(int nuevoEstado) {
     // De momento no se usa
 }

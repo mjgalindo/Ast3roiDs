@@ -17,7 +17,7 @@
 class Nave : public sf::Drawable, public Triangular {
 private:
     //Velocidad de giro (radianes por u.t.)
-    static constexpr float V_ANGULAR = PI / 30;
+    static constexpr float V_ANGULAR = (float) (PI / 30);
     //Aceleracion (pixels por u.t.)
     static constexpr float ACELERACION = 0.3;
     //Deceleracion (porcentaje de velocidad que se conserva)
@@ -53,6 +53,8 @@ private:
     //Puntuacion
     long int puntuacion = 0;
 
+    sf::Vector2u limites;
+
     // Buffers de los distintos sonidos de una nave
     sf::SoundBuffer bufferSonidoDisparo;
     sf::SoundBuffer bufferSonidoPropulsion;
@@ -66,7 +68,7 @@ private:
 
 public:
     //Constructor
-    Nave(sf::Vector2f posicion_inicial);
+    Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla);
 
     //Destructor
     ~Nave();
@@ -101,7 +103,7 @@ public:
 
     void rotarDcha();
 
-    void mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o);
+    void mover(std::vector<Asteroide> &v, Circular &o);
 
     void acelerar();
 
@@ -109,7 +111,7 @@ public:
 
     bool comprobarColision(Circular &c);
 
-    virtual void cambiarEstado(int nuevoEstado, sf::Vector2u lim);
+    virtual void cambiarEstado(int nuevoEstado);
 };
 
 #endif //AST3ROIDS_NAVE_HPP

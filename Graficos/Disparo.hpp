@@ -16,7 +16,7 @@ private:
     //Distancia maxima a la que llega un disparo
     static constexpr float ALCANCE = 600.0f;
     //Velocidad del disparo (total)
-    static constexpr float VELOCIDAD = 13.0f;
+    static constexpr float VELOCIDAD = 6.5f;
 
     //Orden: superior, inferior
     sf::VertexArray poligono;
@@ -27,13 +27,14 @@ private:
     //Distancia recorrida
     float distancia;
 
+    sf::Vector2u limites;
     sf::Clock reloj;
 
 public:
     //Constructor
     Disparo();
 
-    Disparo(sf::Vector2f pos_inicial, float d);
+    Disparo(sf::Vector2f pos_inicial, float d, sf::Vector2u limitesPantalla);
 
     //Destructor
     ~Disparo();
@@ -56,7 +57,7 @@ public:
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 
     //Otros
-    void mover(sf::Vector2u limites);
+    void mover();
 
     bool comprobarAlcance();
 

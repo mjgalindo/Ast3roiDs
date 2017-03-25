@@ -1,21 +1,22 @@
 #include "Disparo.hpp"
-#include <iostream>
 
 //Constructores
 Disparo::Disparo() {}
 
-Disparo::Disparo(sf::Vector2f pos_inicial, float d) {
+Disparo::Disparo(sf::Vector2f pos_inicial, float d, sf::Vector2u limitesPantalla) {
 
     direccion = d;
 
     poligono.setPrimitiveType(sf::LineStrip);
     poligono.resize(2);
-    poligono[0].position = {1.0, 0.0};
-    poligono[1].position = {-1.0, 0.0};
+    poligono[0].position = {1.0f, 0.0f};
+    poligono[1].position = {-1.0f, 0.0f};
 
     //Posicion de la nave
     posicion = pos_inicial;
     distancia = 0;
+
+    limites = limitesPantalla;
 }
 
 //Destructor
@@ -52,23 +53,23 @@ sf::Vector2f Disparo::getPosicion() {
 void Disparo::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 
     sf::Transform t;
-    t.rotate(direccion * (180.0 / 3.14), posicion).translate(posicion).scale({(float) TAMANO, (float) TAMANO});
+    t.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion).scale(
+            {TAMANO * limites.x / (float) RESOLUCION_BASE.x, TAMANO * limites.y / (float) RESOLUCION_BASE.y});
 
     target.draw(poligono, t);
-
 }
 
 //Otros
-void Disparo::mover(sf::Vector2u limites) {
+void Disparo::mover() {
     //Mover la nave
-    posicion.x += VELOCIDAD * cos(direccion);
+    posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
     if (posicion.x - 1 >= limites.x) {
         posicion.x -= limites.x;
     } else if (posicion.x + 1 <= 0.0) {
         posicion.x += limites.x;
     }
 
-    posicion.y += VELOCIDAD * sin(direccion);
+    posicion.y += VELOCIDAD * sin(direccion) * limites.y / (float) RESOLUCION_BASE.y;
     if (posicion.y - 1 >= limites.y) {
         posicion.y -= limites.y;
     } else if (posicion.y + 1 <= 0.0) {
@@ -79,18 +80,14 @@ void Disparo::mover(sf::Vector2u limites) {
 }
 
 bool Disparo::comprobarAlcance() {
-    if (distancia >= ALCANCE) {
-        return true;
-    } else {
-        return false;
-    }
+    return distancia >= ALCANCE;
 }
 
 bool Disparo::comprobarColision(Circular &c) {
     sf::VertexArray poligono_real = poligono;
 
     sf::Transform t;
-    t.rotate(direccion * (180.0 / 3.14), posicion).translate(posicion).scale({(float) TAMANO, (float) TAMANO});
+    t.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion).scale({(float) TAMANO, (float) TAMANO});
 
     poligono_real[0].position = t.transformPoint(poligono[0].position);
     poligono_real[1].position = t.transformPoint(poligono[1].position);
@@ -103,7 +100,7 @@ bool Disparo::comprobarColision(Triangular &tri) {
     sf::VertexArray poligono_real = poligono;
 
     sf::Transform t;
-    t.rotate(direccion * (180.0 / 3.14), posicion).translate(posicion).scale({(float) TAMANO, (float) TAMANO});
+    t.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion).scale({(float) TAMANO, (float) TAMANO});
 
     poligono_real[0].position = t.transformPoint(poligono[0].position);
     poligono_real[1].position = t.transformPoint(poligono[1].position);

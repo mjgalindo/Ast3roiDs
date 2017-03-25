@@ -2,8 +2,8 @@
 #include "Nave.hpp"
 
 //Constructor
-Nave::Nave(sf::Vector2f posicion_inicial)
-        : Triangular(posicion_inicial, (float) -PI / 2.0f, 10) {
+Nave::Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla)
+        : Triangular(posicion_inicial, (float) -PI / 2.0f, 10 * (limitesPantalla.y / (float) RESOLUCION_BASE.y)) {
     if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")) {
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
     }
@@ -70,8 +70,10 @@ Nave::Nave(sf::Vector2f posicion_inicial)
     //Disparos
     num_disparos = 0;
     for (int i = 0; i < MAX_DISPAROS; i++) {
-        disparos[i] = Disparo(sf::Vector2f(0.0, 0.0), 0.0);
+        disparos[i] = Disparo({0.0f, 0.0f}, 0.0f, limitesPantalla);
     }
+
+    limites = limitesPantalla;
 }
 
 void Nave::reiniciar() {
@@ -127,8 +129,8 @@ void Nave::draw(sf::RenderTarget &target, sf::RenderStates states) const {
             t.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion).scale({tamano, tamano});
 
             target.draw(poligono, t);
-        }
             break;
+        }
 
         case ACELERANDO: {
             sf::Transform t;
@@ -136,8 +138,8 @@ void Nave::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 
             target.draw(poligono, t);
             target.draw(fuego, t);
-        }
             break;
+        }
 
         case DESTRUIDA: {
 
@@ -153,12 +155,13 @@ void Nave::draw(sf::RenderTarget &target, sf::RenderStates states) const {
             target.draw(linea1, t1);
             target.draw(linea2, t2);
             target.draw(linea3, t3);
-
-        }
             break;
 
-        case REAPARECIENDO: {
         }
+        case REAPARECIENDO: {
+            break;
+        }
+        default:
             break;
     }
 
@@ -177,7 +180,7 @@ void Nave::disparar() {
                                 poligono[0].position.y * tamano * sin(direccion));
             inicio.y = (float) (poligono[0].position.y * tamano * cos(direccion) +
                                 poligono[0].position.x * tamano * sin(direccion));
-            disparos[num_disparos] = Disparo(posicion + inicio, direccion);
+            disparos[num_disparos] = Disparo(posicion + inicio, direccion, limites);
             num_disparos++;
             reproductorDeSonidoDisparos.play();
         }
@@ -202,7 +205,7 @@ void Nave::rotarDcha() {
     }
 }
 
-void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
+void Nave::mover(std::vector<Asteroide> &v, Circular &o) {
     if (estado == REPOSO || estado == ACELERANDO) {
         //Mover la nave
         posicion.x += velocidad.x;
@@ -221,7 +224,7 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
 
         //Mover los disparos
         for (int i = 0; i < num_disparos; i++) {
-            disparos[i].mover(limites);
+            disparos[i].mover();
             if (disparos[i].comprobarAlcance()) {
                 if (disparos[i].comprobarAlcance()) {
                     recuperarDisparo(i);
@@ -234,8 +237,8 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
             puntuacion += o.getPuntuacion();
             recienDestruida = true;
 
-            o.cambiarEstado(EXP1, {0, 0});
-            cambiarEstado(DESTRUIDA, {0, 0});
+            o.cambiarEstado(EXP1);
+            cambiarEstado(DESTRUIDA);
         }
 
         //Se comprueba el impacto de los disparos
@@ -245,14 +248,14 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
                 recuperarDisparo(j);
                 j--;
 
-                o.cambiarEstado(EXP1, {0, 0});
+                o.cambiarEstado(EXP1);
             }
         }
 
         for (int i = 0; i < v.size(); i++) {
             if (comprobarColision(v[i])) {
                 puntuacion += v[i].getPuntuacion();
-                cambiarEstado(DESTRUIDA, {0, 0});
+                cambiarEstado(DESTRUIDA);
 
                 //Destruir asteroide, dividirlo o lo que sea...
                 v[i].gestionarDestruccion(v);
@@ -303,20 +306,20 @@ void Nave::recuperarDisparo(int d) {
 void Nave::acelerar() {
     if (estado == REPOSO || estado == ACELERANDO) {
         if (velocidad.x * velocidad.x + velocidad.y * velocidad.y < MAX_VELOCIDAD * MAX_VELOCIDAD) {
-            velocidad.x += ACELERACION * cos(direccion);
-            velocidad.y += ACELERACION * sin(direccion);
+            velocidad.x += ACELERACION * cos(direccion) * limites.x / (float) RESOLUCION_BASE.x;
+            velocidad.y += ACELERACION * sin(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         }
         if (reproductorDeSonidoPropulsion.getStatus() == sf::Sound::Status::Stopped) {
             reproductorDeSonidoPropulsion.play();
         }
 
-        cambiarEstado(REPOSO, {0, 0});
-        cambiarEstado(ACELERANDO, {0, 0});
+        cambiarEstado(REPOSO);
+        cambiarEstado(ACELERANDO);
     }
 }
 
 void Nave::frenar() {
-    if (velocidad.x * velocidad.x + velocidad.y * velocidad.y < UMBRAL) {
+    if (velocidad.x * velocidad.x + velocidad.y * velocidad.y < UMBRAL * limites.x / (float) RESOLUCION_BASE.x) {
         velocidad.x = 0;
         velocidad.y = 0;
     } else {
@@ -330,7 +333,7 @@ bool Nave::comprobarColision(Circular &c) {
     return colisionTrianguloCirculo(getTriangulo(), c.posicion, c.radio);
 }
 
-void Nave::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
+void Nave::cambiarEstado(int nuevoEstado) {
     static int ciclos = 0;
 
     if (nuevoEstado == DESTRUIDA && estado != nuevoEstado) {
@@ -338,7 +341,6 @@ void Nave::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
         num_disparos = 0;
         recienDestruida = true;
     }
-
 
     estado = nuevoEstado;
     switch (estado) {
@@ -369,6 +371,8 @@ void Nave::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
             } else {
                 ciclos++;
             }
+            break;
+        default:
             break;
     }
 }

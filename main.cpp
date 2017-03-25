@@ -20,19 +20,19 @@ Estado tratarPuntuaciones(Estado estado);
 Estado tratarOpciones(Estado estado);
 
 //Tamaño de la ventana
-sf::Vector2u MAX_SIZE = 2u * RESOLUCION_BASE;
+sf::Vector2u resolucion = 2u * RESOLUCION_BASE;
 
 double ratio_alto = 1.0 / RESOLUCION_BASE.x;
 double ratio_ancho = 1.0 / RESOLUCION_BASE.y;
 
 template<typename T>
 T ajustar_h(T valor) {
-    return (T) (valor * MAX_SIZE.y * ratio_alto);
+    return (T) (valor * resolucion.y * ratio_alto);
 }
 
 template<typename T>
 T ajustar_w(T valor) {
-    return (T) (valor * MAX_SIZE.x * ratio_ancho);
+    return (T) (valor * resolucion.x * ratio_ancho);
 }
 
 //Ventana
@@ -41,7 +41,7 @@ sf::RenderWindow ventana;
 int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
-    ventana.create(sf::VideoMode(MAX_SIZE.x,MAX_SIZE.y), "Ast3roiDs", sf::Style::Default, settings);
+    ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
 
     ventana.setFramerateLimit(60);
     ventana.setKeyRepeatEnabled(false);
@@ -86,12 +86,12 @@ Estado tratarTitulo(Estado estado) {
     titulo.setString("AST3ROIDS");
     titulo.setCharacterSize(ajustar_h(100u));
     titulo.setFillColor(sf::Color::White);
-    titulo.setPosition((MAX_SIZE.x - titulo.getLocalBounds().width) / 2, MAX_SIZE.y / 5);
+    titulo.setPosition((resolucion.x - titulo.getLocalBounds().width) / 2, resolucion.y / 5);
 
     instrucciones.setFont(fuente);
     instrucciones.setString("<ENTER> PARA MENU");
     instrucciones.setCharacterSize(ajustar_h(30u));
-    instrucciones.setPosition((MAX_SIZE.x - instrucciones.getLocalBounds().width) / 2, ajustar_h(360));
+    instrucciones.setPosition((resolucion.x - instrucciones.getLocalBounds().width) / 2, ajustar_h(360));
     instrucciones.setFillColor(sf::Color::White);
 
     sf::Clock reloj;
@@ -138,31 +138,35 @@ Estado tratarMenu(Estado estado) {
     texto.setFont(fuente);
     texto.setString("MENU");
     texto.setCharacterSize(ajustar_h(80u));
-    texto.setPosition({(MAX_SIZE.x - texto.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 10.0f});
+    texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 10.0f});
     texto.setFillColor(sf::Color::White);
 
     opcion1.setFont(fuente);
     opcion1.setString("JUGAR");
     opcion1.setCharacterSize(ajustar_h(40u));
-    opcion1.setPosition({(MAX_SIZE.x - opcion1.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 8 + MAX_SIZE.y / 5.0f});
+    opcion1.setPosition(
+            {(resolucion.x - opcion1.getLocalBounds().width) / 2.0f, resolucion.y / 8 + resolucion.y / 5.0f});
     opcion1.setFillColor(sf::Color::White);
 
     opcion2.setFont(fuente);
     opcion2.setString("PUNTUACIONES");
     opcion2.setCharacterSize(ajustar_h(40u));
-    opcion2.setPosition({(MAX_SIZE.x - opcion2.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 8 + 2 * MAX_SIZE.y / 5.0f});
+    opcion2.setPosition(
+            {(resolucion.x - opcion2.getLocalBounds().width) / 2.0f, resolucion.y / 8 + 2 * resolucion.y / 5.0f});
     opcion2.setFillColor(sf::Color::White);
 
     opcion3.setFont(fuente);
     opcion3.setString("OPCIONES");
     opcion3.setCharacterSize(ajustar_h(40u));
-    opcion3.setPosition({(MAX_SIZE.x - opcion3.getLocalBounds().width) / 2, MAX_SIZE.y / 8.0f + 3 * MAX_SIZE.y / 5.0f});
+    opcion3.setPosition(
+            {(resolucion.x - opcion3.getLocalBounds().width) / 2, resolucion.y / 8.0f + 3 * resolucion.y / 5.0f});
     opcion3.setFillColor(sf::Color::White);
 
     opcion4.setFont(fuente);
     opcion4.setString("SALIR");
     opcion4.setCharacterSize(ajustar_h(40u));
-    opcion4.setPosition({(MAX_SIZE.x - opcion4.getLocalBounds().width) / 2, MAX_SIZE.y / 8.0f + 4 * MAX_SIZE.y / 5.0f});
+    opcion4.setPosition(
+            {(resolucion.x - opcion4.getLocalBounds().width) / 2, resolucion.y / 8.0f + 4 * resolucion.y / 5.0f});
     opcion4.setFillColor(sf::Color::White);
 
     array<Estado, 4> opciones = {JUEGO, PUNTUACIONES, OPCIONES, ERROR};
@@ -187,19 +191,19 @@ Estado tratarMenu(Estado estado) {
                     break;
             }
 
-            sf::RectangleShape indicador({MAX_SIZE.x / 15.0f, MAX_SIZE.x / 15.0f});
+            sf::RectangleShape indicador({resolucion.x / 15.0f, resolucion.x / 15.0f});
             switch (seleccion) {
                 case 0:
-                    indicador.setPosition({opcion1.getPosition().x - MAX_SIZE.x / 10, opcion1.getPosition().y});
+                    indicador.setPosition({opcion1.getPosition().x - resolucion.x / 10, opcion1.getPosition().y});
                     break;
                 case 1:
-                    indicador.setPosition({opcion2.getPosition().x - MAX_SIZE.x / 10, opcion2.getPosition().y});
+                    indicador.setPosition({opcion2.getPosition().x - resolucion.x / 10, opcion2.getPosition().y});
                     break;
                 case 2:
-                    indicador.setPosition({opcion3.getPosition().x - MAX_SIZE.x / 10, opcion3.getPosition().y});
+                    indicador.setPosition({opcion3.getPosition().x - resolucion.x / 10, opcion3.getPosition().y});
                     break;
                 case 3:
-                    indicador.setPosition({opcion4.getPosition().x - MAX_SIZE.x / 10, opcion4.getPosition().y});
+                    indicador.setPosition({opcion4.getPosition().x - resolucion.x / 10, opcion4.getPosition().y});
                     break;
                 default:
                     break;
@@ -266,11 +270,11 @@ Estado tratarJuego(Estado estado) {
     sf::Clock reloj;
     int nivel = 0;
 
-    Nave nave = Nave(sf::Vector2f(MAX_SIZE.x / 2.0f, MAX_SIZE.y / 2.0f));
-    Ovni ovni;
+    Nave nave = Nave({resolucion.x / 2.0f, resolucion.y / 2.0f}, resolucion);
+    Ovni ovni(resolucion);
     vector<Asteroide> asteroides;
     unsigned int numeroDeAsteroides = 4;
-    Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, MAX_SIZE);
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion);
 
     while (true) {
         if(nave.getVidas()<0){
@@ -283,7 +287,7 @@ Estado tratarJuego(Estado estado) {
         if(asteroides.size()==0){
             nivel++;
             numeroDeAsteroides+=2;
-            Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, MAX_SIZE);
+            Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion);
         }
 
         sf::Event event;
@@ -315,8 +319,8 @@ Estado tratarJuego(Estado estado) {
             nave.acelerar();
         }
 
-        ovni.mover(MAX_SIZE, asteroides, nave);
-        nave.mover(MAX_SIZE, asteroides, ovni);
+        ovni.mover(asteroides, nave);
+        nave.mover(asteroides, ovni);
         nave.frenar();
 
         puntuacion.setString(std::to_string(nave.getPuntuacion()));
@@ -337,8 +341,8 @@ Estado tratarJuego(Estado estado) {
 
         ventana.display();
         reloj.restart();
-        nave.cambiarEstado(nave.getEstado(),MAX_SIZE);
-        ovni.cambiarEstado(ovni.getEstado(),MAX_SIZE);
+        nave.cambiarEstado(nave.getEstado());
+        ovni.cambiarEstado(ovni.getEstado());
     }
 }
 

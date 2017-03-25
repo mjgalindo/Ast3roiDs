@@ -39,7 +39,7 @@ public:
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 
     //Otros
-    virtual void cambiarEstado(int nuevoEstado, sf::Vector2u lim);
+    virtual void cambiarEstado(int nuevoEstado);
 
     void gestionarDestruccion(std::vector<Asteroide> &v);
 

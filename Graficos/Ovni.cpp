@@ -1,8 +1,8 @@
 #include "Ovni.hpp"
 #include <iostream>
 
-Ovni::Ovni() :
-        Circular({0, 0}, 15) {
+Ovni::Ovni(sf::Vector2u limitesPantalla) :
+        Circular({0, 0}, 15 * limitesPantalla.y / (float) RESOLUCION_BASE.y) {
     estado = MUERTO;
     if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")) {
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
@@ -30,6 +30,8 @@ Ovni::Ovni() :
     poligono[9].position = {0.4f, -0.8f};
     poligono[10].position = {-0.4f, -0.8f};
     poligono[11].position = {-0.6f, -0.4f};
+
+    limites = limitesPantalla;
 }
 
 Ovni::~Ovni() {}
@@ -49,7 +51,7 @@ int Ovni::getPuntuacion() const {
 void Ovni::disparar() {
     if (estado == VIVO) {
         if (num_disparos < MAX_DISPAROS) {
-            disparos[num_disparos] = Disparo(posicion, direccion);
+            disparos[num_disparos] = Disparo(posicion, direccion, limites);
             disparos[num_disparos].setDireccion(anguloAleatorio());
             num_disparos++;
         }
@@ -90,20 +92,20 @@ void Ovni::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     }
 }
 
-void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n) {
+void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
     if (estado == VIVO) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
         if (valorAleatorio() < 0.0055) {
             direccion = anguloAleatorio();
         }
-        posicion.x += VELOCIDAD * cos(direccion);
+        posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         if (posicion.x - 1 >= limites.x) {
             posicion.x -= limites.x;
         } else if (posicion.x + 1 <= 0.0) {
             posicion.x += limites.x;
         }
 
-        posicion.y += VELOCIDAD * sin(direccion);
+        posicion.y += VELOCIDAD * sin(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         if (posicion.y - 1 >= limites.y) {
             posicion.y -= limites.y;
         } else if (posicion.y + 1 <= 0.0) {
@@ -117,7 +119,7 @@ void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n)
         //Colision del ovni con un asteroide
         for (int i = 0; i < v.size(); i++) {
             if (comprobarColision(v[i])) {
-                cambiarEstado(EXP1, {0, 0});
+                cambiarEstado(EXP1);
                 //Destruir asteroide, dividirlo o lo que sea....
                 v[i].gestionarDestruccion(v);
                 v.erase(v.begin() + i);
@@ -127,7 +129,7 @@ void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n)
 
         //Mover los disparos
         for (int i = 0; i < num_disparos; i++) {
-            disparos[i].mover(limites);
+            disparos[i].mover();
 
             if (disparos[i].comprobarAlcance()) {
                 recuperarDisparo(i);
@@ -139,7 +141,7 @@ void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n)
             if ((n.getEstado() == REPOSO || n.getEstado() == ACELERANDO) && disparos[i].comprobarColision(n)) {
                 recuperarDisparo(i);
                 i--;
-                n.cambiarEstado(DESTRUIDA, {0, 0});
+                n.cambiarEstado(DESTRUIDA);
                 continue;
             }
 
@@ -168,7 +170,7 @@ bool Ovni::comprobarColision(Circular &c) {
     return colisionCirculos(posicion, radio, c.posicion, c.radio);
 }
 
-void Ovni::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
+void Ovni::cambiarEstado(int nuevoEstado) {
     static int ciclo = 0;
     estado = nuevoEstado;
     switch ((EstadoOvni) nuevoEstado) {
@@ -198,10 +200,10 @@ void Ovni::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
             if (rand() % 200 == 0) {
                 estado = VIVO;
                 if (valorAleatorio() < 0.5) {
-                    posicion = {30.0f, valorAleatorio(0, lim.y)};
+                    posicion = {30.0f * (limites.x / (float) RESOLUCION_BASE.x), valorAleatorio(0, limites.y)};
                 } else {
-                    std::uniform_real_distribution<float> distributionX(0, lim.x);
-                    posicion = {valorAleatorio(0, lim.x), 30.0f};
+                    std::uniform_real_distribution<float> distributionX(0, limites.x);
+                    posicion = {valorAleatorio(0, limites.x), 30.0f * (limites.y / (float) RESOLUCION_BASE.y)};
                 }
                 direccion = anguloAleatorio();
                 num_disparos = 0;

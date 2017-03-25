@@ -36,7 +36,7 @@ class Triangular {
         sf::VertexArray getTriangulo();
 
         //Otros
-        virtual void cambiarEstado(int nuevoEstado, sf::Vector2u lim)=0;
+        virtual void cambiarEstado(int nuevoEstado)=0;
 };
 
 #endif //AST3ROIDS_TRIANGULAR_HPP

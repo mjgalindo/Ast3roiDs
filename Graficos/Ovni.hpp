@@ -12,7 +12,7 @@
 class Ovni : public sf::Drawable, public Circular {
 
 private:
-    static constexpr float VELOCIDAD = 4.0;
+    static constexpr float VELOCIDAD = 3.0;
     //Numero maximo de disparos activos
     static const int MAX_DISPAROS = 2;
     //Direccion en que se mueve el ovni
@@ -27,6 +27,8 @@ private:
     //Vector de disparos
     Disparo disparos[MAX_DISPAROS];
 
+    sf::Vector2u limites;
+
     // Buffers de los distintos sonidos de un ovni
     sf::SoundBuffer bufferSonidoOvni;
     sf::SoundBuffer bufferSonidoDisparo;
@@ -36,7 +38,7 @@ private:
     sf::Sound reproductorDeSonidoOvni;
 
 public:
-    Ovni();
+    Ovni(sf::Vector2u limitesPantalla);
 
     ~Ovni();
 
@@ -51,13 +53,13 @@ public:
 
     void disparar();
 
-    void mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n);
+    void mover(std::vector<Asteroide> &v, Triangular &n);
 
     void recuperarDisparo(int d);
 
     bool comprobarColision(Circular &c);
 
-    virtual void cambiarEstado(int nuevoEstado, sf::Vector2u lim);
+    virtual void cambiarEstado(int nuevoEstado);
 };
 
 
