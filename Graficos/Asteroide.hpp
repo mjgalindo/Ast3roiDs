@@ -5,6 +5,7 @@
 
 #include "../Estados.hpp"
 #include "Circular.hpp"
+#include "../Estados.hpp"
 #include "../matematicas.hpp"
 
 class Asteroide : public sf::Drawable, public Circular {
@@ -13,9 +14,13 @@ private:
     float direccion;
     Tipo version;
     sf::VertexArray poligono;
+
+    sf::VertexArray punto;
+    sf::Vector2f posicion0, posicion1, posicion2, posicion3, posicion4, posicion5, posicion6, posicion7;
+    bool recienDestruida = false;
     sf::Vector2f velocidad;
     Tamano tipoTamano;
-
+    clock_t start;
 public:
 
     Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam);

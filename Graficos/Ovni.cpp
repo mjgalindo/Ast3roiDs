@@ -30,6 +30,13 @@ Ovni::Ovni() :
     poligono[9].position = {0.4f, -0.8f};
     poligono[10].position = {-0.4f, -0.8f};
     poligono[11].position = {-0.6f, -0.4f};
+
+    punto.setPrimitiveType(sf::LineStrip);
+    punto.resize(2);
+    punto[0].position = {0.0f, 0.0f};
+    punto[0].position = {0.2f, 0.2f};
+
+    recienDestruida = true;
 }
 
 Ovni::~Ovni() {}
@@ -63,26 +70,25 @@ void Ovni::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         t.translate(posicion).scale({radio, radio});
         target.draw(poligono, t);
     } else if (estado == EXP1) {
-        sf::CircleShape c;
-        c.setRadius(radio);
-        c.setOrigin(radio, radio);
-        c.setPosition(posicion);
-        c.setFillColor(sf::Color::White);
-        target.draw(c);
-    } else if (estado == EXP2) {
-        sf::CircleShape c;
-        c.setRadius(radio);
-        c.setOrigin(radio, radio);
-        c.setPosition(posicion);
-        c.setFillColor(sf::Color::Yellow);
-        target.draw(c);
-    } else if (estado == EXP3) {
-        sf::CircleShape c;
-        c.setRadius(radio);
-        c.setOrigin(radio, radio);
-        c.setPosition(posicion);
-        c.setFillColor(sf::Color::Red);
-        target.draw(c);
+        sf::Transform t0, t1, t2, t3, t4, t5, t6, t7;
+        t0.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion0);
+        t1.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion1);
+        t2.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion2);
+        t3.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion3);
+        t4.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion4);
+        t5.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion5);
+        t6.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion6);
+        t7.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion7);
+
+
+        target.draw(punto, t0);
+        target.draw(punto, t1);
+        target.draw(punto, t2);
+        target.draw(punto, t3);
+        target.draw(punto, t4);
+        target.draw(punto, t5);
+        target.draw(punto, t6);
+        target.draw(punto, t7);
     }
 
     for (int i = 0; i < num_disparos; i++) {
@@ -155,6 +161,33 @@ void Ovni::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Triangular &n)
             }
         }
     }
+    if(estado==EXP1){
+        if (recienDestruida) {
+            posicion0 = posicion;
+            posicion1 = posicion;
+            posicion2 = posicion;
+            posicion3 = posicion;
+            posicion4 = posicion;
+            posicion5 = posicion;
+            posicion6 = posicion;
+            posicion7 = posicion;
+            recienDestruida = false;
+            start = clock();
+        }
+        double tiempo = (clock()-start)/(double)CLOCKS_PER_SEC;
+        if (tiempo >2.0){
+            estado=MUERTO;
+            //cambiarEstado(MUERTO,{0, 0});
+        }
+        posicion0 = {posicion0.x + 1.0f, posicion0.y + 1.0f};
+        posicion1 = {posicion1.x + 1.2f, posicion1.y + 1.1};
+        posicion2 = {posicion2.x + 1.0f, posicion2.y - 1.2};
+        posicion3 = {posicion3.x - 0.5f, posicion3.y - 1.0f};
+        posicion4 = {posicion4.x + 0.75f, posicion4.y + 0.6};
+        posicion5 = {posicion5.x - 0.65f, posicion5.y + 0.45};
+        posicion6 = {posicion6.x + 0.4, posicion6.y - 0.2};
+        posicion7 = {posicion7.x - 0.9f, posicion7.y - 0.3};
+    }
 }
 
 void Ovni::recuperarDisparo(int d) {
@@ -179,20 +212,7 @@ void Ovni::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
             num_disparos = 0;
             reproductorDeSonidoOvni.setLoop(false);
             reproductorDeSonidoOvni.stop();
-            if (ciclo >= 5) {
-                estado = EXP2;
-            }
-            break;
-        case EXP2:
-            if (ciclo >= 10) {
-                estado = EXP3;
-            }
-            break;
-        case EXP3:
-            if (ciclo >= 15) {
-                estado = MUERTO;
-                posicion = {-100, -100};
-            }
+
             break;
         case MUERTO:
             if (rand() % 200 == 0) {
@@ -205,6 +225,7 @@ void Ovni::cambiarEstado(int nuevoEstado, sf::Vector2u lim) {
                 }
                 direccion = anguloAleatorio();
                 num_disparos = 0;
+                recienDestruida = true;
                 reproductorDeSonidoOvni.setLoop(true);
                 reproductorDeSonidoOvni.play();
             }

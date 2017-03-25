@@ -1,8 +1,10 @@
+
+#include <glew.h>
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <thread>
 #include <iostream>
-
+#include <SFML/OpenGL.hpp>
 #include "Graficos/Nave.hpp"
 #include "Graficos/Ovni.hpp"
 
@@ -25,6 +27,38 @@ sf::Vector2u MAX_SIZE = {800,600};
 sf::RenderWindow ventana;
 
 int main() {
+    GLfloat points[] = {
+            0.0f,  0.5f,  0.0f,
+            0.5f,
+            -0.5f,  0.0f,
+            -  0.5f,
+            -0.5f,  0.0f
+    };
+    GLfloat colors[] = {
+            1.0f, 0.0f,
+            0.0f,
+            0.0f, 1.0f,
+            0.0f,
+            0.0f, 0.0f,
+            1.0f
+    };
+    /*GLuint points_VBO = 0;
+    GLuint colors_VBO = 0;
+    glGenBuffers(1, &points_VBO);
+    glGenBuffers(1, &colors_VBO);
+    GLuint VAO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, points_VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),NULL);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, colors_VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),NULL);
+    glEnableVertexAttribArray(1);
+    glBindVertexArray(0);
+    */
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
     ventana.create(sf::VideoMode(MAX_SIZE.x,MAX_SIZE.y), "Ast3roiDs", sf::Style::Default, settings);
@@ -225,7 +259,21 @@ void reproducirMusica(std::shared_ptr<bool> jugando, std::shared_ptr<bool> silen
             tiempoEntreSonidos -= 10;
     }
 }
+void comprobarMuerteAsteroides(std::vector<Asteroide> &asteroides){
+    for(int i=0; i<asteroides.size(); i++){
+        if(asteroides[i].estado == DESTRUIDO){
+            asteroides.erase(asteroides.begin() + i);
+        }
+    }
 
+}
+void comprobarMuerteOvni(Ovni ovni){
+    if(ovni.estado == MUERTO){
+        //ovni.erase(asteroides.begin() + i);
+    }
+
+
+}
 Estado tratarJuego(Estado estado) {
     sf::Text texto;
     sf::Text opcion1;
@@ -303,6 +351,8 @@ Estado tratarJuego(Estado estado) {
         nave.mover(MAX_SIZE, asteroides, ovni);
         nave.frenar();
 
+        comprobarMuerteAsteroides(asteroides);
+        comprobarMuerteOvni(ovni);
         puntuacion.setString(std::to_string(nave.getPuntuacion()));
         vidas.setString(std::to_string(nave.getVidas()));
 

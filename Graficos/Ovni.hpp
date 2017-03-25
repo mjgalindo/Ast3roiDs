@@ -19,6 +19,9 @@ private:
     float direccion;
 
     sf::VertexArray poligono;
+    sf::VertexArray punto;
+    sf::Vector2f posicion0, posicion1, posicion2, posicion3, posicion4, posicion5, posicion6, posicion7;
+    bool recienDestruida = true;
 
     sf::Vector2f velocidad;
 
@@ -35,6 +38,7 @@ private:
     sf::Sound reproductorDeSonidoDisparos;
     sf::Sound reproductorDeSonidoOvni;
 
+    clock_t start;
 public:
     Ovni();
 
