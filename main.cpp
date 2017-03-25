@@ -20,7 +20,7 @@ Estado tratarPuntuaciones(Estado estado);
 Estado tratarOpciones(Estado estado);
 
 //Tamaño de la ventana
-sf::Vector2u resolucion = 2u * RESOLUCION_BASE;
+sf::Vector2u resolucion = 1u * RESOLUCION_BASE;
 
 double ratio_alto = 1.0 / RESOLUCION_BASE.x;
 double ratio_ancho = 1.0 / RESOLUCION_BASE.y;
@@ -226,7 +226,7 @@ Estado tratarMenu(Estado estado) {
 /// más comunicación con el thread del juego. Además, cada vez
 /// debería ser más rapido dependiendo de la puntuación o del
 /// avance en cada nivel.
-void reproducirMusica(std::shared_ptr<bool> jugando, std::shared_ptr<bool> silencio) {
+void reproducirMusica(std::shared_ptr<bool> jugando, std::shared_ptr<bool> silencio, std::shared_ptr<bool> reiniciar) {
     sf::SoundBuffer sonido1, sonido2;
     sonido1.loadFromFile("Recursos/Sonido/beat1.wav");
     sonido2.loadFromFile("Recursos/Sonido/beat2.wav");
@@ -241,6 +241,10 @@ void reproducirMusica(std::shared_ptr<bool> jugando, std::shared_ptr<bool> silen
         sf::sleep(sf::milliseconds(tiempoEntreSonidos));
         if (tiempoEntreSonidos > 200)
             tiempoEntreSonidos -= 10;
+        if (*reiniciar) {
+            tiempoEntreSonidos = 1000;
+            *reiniciar = false;
+        }
     }
 }
 
@@ -265,8 +269,9 @@ Estado tratarJuego(Estado estado) {
 
     shared_ptr<bool> jugando(new bool(true));
     shared_ptr<bool> silencioMusica(new bool(false));
+    shared_ptr<bool> reiniciarMusica(new bool(false));
 
-    thread musica(&reproducirMusica, jugando, silencioMusica);
+    thread musica(&reproducirMusica, jugando, silencioMusica, reiniciarMusica);
     sf::Clock reloj;
     int nivel = 0;
 
@@ -288,6 +293,7 @@ Estado tratarJuego(Estado estado) {
             nivel++;
             numeroDeAsteroides+=2;
             Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion);
+            *reiniciarMusica = true;
         }
 
         sf::Event event;
