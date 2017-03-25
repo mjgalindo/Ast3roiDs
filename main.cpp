@@ -20,7 +20,20 @@ Estado tratarPuntuaciones(Estado estado);
 Estado tratarOpciones(Estado estado);
 
 //Tamaño de la ventana
-sf::Vector2u MAX_SIZE = {800,600};
+sf::Vector2u MAX_SIZE = {800 * 2, 600 * 2};
+double ratio_alto = 1 / 600.0;
+double ratio_ancho = 1 / 800.0;
+
+template<typename T>
+T ajustar_h(T valor) {
+    return (T) (valor * MAX_SIZE.y * ratio_alto);
+}
+
+template<typename T>
+T ajustar_w(T valor) {
+    return (T) (valor * MAX_SIZE.x * ratio_ancho);
+}
+
 //Ventana
 sf::RenderWindow ventana;
 
@@ -70,14 +83,14 @@ Estado tratarTitulo(Estado estado) {
 
     titulo.setFont(fuente);
     titulo.setString("AST3ROIDS");
-    titulo.setCharacterSize(MAX_SIZE.y / 6);
+    titulo.setCharacterSize(ajustar_h(100u));
     titulo.setFillColor(sf::Color::White);
     titulo.setPosition((MAX_SIZE.x - titulo.getLocalBounds().width) / 2, MAX_SIZE.y / 5);
 
     instrucciones.setFont(fuente);
     instrucciones.setString("<ENTER> PARA MENU");
-    instrucciones.setCharacterSize(MAX_SIZE.y / 20);
-    instrucciones.setPosition((MAX_SIZE.x - instrucciones.getLocalBounds().width) / 2, 3 * MAX_SIZE.y / 5);
+    instrucciones.setCharacterSize(ajustar_h(30u));
+    instrucciones.setPosition((MAX_SIZE.x - instrucciones.getLocalBounds().width) / 2, ajustar_h(360));
     instrucciones.setFillColor(sf::Color::White);
 
     sf::Clock reloj;
@@ -123,31 +136,31 @@ Estado tratarMenu(Estado estado) {
 
     texto.setFont(fuente);
     texto.setString("MENU");
-    texto.setCharacterSize(80);
+    texto.setCharacterSize(ajustar_h(80u));
     texto.setPosition({(MAX_SIZE.x - texto.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 10.0f});
     texto.setFillColor(sf::Color::White);
 
     opcion1.setFont(fuente);
     opcion1.setString("JUGAR");
-    opcion1.setCharacterSize(40);
+    opcion1.setCharacterSize(ajustar_h(40u));
     opcion1.setPosition({(MAX_SIZE.x - opcion1.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 8 + MAX_SIZE.y / 5.0f});
     opcion1.setFillColor(sf::Color::White);
 
     opcion2.setFont(fuente);
     opcion2.setString("PUNTUACIONES");
-    opcion2.setCharacterSize(40);
+    opcion2.setCharacterSize(ajustar_h(40u));
     opcion2.setPosition({(MAX_SIZE.x - opcion2.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 8 + 2 * MAX_SIZE.y / 5.0f});
     opcion2.setFillColor(sf::Color::White);
 
     opcion3.setFont(fuente);
     opcion3.setString("OPCIONES");
-    opcion3.setCharacterSize(40);
+    opcion3.setCharacterSize(ajustar_h(40u));
     opcion3.setPosition({(MAX_SIZE.x - opcion3.getLocalBounds().width) / 2, MAX_SIZE.y / 8.0f + 3 * MAX_SIZE.y / 5.0f});
     opcion3.setFillColor(sf::Color::White);
 
     opcion4.setFont(fuente);
     opcion4.setString("SALIR");
-    opcion4.setCharacterSize(40);
+    opcion4.setCharacterSize(ajustar_h(40u));
     opcion4.setPosition({(MAX_SIZE.x - opcion4.getLocalBounds().width) / 2, MAX_SIZE.y / 8.0f + 4 * MAX_SIZE.y / 5.0f});
     opcion4.setFillColor(sf::Color::White);
 
@@ -236,13 +249,13 @@ Estado tratarJuego(Estado estado) {
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
     puntuacion.setFont(fuente);
-    puntuacion.setCharacterSize(30);
-    puntuacion.setPosition(sf::Vector2f(0.0, 0.0));
+    puntuacion.setCharacterSize(ajustar_h(30u));
+    puntuacion.setPosition({ajustar_w(20.0f), ajustar_h(10.0f)});
     puntuacion.setFillColor(sf::Color::White);
 
     vidas.setFont(fuente);
-    vidas.setCharacterSize(30);
-    vidas.setPosition(sf::Vector2f(0.0, 35.0));
+    vidas.setCharacterSize(ajustar_h(30u));
+    vidas.setPosition({ajustar_w(20.0f), ajustar_h(45.0f)});
     vidas.setFillColor(sf::Color::White);
 
     shared_ptr<bool> jugando(new bool(true));
@@ -261,6 +274,7 @@ Estado tratarJuego(Estado estado) {
     while (true) {
         if(nave.getVidas()<0){
             *jugando = false;
+            *silencioMusica = true;
             musica.join();
             return GAME_OVER;
         }
@@ -277,6 +291,7 @@ Estado tratarJuego(Estado estado) {
             case sf::Event::Closed:
                 ventana.close();
                 *jugando = false;
+                *silencioMusica = true;
                 musica.join();
                 return ERROR;
             case sf::Event::KeyPressed:
@@ -340,8 +355,8 @@ Estado tratarGameOver(Estado estado) {
 
     opcion1.setFont(fuente);
     opcion1.setString("1-PUNTUACIONES");
-    opcion1.setCharacterSize(30);
-    opcion1.setPosition(sf::Vector2f(0.0, 35.0));
+    opcion1.setCharacterSize(ajustar_h(30u));
+    opcion1.setPosition({ajustar_w(0.0f), ajustar_h(35.0f)});
     opcion1.setFillColor(sf::Color::White);
 
     while (true) {
@@ -376,13 +391,13 @@ Estado tratarPuntuaciones(Estado estado) {
 
     texto.setFont(fuente);
     texto.setString("PUNTUACIONES");
-    texto.setCharacterSize(30);
+    texto.setCharacterSize(ajustar_h(30u));
     texto.setFillColor(sf::Color::White);
 
     opcion1.setFont(fuente);
     opcion1.setString("1-MENU");
-    opcion1.setCharacterSize(30);
-    opcion1.setPosition(sf::Vector2f(0.0, 35.0));
+    opcion1.setCharacterSize(ajustar_h(30u));
+    opcion1.setPosition({ajustar_w(0.0f), ajustar_h(35.0f)});
     opcion1.setFillColor(sf::Color::White);
 
     while (true) {
@@ -417,13 +432,13 @@ Estado tratarOpciones(Estado estado) {
 
     texto.setFont(fuente);
     texto.setString("OPCIONES");
-    texto.setCharacterSize(30);
+    texto.setCharacterSize(ajustar_h(30u));
     texto.setFillColor(sf::Color::White);
 
     opcion1.setFont(fuente);
     opcion1.setString("1-MENU");
-    opcion1.setCharacterSize(30);
-    opcion1.setPosition(sf::Vector2f(0.0, 35.0));
+    opcion1.setCharacterSize(ajustar_h(30u));
+    opcion1.setPosition({ajustar_w(0.0f), ajustar_h(35.0f)});
     opcion1.setFillColor(sf::Color::White);
 
     while (true) {
