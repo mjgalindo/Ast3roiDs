@@ -6,6 +6,7 @@
 #include "../Estados.hpp"
 #include "Circular.hpp"
 #include "../matematicas.hpp"
+#include "../constantesGlobales.hpp"
 
 class Asteroide : public sf::Drawable, public Circular {
 
@@ -15,10 +16,11 @@ private:
     sf::VertexArray poligono;
     sf::Vector2f velocidad;
     Tamano tipoTamano;
-
+    sf::Vector2u limites;
 public:
 
-    Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam);
+    Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam,
+              sf::Vector2u limitesPantalla);
 
     ~Asteroide() {};
 
@@ -30,7 +32,7 @@ public:
 
     virtual int getPuntuacion() const;
 
-    void mover(sf::Vector2u limites);
+    void mover();
 
     void explotar() {};
 
@@ -45,23 +47,23 @@ public:
                                            sf::Vector2u limitesPantalla) {
         vectorAsteroides.clear();
         for (int i = 0; i < numAsteroides; ++i) {
-            float velocidad = valorAleatorio(0.2,2.0);
+            float velocidad = valorAleatorio(0.2, 2.0) * limitesPantalla.y / (float) RESOLUCION_BASE.y;
             float direccion = anguloAleatorio();
 
-            int posX = limitesPantalla.x/2.0;
-            int posY = limitesPantalla.y/2.0;
+            int posX = limitesPantalla.x / 2;
+            int posY = limitesPantalla.y / 2;
 
-            while(abs(posX-limitesPantalla.x/2.0)<limitesPantalla.x*0.05){
-                posX =  enteroAleatorio(0, limitesPantalla.x);
+            while (abs(posX - limitesPantalla.x / 2) < limitesPantalla.x * 0.05) {
+                posX = enteroAleatorio(0, limitesPantalla.x);
             }
-            while(abs(posY-limitesPantalla.y/2.0)<limitesPantalla.y*0.05){
-                posY =  enteroAleatorio(0, limitesPantalla.y);
+            while (abs(posY - limitesPantalla.y / 2) < limitesPantalla.y * 0.05) {
+                posY = enteroAleatorio(0, limitesPantalla.y);
             }
 
             vectorAsteroides.push_back(Asteroide(
                     {(float) posX, (float) posY},
-                    direccion, { velocidad * (float)cos(direccion),velocidad * (float)sin(direccion) },
-                    (Tipo) enteroAleatorio(0, 2), TAM_2));
+                    direccion, {velocidad * (float) cos(direccion), velocidad * (float) sin(direccion)},
+                    (Tipo) enteroAleatorio(0, 2), TAM_2, limitesPantalla));
         }
 
     }

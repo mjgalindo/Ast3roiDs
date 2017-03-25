@@ -20,9 +20,10 @@ Estado tratarPuntuaciones(Estado estado);
 Estado tratarOpciones(Estado estado);
 
 //Tamaño de la ventana
-sf::Vector2u MAX_SIZE = {800 * 2, 600 * 2};
-double ratio_alto = 1 / 600.0;
-double ratio_ancho = 1 / 800.0;
+sf::Vector2u MAX_SIZE = 2u * RESOLUCION_BASE;
+
+double ratio_alto = 1.0 / RESOLUCION_BASE.x;
+double ratio_ancho = 1.0 / RESOLUCION_BASE.y;
 
 template<typename T>
 T ajustar_h(T valor) {
@@ -330,7 +331,7 @@ Estado tratarJuego(Estado estado) {
         ventana.draw(ovni);
 
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
-            ast->mover(MAX_SIZE);
+            ast->mover();
             ventana.draw(*ast);
         }
 

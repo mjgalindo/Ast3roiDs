@@ -3,12 +3,14 @@
 
 static constexpr float tamanosReales[] = {7.25f, 12.5f, 25.0f};
 
-Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam) :
-        Circular(posicion_inicial, tamanosReales[tam]) {
+Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam,
+                     sf::Vector2u limitesPantalla) :
+        Circular(posicion_inicial, tamanosReales[tam] * (limitesPantalla.y / (float) RESOLUCION_BASE.y)) {
     direccion = dir;
     velocidad = vel;
     version = tipo;
     tipoTamano = tam;
+    limites = limitesPantalla;
     // Definimos el asteroide como una serie de puntos conectados por orden
     poligono.setPrimitiveType(sf::LineStrip);
     switch (version) {
@@ -93,7 +95,7 @@ void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     target.draw(poligono, t);
 }
 
-void Asteroide::mover(sf::Vector2u limites) {
+void Asteroide::mover() {
     posicion += velocidad;
     if (posicion.x - 1 >= limites.x) {
         posicion.x -= limites.x;
@@ -114,18 +116,18 @@ void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v) {
         case TAM_1:
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x + valorAleatorio(0, (float)PI/2), velocidad.y + valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_0));
+                                  TIPO_0, TAM_0, limites));
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x - valorAleatorio(0, (float)PI/2), velocidad.y - valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_0));
+                                  TIPO_0, TAM_0, limites));
             break;
         case TAM_2:
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x + valorAleatorio(0, (float)PI/2), velocidad.y + valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_1));
+                                  TIPO_0, TAM_1, limites));
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x - valorAleatorio(0, (float)PI/2), velocidad.y - valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_1));
+                                  TIPO_0, TAM_1, limites));
             break;
     }
 }
