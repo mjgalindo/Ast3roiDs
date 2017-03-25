@@ -2,7 +2,7 @@
 #include "Nave.hpp"
 
 //Constructor
-Nave::Nave(sf::Vector2f posicion_inicial)
+Nave::Nave(sf::Vector2f posicion_inicial, long int *p)
         : Triangular(posicion_inicial, (float) -PI / 2.0f, 10) {
     if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")) {
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
@@ -72,6 +72,8 @@ Nave::Nave(sf::Vector2f posicion_inicial)
     for (int i = 0; i < MAX_DISPAROS; i++) {
         disparos[i] = Disparo(sf::Vector2f(0.0, 0.0), 0.0);
     }
+
+    puntuacion = p;
 }
 
 void Nave::reiniciar() {
@@ -109,10 +111,6 @@ sf::VertexArray *Nave::getPoligono() {
 
 sf::Vector2f Nave::getVelocidad() {
     return velocidad;
-}
-
-long int Nave::getPuntuacion() {
-    return puntuacion;
 }
 
 int Nave::getVidas() {
@@ -231,7 +229,7 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
         }
 
         if (o.getEstado()== VIVO && comprobarColision(o)) {
-            puntuacion += o.getPuntuacion();
+            *puntuacion += o.getPuntuacion();
             recienDestruida = true;
 
             o.cambiarEstado(EXP1, {0, 0});
@@ -241,7 +239,7 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
         //Se comprueba el impacto de los disparos
         for (int j = 0; j < num_disparos; j++) {
             if (o.getEstado() == VIVO && disparos[j].comprobarColision(o)) {
-                puntuacion += o.getPuntuacion();
+                *puntuacion += o.getPuntuacion();
                 recuperarDisparo(j);
                 j--;
 
@@ -252,7 +250,7 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
         for (int i = 0; i < v.size(); i++) {
             if(v[i].estado == MOVIMIENTO){
                 if (comprobarColision(v[i])) {
-                    puntuacion += v[i].getPuntuacion();
+                    *puntuacion += v[i].getPuntuacion();
                     cambiarEstado(DESTRUIDA, {0, 0});
 
                     //Destruir asteroide, dividirlo o lo que sea...
@@ -266,7 +264,7 @@ void Nave::mover(sf::Vector2u limites, std::vector<Asteroide> &v, Circular &o) {
                 //Se comprueba el impacto de los disparos
                 for (int j = 0; j < num_disparos && !detectada ; j++) {
                     if (disparos[j].comprobarColision(v[i])) {
-                        puntuacion += v[i].getPuntuacion();
+                        *puntuacion += v[i].getPuntuacion();
                         recuperarDisparo(j);
 
                         //Destruir asteroide, dividirlo o lo que sea....

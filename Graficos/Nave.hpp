@@ -51,7 +51,7 @@ private:
     //Numero de autoreapariciones de la nave
     int vidas = 5;
     //Puntuacion
-    long int puntuacion = 0;
+    long int *puntuacion;
 
     // Buffers de los distintos sonidos de una nave
     sf::SoundBuffer bufferSonidoDisparo;
@@ -66,7 +66,7 @@ private:
 
 public:
     //Constructor
-    Nave(sf::Vector2f posicion_inicial);
+    Nave(sf::Vector2f posicion_inicial, long int *p);
 
     //Destructor
     ~Nave();

@@ -4,9 +4,13 @@
 #include <memory>
 #include <thread>
 #include <iostream>
+#include <fstream>
+
 #include <SFML/OpenGL.hpp>
 #include "Graficos/Nave.hpp"
 #include "Graficos/Ovni.hpp"
+
+#define MAX_PUNTS 10
 
 using namespace std;
 
@@ -25,6 +29,10 @@ Estado tratarOpciones(Estado estado);
 sf::Vector2u MAX_SIZE = {800,600};
 //Ventana
 sf::RenderWindow ventana;
+
+//Puntuacion
+long int puntuacion;
+
 
 int main() {
     GLfloat points[] = {
@@ -275,18 +283,20 @@ void comprobarMuerteOvni(Ovni ovni){
 
 }
 Estado tratarJuego(Estado estado) {
+    puntuacion = 0;
+
     sf::Text texto;
     sf::Text opcion1;
-    sf::Text puntuacion;
+    sf::Text punt;
     sf::Text vidas;
 
     sf::Font fuente;
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
-    puntuacion.setFont(fuente);
-    puntuacion.setCharacterSize(30);
-    puntuacion.setPosition(sf::Vector2f(0.0, 0.0));
-    puntuacion.setFillColor(sf::Color::White);
+    punt.setFont(fuente);
+    punt.setCharacterSize(30);
+    punt.setPosition(sf::Vector2f(0.0, 0.0));
+    punt.setFillColor(sf::Color::White);
 
     vidas.setFont(fuente);
     vidas.setCharacterSize(30);
@@ -300,7 +310,7 @@ Estado tratarJuego(Estado estado) {
     sf::Clock reloj;
     int nivel = 0;
 
-    Nave nave = Nave(sf::Vector2f(MAX_SIZE.x / 2.0f, MAX_SIZE.y / 2.0f));
+    Nave nave = Nave(sf::Vector2f(MAX_SIZE.x / 2.0f, MAX_SIZE.y / 2.0f), &puntuacion);
     Ovni ovni;
     vector<Asteroide> asteroides;
     unsigned int numeroDeAsteroides = 4;
@@ -353,13 +363,14 @@ Estado tratarJuego(Estado estado) {
 
         comprobarMuerteAsteroides(asteroides);
         comprobarMuerteOvni(ovni);
-        puntuacion.setString(std::to_string(nave.getPuntuacion()));
+        punt.setString(std::to_string(puntuacion));
+        punt.setString(std::to_string(puntuacion));
         vidas.setString(std::to_string(nave.getVidas()));
 
         ventana.clear(sf::Color::Black);
         ventana.draw(texto);
         ventana.draw(opcion1);
-        ventana.draw(puntuacion);
+        ventana.draw(punt);
         ventana.draw(vidas);
         ventana.draw(nave);
         ventana.draw(ovni);
@@ -379,20 +390,60 @@ Estado tratarJuego(Estado estado) {
 Estado tratarGameOver(Estado estado) {
     sf::Text texto;
     sf::Text opcion1;
+    sf::Text Snombre;
+    sf::Text nombre;
+    sf::Text Spuntuacion;
+    sf::Text punt;
 
     sf::Font fuente;
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
     texto.setFont(fuente);
     texto.setString("GAME OVER");
-    texto.setCharacterSize(30);
+    texto.setCharacterSize(75);
+    texto.setPosition({(MAX_SIZE.x - texto.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 14.0f});
     texto.setFillColor(sf::Color::White);
+    texto.setOutlineColor(sf::Color::White);
+    texto.setOutlineThickness(1.5);
 
     opcion1.setFont(fuente);
-    opcion1.setString("1-PUNTUACIONES");
-    opcion1.setCharacterSize(30);
-    opcion1.setPosition(sf::Vector2f(0.0, 35.0));
+    opcion1.setString("ACEPTAR");
+    opcion1.setCharacterSize(40);
+    opcion1.setPosition(sf::Vector2f(MAX_SIZE.x - opcion1.getLocalBounds().width - 5, MAX_SIZE.y - opcion1.getLocalBounds().height - 5));
     opcion1.setFillColor(sf::Color::White);
+    opcion1.setOutlineColor(sf::Color::White);
+    opcion1.setOutlineThickness(1.5);
+
+    float altura = MAX_SIZE.y/3.0f;
+
+    Snombre.setFont(fuente);
+    Snombre.setString("Nombre del piloto (3 letras): ");
+    Snombre.setCharacterSize(30);
+    Snombre.setPosition(sf::Vector2f((MAX_SIZE.x - Snombre.getLocalBounds().width) / 2.0f, altura));
+    Snombre.setFillColor(sf::Color::White);
+
+    string nombre_introducido = "AAA";
+
+    altura += Snombre.getLocalBounds().height + 10;
+    nombre.setFont(fuente);
+    nombre.setString(nombre_introducido);
+    nombre.setCharacterSize(30);
+    nombre.setPosition(sf::Vector2f((MAX_SIZE.x - nombre.getLocalBounds().width) / 2.0f, altura));
+    nombre.setFillColor(sf::Color::White);
+
+    altura += nombre.getLocalBounds().height +30;
+    Spuntuacion.setFont(fuente);
+    Spuntuacion.setString("Puntuacion obtenida: ");
+    Spuntuacion.setCharacterSize(30);
+    Spuntuacion.setPosition(sf::Vector2f((MAX_SIZE.x - Spuntuacion.getLocalBounds().width) / 2.0f, altura + 10));
+    Spuntuacion.setFillColor(sf::Color::White);
+
+    altura += Spuntuacion.getLocalBounds().height +10;
+    punt.setFont(fuente);
+    punt.setString(to_string(puntuacion));
+    punt.setCharacterSize(30);
+    punt.setPosition(sf::Vector2f((MAX_SIZE.x - punt.getLocalBounds().width) / 2.0f, altura + 10));
+    punt.setFillColor(sf::Color::White);
 
     while (true) {
         sf::Event event;
@@ -402,7 +453,51 @@ Estado tratarGameOver(Estado estado) {
                     ventana.close();
                     return ERROR;
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Num1) {
+                    if (event.key.code == sf::Keyboard::Return) {
+                        ifstream f_puntuaciones("puntuaciones.dat");
+                        vector<string> nombres(0);
+                        vector<long int> punts(0);
+                        if(f_puntuaciones.good()) {
+                            string nombre_aux;
+                            long int puntuacion_aux;
+                            for (int i = 0; i < MAX_PUNTS && !f_puntuaciones.eof(); i++) {
+                                f_puntuaciones >> nombre_aux;
+                                f_puntuaciones >> puntuacion_aux;
+
+                                if(nombre_aux.compare("")!=0){
+                                    nombres.push_back(nombre_aux);
+                                    punts.push_back(puntuacion_aux);
+                                }
+                            }
+
+                            nombre_aux = nombre_introducido;
+                            puntuacion_aux = puntuacion;
+                            for (int i = 0; i < nombres.size(); i++) {
+                                if (puntuacion_aux > punts[i]) {
+                                    long int p = punts[i];
+                                    string n = nombres[i];
+                                    punts[i] = puntuacion_aux;
+                                    nombres[i] = nombre_aux;
+                                    puntuacion_aux = p;
+                                    nombre_aux = n;
+                                }
+                            }
+                            if (nombres.size() < MAX_PUNTS) {
+                                nombres.push_back(nombre_aux);
+                                punts.push_back(puntuacion_aux);
+                            }
+                        }
+                        f_puntuaciones.close();
+
+                        ofstream f_puntuaciones_out("puntuaciones.dat");
+                        if(f_puntuaciones_out.good()){
+                            for(int i=0 ; i<nombres.size() ; i++){
+                                f_puntuaciones_out << nombres[i] << " " << punts[i] << endl;
+                            }
+
+                            f_puntuaciones_out.flush();
+                            f_puntuaciones_out.close();
+                        }
                         return PUNTUACIONES;
                     }
                 default:
@@ -412,6 +507,10 @@ Estado tratarGameOver(Estado estado) {
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
+            ventana.draw(Snombre);
+            ventana.draw(nombre);
+            ventana.draw(Spuntuacion);
+            ventana.draw(punt);
             ventana.display();
         }
     }
@@ -424,16 +523,49 @@ Estado tratarPuntuaciones(Estado estado) {
     sf::Font fuente;
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
+    vector<sf::Text> punts(MAX_PUNTS);
+
+    ifstream f_puntuaciones("puntuaciones.dat");
+    if(f_puntuaciones.good()){
+        string nombre;
+        long int puntuacion;
+        for(int i=0 ; i<MAX_PUNTS && !f_puntuaciones.eof() ; i++){
+            f_puntuaciones >> nombre;
+            f_puntuaciones >> puntuacion;
+
+            string linea = "";
+            linea.append(nombre);
+            linea.append("    ");
+            linea.append(to_string(puntuacion));
+
+            sf::Text punt;
+            punt.setFont(fuente);
+            punt.setCharacterSize(30);
+            punt.setString(linea);
+            punt.setPosition({(MAX_SIZE.x - punt.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 3.5f + i*MAX_SIZE.y / 14.0f});
+            punt.setFillColor(sf::Color::White);
+
+            punts.push_back(punt);
+        }
+    }
+    f_puntuaciones.close();
+
     texto.setFont(fuente);
     texto.setString("PUNTUACIONES");
-    texto.setCharacterSize(30);
+    texto.setCharacterSize(75);
+    texto.setPosition({(MAX_SIZE.x - texto.getLocalBounds().width) / 2.0f, MAX_SIZE.y / 14.0f});
     texto.setFillColor(sf::Color::White);
+    texto.setOutlineColor(sf::Color::White);
+    texto.setOutlineThickness(1.5);
 
     opcion1.setFont(fuente);
-    opcion1.setString("1-MENU");
-    opcion1.setCharacterSize(30);
-    opcion1.setPosition(sf::Vector2f(0.0, 35.0));
+    opcion1.setString("ACEPTAR");
+    opcion1.setCharacterSize(40);
+    opcion1.setPosition(sf::Vector2f(MAX_SIZE.x - opcion1.getLocalBounds().width - 5, MAX_SIZE.y - opcion1.getLocalBounds().height - 5));
     opcion1.setFillColor(sf::Color::White);
+    opcion1.setOutlineColor(sf::Color::White);
+    opcion1.setOutlineThickness(1.5);
+
 
     while (true) {
         sf::Event event;
@@ -443,7 +575,7 @@ Estado tratarPuntuaciones(Estado estado) {
                     ventana.close();
                     return ERROR;
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Num1) {
+                    if (event.key.code == sf::Keyboard::Return) {
                         return MENU;
                     }
                 default:
@@ -453,6 +585,11 @@ Estado tratarPuntuaciones(Estado estado) {
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
+
+            for(unsigned int i=0 ; i<punts.size() ; i++){
+                ventana.draw(punts[i]);
+            }
+
             ventana.display();
         }
     }
