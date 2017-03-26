@@ -29,7 +29,7 @@ Estado tratarPuntuaciones(Estado estado);
 Estado tratarOpciones(Estado estado);
 
 //Tamaño de la ventana
-sf::Vector2u resolucion = 2u * RESOLUCION_BASE;
+sf::Vector2u resolucion = 1u * RESOLUCION_BASE;
 
 double ratio_alto = 1.0 / RESOLUCION_BASE.x;
 double ratio_ancho = 1.0 / RESOLUCION_BASE.y;

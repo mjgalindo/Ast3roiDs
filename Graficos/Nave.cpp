@@ -251,33 +251,34 @@ void Nave::mover(std::vector<Asteroide> &v, Circular &o) {
         }
 
         for (int i = 0; i < v.size(); i++) {
-            if (comprobarColision(v[i])) {
-                *puntuacion += v[i].getPuntuacion();
-                cambiarEstado(DESTRUIDA);
-
-                //Destruir asteroide, dividirlo o lo que sea...
-                v[i].gestionarDestruccion(v);
-                v.erase(v.begin() + i);
-                i--;
-                continue;
-            }
-            bool detectada = false;
-            //Se comprueba el impacto de los disparos
-            for (int j = 0; j < num_disparos && !detectada; j++) {
-                if (disparos[j].comprobarColision(v[i])) {
+            if (v[i].estado == MOVIMIENTO) {
+                if (comprobarColision(v[i])) {
                     *puntuacion += v[i].getPuntuacion();
-                    recuperarDisparo(j);
+                    cambiarEstado(DESTRUIDA);
 
-                    //Destruir asteroide, dividirlo o lo que sea....
+                    //Destruir asteroide, dividirlo o lo que sea...
                     v[i].gestionarDestruccion(v);
-                    //v.erase(v.begin() + i);
+                    v.erase(v.begin() + i);
                     i--;
-                    detectada = true;
+                    continue;
+                }
+                bool detectada = false;
+                //Se comprueba el impacto de los disparos
+                for (int j = 0; j < num_disparos && !detectada; j++) {
+                    if (disparos[j].comprobarColision(v[i])) {
+                        *puntuacion += v[i].getPuntuacion();
+                        recuperarDisparo(j);
+
+                        //Destruir asteroide, dividirlo o lo que sea....
+                        v[i].gestionarDestruccion(v);
+                        //v.erase(v.begin() + i);
+                        i--;
+                        detectada = true;
+                    }
                 }
             }
         }
     }
-
 
     if (estado == DESTRUIDA) {
         if (recienDestruida) {

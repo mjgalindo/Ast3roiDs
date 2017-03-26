@@ -65,7 +65,7 @@ Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel,
     punto.resize(2);
     punto[0].position = {0.0f, 0.0f};
     punto[0].position = {0.2f, 0.2f};
-
+    estado = MOVIMIENTO;
 }
 
 //Getters
