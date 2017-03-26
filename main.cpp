@@ -460,42 +460,56 @@ Estado tratarGameOver(Estado estado) {
                         ifstream f_puntuaciones("puntuaciones.dat");
                         vector<string> nombres(0);
                         vector<long int> punts(0);
-                        if (f_puntuaciones.good()) {
-                            string nombre_aux;
-                            long int puntuacion_aux;
-                            for (int i = 0; i < MAX_PUNTS && !f_puntuaciones.eof(); i++) {
+                        string nombre_aux = "";
+                        long int puntuacion_aux = 0;
+                        if(f_puntuaciones.good()) {
+                            for (int i = 0; !f_puntuaciones.eof(); i++) {
                                 f_puntuaciones >> nombre_aux;
                                 f_puntuaciones >> puntuacion_aux;
 
-                                if (nombre_aux.compare("") != 0) {
+                                if(puntuacion_aux!=0){
                                     nombres.push_back(nombre_aux);
                                     punts.push_back(puntuacion_aux);
+                                    nombre_aux = "";
+                                    puntuacion_aux = 0;
                                 }
                             }
 
                             nombre_aux = nombre_introducido;
                             puntuacion_aux = puntuacion;
-                            for (int i = 0; i < nombres.size(); i++) {
-                                if (puntuacion_aux > punts[i]) {
-                                    long int p = punts[i];
-                                    string n = nombres[i];
-                                    punts[i] = puntuacion_aux;
-                                    nombres[i] = nombre_aux;
-                                    puntuacion_aux = p;
-                                    nombre_aux = n;
-                                }
-                            }
-                            if (nombres.size() < MAX_PUNTS) {
+                            if(punts.empty()){
                                 nombres.push_back(nombre_aux);
                                 punts.push_back(puntuacion_aux);
+                            }
+                            else {
+                                for (int i = 0; i < nombres.size(); i++) {
+                                    if (puntuacion_aux > punts[i]) {
+                                        long int p = punts[i];
+                                        string n = nombres[i];
+                                        punts[i] = puntuacion_aux;
+                                        nombres[i] = nombre_aux;
+                                        puntuacion_aux = p;
+                                        nombre_aux = n;
+                                    }
+                                }
+
+                                if(nombres.size()<MAX_PUNTS){
+                                    nombres.push_back(nombre_aux);
+                                    punts.push_back(puntuacion_aux);
+                                }
                             }
                         }
                         f_puntuaciones.close();
 
                         ofstream f_puntuaciones_out("puntuaciones.dat");
-                        if (f_puntuaciones_out.good()) {
-                            for (int i = 0; i < nombres.size(); i++) {
-                                f_puntuaciones_out << nombres[i] << " " << punts[i] << endl;
+                        if(f_puntuaciones_out.good()) {
+                            if (nombres.size() != 0) {
+                                for (int i = 0; i < nombres.size(); i++) {
+                                    f_puntuaciones_out << nombres[i] << " " << punts[i] << endl;
+                                }
+                            }
+                            else {
+                                f_puntuaciones_out << nombre_introducido << " " << puntuacion << endl;
                             }
 
                             f_puntuaciones_out.flush();
@@ -529,27 +543,32 @@ Estado tratarPuntuaciones(Estado estado) {
     vector<sf::Text> punts(MAX_PUNTS);
 
     ifstream f_puntuaciones("puntuaciones.dat");
-    if (f_puntuaciones.good()) {
-        string nombre;
-        long int puntuacion;
-        for (int i = 0; i < MAX_PUNTS && !f_puntuaciones.eof(); i++) {
-            f_puntuaciones >> nombre;
-            f_puntuaciones >> puntuacion;
+    if(f_puntuaciones.good()){
+        string nombre_aux;
+        long int puntuacion_aux;
+        for(int i=0 ; i<MAX_PUNTS && !f_puntuaciones.eof() ; i++){
+            f_puntuaciones >> nombre_aux;
+            f_puntuaciones >> puntuacion_aux;
 
             string linea = "";
-            linea.append(nombre);
+            linea.append(nombre_aux);
             linea.append("    ");
-            linea.append(to_string(puntuacion));
+            linea.append(to_string(puntuacion_aux));
 
-            sf::Text punt;
-            punt.setFont(fuente);
-            punt.setCharacterSize(30);
-            punt.setString(linea);
-            punt.setPosition({(resolucion.x - punt.getLocalBounds().width) / 2.0f,
-                              resolucion.y / 3.5f + i * resolucion.y / 14.0f});
-            punt.setFillColor(sf::Color::White);
+            if(nombre_aux.compare("")!=0) {
+                nombre_aux = "";
+                puntuacion_aux = 0;
 
-            punts.push_back(punt);
+                sf::Text punt;
+                punt.setFont(fuente);
+                punt.setCharacterSize(30);
+                punt.setString(linea);
+                punt.setPosition({(resolucion.x - punt.getLocalBounds().width) / 2.0f,
+                                  resolucion.y / 3.5f + i * resolucion.y / 14.0f});
+                punt.setFillColor(sf::Color::White);
+
+                punts.push_back(punt);
+            }
         }
     }
     f_puntuaciones.close();
