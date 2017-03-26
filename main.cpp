@@ -2,25 +2,34 @@
 #include <memory>
 #include <thread>
 #include <iostream>
+#include <fstream>
 
+#include <SFML/OpenGL.hpp>
 #include "Graficos/Nave.hpp"
 #include "Graficos/Ovni.hpp"
+
+#define MAX_PUNTS 10
 
 using namespace std;
 
 enum Estado {
-    TITULO, MENU, JUEGO, GAME_OVER, PUNTUACIONES, OPCIONES, ERROR
+    TITULO, MENU, JUEGO, GAME_OVER, PUNTUACIONES, OPCIONES, EXIT
 };
 
 Estado tratarTitulo(Estado estado);
+
 Estado tratarMenu(Estado estado);
+
 Estado tratarJuego(Estado estado);
+
 Estado tratarGameOver(Estado estado);
+
 Estado tratarPuntuaciones(Estado estado);
+
 Estado tratarOpciones(Estado estado);
 
 //Tamaño de la ventana
-sf::Vector2u resolucion = 1u * RESOLUCION_BASE;
+sf::Vector2u resolucion = 2u * RESOLUCION_BASE;
 
 double ratio_alto = 1.0 / RESOLUCION_BASE.x;
 double ratio_ancho = 1.0 / RESOLUCION_BASE.y;
@@ -37,6 +46,10 @@ T ajustar_w(T valor) {
 
 //Ventana
 sf::RenderWindow ventana;
+
+//Puntuacion
+long int puntuacion;
+
 
 int main() {
     sf::ContextSettings settings;
@@ -103,7 +116,7 @@ Estado tratarTitulo(Estado estado) {
             switch (event.type) {
                 case sf::Event::Closed:
                     ventana.close();
-                    return ERROR;
+                    return EXIT;
                 case sf::Event::KeyPressed:
                     if (event.key.code == sf::Keyboard::Return) {
                         return MENU;
@@ -169,7 +182,7 @@ Estado tratarMenu(Estado estado) {
             {(resolucion.x - opcion4.getLocalBounds().width) / 2, resolucion.y / 8.0f + 4 * resolucion.y / 5.0f});
     opcion4.setFillColor(sf::Color::White);
 
-    array<Estado, 4> opciones = {JUEGO, PUNTUACIONES, OPCIONES, ERROR};
+    array<Estado, 4> opciones = {JUEGO, PUNTUACIONES, OPCIONES, EXIT};
     int seleccion = 0;
 
     while (true) {
@@ -178,7 +191,7 @@ Estado tratarMenu(Estado estado) {
             switch (event.type) {
                 case sf::Event::Closed:
                     ventana.close();
-                    return ERROR;
+                    return EXIT;
                 case sf::Event::KeyPressed:
                     if (event.key.code == sf::Keyboard::Return) {
                         return opciones[seleccion];
@@ -248,19 +261,38 @@ void reproducirMusica(std::shared_ptr<bool> jugando, std::shared_ptr<bool> silen
     }
 }
 
+void comprobarMuerteAsteroides(std::vector<Asteroide> &asteroides) {
+    for (int i = 0; i < asteroides.size(); i++) {
+        if (asteroides[i].estado == DESTRUIDO) {
+            asteroides.erase(asteroides.begin() + i);
+        }
+    }
+
+}
+
+void comprobarMuerteOvni(Ovni ovni) {
+    if (ovni.estado == MUERTO) {
+        //ovni.erase(asteroides.begin() + i);
+    }
+
+
+}
+
 Estado tratarJuego(Estado estado) {
+    puntuacion = 0;
+
     sf::Text texto;
     sf::Text opcion1;
-    sf::Text puntuacion;
+    sf::Text punt;
     sf::Text vidas;
 
     sf::Font fuente;
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
-    puntuacion.setFont(fuente);
-    puntuacion.setCharacterSize(ajustar_h(30u));
-    puntuacion.setPosition({ajustar_w(20.0f), ajustar_h(10.0f)});
-    puntuacion.setFillColor(sf::Color::White);
+    punt.setFont(fuente);
+    punt.setCharacterSize(ajustar_h(30u));
+    punt.setPosition({ajustar_w(20.0f), ajustar_h(10.0f)});
+    punt.setFillColor(sf::Color::White);
 
     vidas.setFont(fuente);
     vidas.setCharacterSize(ajustar_h(30u));
@@ -275,23 +307,24 @@ Estado tratarJuego(Estado estado) {
     sf::Clock reloj;
     int nivel = 0;
 
-    Nave nave = Nave({resolucion.x / 2.0f, resolucion.y / 2.0f}, resolucion);
+    Nave nave = Nave({resolucion.x / 2.0f, resolucion.y / 2.0f}, resolucion, &puntuacion);
     Ovni ovni(resolucion);
+
     vector<Asteroide> asteroides;
     unsigned int numeroDeAsteroides = 4;
     Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion);
 
     while (true) {
-        if(nave.getVidas()<0){
+        if (nave.getVidas() < 0) {
             *jugando = false;
             *silencioMusica = true;
             musica.join();
             return GAME_OVER;
         }
 
-        if(asteroides.size()==0){
+        if (asteroides.size() == 0) {
             nivel++;
-            numeroDeAsteroides+=2;
+            numeroDeAsteroides += 2;
             Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion);
             *reiniciarMusica = true;
         }
@@ -304,7 +337,7 @@ Estado tratarJuego(Estado estado) {
                 *jugando = false;
                 *silencioMusica = true;
                 musica.join();
-                return ERROR;
+                return EXIT;
             case sf::Event::KeyPressed:
                 if (event.key.code == sf::Keyboard::D) {
                     nave.disparar();
@@ -329,13 +362,16 @@ Estado tratarJuego(Estado estado) {
         nave.mover(asteroides, ovni);
         nave.frenar();
 
-        puntuacion.setString(std::to_string(nave.getPuntuacion()));
+        comprobarMuerteAsteroides(asteroides);
+        comprobarMuerteOvni(ovni);
+        punt.setString(std::to_string(puntuacion));
+        punt.setString(std::to_string(puntuacion));
         vidas.setString(std::to_string(nave.getVidas()));
 
         ventana.clear(sf::Color::Black);
         ventana.draw(texto);
         ventana.draw(opcion1);
-        ventana.draw(puntuacion);
+        ventana.draw(punt);
         ventana.draw(vidas);
         ventana.draw(nave);
         ventana.draw(ovni);
@@ -355,20 +391,62 @@ Estado tratarJuego(Estado estado) {
 Estado tratarGameOver(Estado estado) {
     sf::Text texto;
     sf::Text opcion1;
+    sf::Text Snombre;
+    sf::Text nombre;
+    sf::Text Spuntuacion;
+    sf::Text punt;
 
     sf::Font fuente;
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
     texto.setFont(fuente);
     texto.setString("GAME OVER");
-    texto.setCharacterSize(30);
+    texto.setCharacterSize(75);
+    texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
     texto.setFillColor(sf::Color::White);
+    texto.setOutlineColor(sf::Color::White);
+    texto.setOutlineThickness(1.5);
 
     opcion1.setFont(fuente);
-    opcion1.setString("1-PUNTUACIONES");
-    opcion1.setCharacterSize(ajustar_h(30u));
-    opcion1.setPosition({ajustar_w(0.0f), ajustar_h(35.0f)});
+    opcion1.setString("ACEPTAR");
+    opcion1.setCharacterSize(ajustar_h(40u));
+    opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - 5,
+                                     resolucion.y - opcion1.getLocalBounds().height - 5));
+
     opcion1.setFillColor(sf::Color::White);
+    opcion1.setOutlineColor(sf::Color::White);
+    opcion1.setOutlineThickness(1.5);
+
+    float altura = resolucion.y / 3.0f;
+
+    Snombre.setFont(fuente);
+    Snombre.setString("Nombre del piloto (3 letras): ");
+    Snombre.setCharacterSize(30);
+    Snombre.setPosition(sf::Vector2f((resolucion.x - Snombre.getLocalBounds().width) / 2.0f, altura));
+    Snombre.setFillColor(sf::Color::White);
+
+    string nombre_introducido = "AAA";
+
+    altura += Snombre.getLocalBounds().height + 10;
+    nombre.setFont(fuente);
+    nombre.setString(nombre_introducido);
+    nombre.setCharacterSize(30);
+    nombre.setPosition(sf::Vector2f((resolucion.x - nombre.getLocalBounds().width) / 2.0f, altura));
+    nombre.setFillColor(sf::Color::White);
+
+    altura += nombre.getLocalBounds().height + 30;
+    Spuntuacion.setFont(fuente);
+    Spuntuacion.setString("Puntuacion obtenida: ");
+    Spuntuacion.setCharacterSize(30);
+    Spuntuacion.setPosition(sf::Vector2f((resolucion.x - Spuntuacion.getLocalBounds().width) / 2.0f, altura + 10));
+    Spuntuacion.setFillColor(sf::Color::White);
+
+    altura += Spuntuacion.getLocalBounds().height + 10;
+    punt.setFont(fuente);
+    punt.setString(to_string(puntuacion));
+    punt.setCharacterSize(30);
+    punt.setPosition(sf::Vector2f((resolucion.x - punt.getLocalBounds().width) / 2.0f, altura + 10));
+    punt.setFillColor(sf::Color::White);
 
     while (true) {
         sf::Event event;
@@ -376,9 +454,53 @@ Estado tratarGameOver(Estado estado) {
             switch (event.type) {
                 case sf::Event::Closed:
                     ventana.close();
-                    return ERROR;
+                    return EXIT;
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Num1) {
+                    if (event.key.code == sf::Keyboard::Return) {
+                        ifstream f_puntuaciones("puntuaciones.dat");
+                        vector<string> nombres(0);
+                        vector<long int> punts(0);
+                        if (f_puntuaciones.good()) {
+                            string nombre_aux;
+                            long int puntuacion_aux;
+                            for (int i = 0; i < MAX_PUNTS && !f_puntuaciones.eof(); i++) {
+                                f_puntuaciones >> nombre_aux;
+                                f_puntuaciones >> puntuacion_aux;
+
+                                if (nombre_aux.compare("") != 0) {
+                                    nombres.push_back(nombre_aux);
+                                    punts.push_back(puntuacion_aux);
+                                }
+                            }
+
+                            nombre_aux = nombre_introducido;
+                            puntuacion_aux = puntuacion;
+                            for (int i = 0; i < nombres.size(); i++) {
+                                if (puntuacion_aux > punts[i]) {
+                                    long int p = punts[i];
+                                    string n = nombres[i];
+                                    punts[i] = puntuacion_aux;
+                                    nombres[i] = nombre_aux;
+                                    puntuacion_aux = p;
+                                    nombre_aux = n;
+                                }
+                            }
+                            if (nombres.size() < MAX_PUNTS) {
+                                nombres.push_back(nombre_aux);
+                                punts.push_back(puntuacion_aux);
+                            }
+                        }
+                        f_puntuaciones.close();
+
+                        ofstream f_puntuaciones_out("puntuaciones.dat");
+                        if (f_puntuaciones_out.good()) {
+                            for (int i = 0; i < nombres.size(); i++) {
+                                f_puntuaciones_out << nombres[i] << " " << punts[i] << endl;
+                            }
+
+                            f_puntuaciones_out.flush();
+                            f_puntuaciones_out.close();
+                        }
                         return PUNTUACIONES;
                     }
                 default:
@@ -388,6 +510,10 @@ Estado tratarGameOver(Estado estado) {
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
+            ventana.draw(Snombre);
+            ventana.draw(nombre);
+            ventana.draw(Spuntuacion);
+            ventana.draw(punt);
             ventana.display();
         }
     }
@@ -400,16 +526,52 @@ Estado tratarPuntuaciones(Estado estado) {
     sf::Font fuente;
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
+    vector<sf::Text> punts(MAX_PUNTS);
+
+    ifstream f_puntuaciones("puntuaciones.dat");
+    if (f_puntuaciones.good()) {
+        string nombre;
+        long int puntuacion;
+        for (int i = 0; i < MAX_PUNTS && !f_puntuaciones.eof(); i++) {
+            f_puntuaciones >> nombre;
+            f_puntuaciones >> puntuacion;
+
+            string linea = "";
+            linea.append(nombre);
+            linea.append("    ");
+            linea.append(to_string(puntuacion));
+
+            sf::Text punt;
+            punt.setFont(fuente);
+            punt.setCharacterSize(30);
+            punt.setString(linea);
+            punt.setPosition({(resolucion.x - punt.getLocalBounds().width) / 2.0f,
+                              resolucion.y / 3.5f + i * resolucion.y / 14.0f});
+            punt.setFillColor(sf::Color::White);
+
+            punts.push_back(punt);
+        }
+    }
+    f_puntuaciones.close();
+
     texto.setFont(fuente);
     texto.setString("PUNTUACIONES");
-    texto.setCharacterSize(ajustar_h(30u));
+    texto.setCharacterSize(ajustar_h(75u));
+    texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
     texto.setFillColor(sf::Color::White);
+    texto.setOutlineColor(sf::Color::White);
+    texto.setOutlineThickness(1.5);
 
     opcion1.setFont(fuente);
-    opcion1.setString("1-MENU");
-    opcion1.setCharacterSize(ajustar_h(30u));
-    opcion1.setPosition({ajustar_w(0.0f), ajustar_h(35.0f)});
+    opcion1.setString("ACEPTAR");
+    opcion1.setCharacterSize(ajustar_h(40u));
+    opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - 5,
+                                     resolucion.y - opcion1.getLocalBounds().height - 5));
+
     opcion1.setFillColor(sf::Color::White);
+    opcion1.setOutlineColor(sf::Color::White);
+    opcion1.setOutlineThickness(1.5);
+
 
     while (true) {
         sf::Event event;
@@ -417,9 +579,9 @@ Estado tratarPuntuaciones(Estado estado) {
             switch (event.type) {
                 case sf::Event::Closed:
                     ventana.close();
-                    return ERROR;
+                    return EXIT;
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Num1) {
+                    if (event.key.code == sf::Keyboard::Return) {
                         return MENU;
                     }
                 default:
@@ -429,6 +591,11 @@ Estado tratarPuntuaciones(Estado estado) {
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
+
+            for (unsigned int i = 0; i < punts.size(); i++) {
+                ventana.draw(punts[i]);
+            }
+
             ventana.display();
         }
     }
@@ -458,7 +625,7 @@ Estado tratarOpciones(Estado estado) {
             switch (event.type) {
                 case sf::Event::Closed:
                     ventana.close();
-                    return ERROR;
+                    return EXIT;
                 case sf::Event::KeyPressed:
                     if (event.key.code == sf::Keyboard::Num1) {
                         return MENU;

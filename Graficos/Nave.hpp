@@ -51,7 +51,7 @@ private:
     //Numero de autoreapariciones de la nave
     int vidas = 5;
     //Puntuacion
-    long int puntuacion = 0;
+    long int *puntuacion;
 
     sf::Vector2u limites;
 
@@ -68,7 +68,8 @@ private:
 
 public:
     //Constructor
-    Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla);
+    Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int *p);
+
 
     //Destructor
     ~Nave();

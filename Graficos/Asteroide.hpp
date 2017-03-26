@@ -5,6 +5,7 @@
 
 #include "../Estados.hpp"
 #include "Circular.hpp"
+#include "../Estados.hpp"
 #include "../matematicas.hpp"
 #include "../constantesGlobales.hpp"
 
@@ -14,9 +15,14 @@ private:
     float direccion;
     Tipo version;
     sf::VertexArray poligono;
+
+    sf::VertexArray punto;
+    sf::Vector2f posicion0, posicion1, posicion2, posicion3, posicion4, posicion5, posicion6, posicion7;
+    bool recienDestruida = false;
     sf::Vector2f velocidad;
     Tamano tipoTamano;
     sf::Vector2u limites;
+    clock_t start;
 public:
 
     Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam,
@@ -53,10 +59,10 @@ public:
             int posX = limitesPantalla.x / 2;
             int posY = limitesPantalla.y / 2;
 
-            while (abs(posX - limitesPantalla.x / 2) < limitesPantalla.x * 0.05) {
+            while (std::abs(posX - limitesPantalla.x / 2) < limitesPantalla.x * 0.05) {
                 posX = enteroAleatorio(0, limitesPantalla.x);
             }
-            while (abs(posY - limitesPantalla.y / 2) < limitesPantalla.y * 0.05) {
+            while (std::abs(posY - limitesPantalla.y / 2) < limitesPantalla.y * 0.05) {
                 posY = enteroAleatorio(0, limitesPantalla.y);
             }
 

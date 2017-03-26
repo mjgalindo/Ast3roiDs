@@ -24,11 +24,14 @@ include_directories(neural/include/)
 # Detecta y linkea SFML
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 find_package(SFML 2 REQUIRED system window graphics network audio)
+find_package(OpenGL REQUIRED)
+target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
+include_directories("C:/Program Files (x86)/glew/include/GL")
+
 if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
     target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
 endif()
 # Linkea la libreria de redes neuronales
 target_link_libraries(${EXECUTABLE_NAME} neural)
-
 add_subdirectory(Utiles)

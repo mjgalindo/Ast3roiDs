@@ -7,7 +7,7 @@
 using namespace std;
 
 sf::RenderWindow ventana;
-sf::Vector2u MAX_SIZE = {800, 600};
+sf::Vector2u resolucion = {800, 600};
 vector<float> direcciones = {PI * 3 / 4,PI,-PI * 3 / 4,PI / 2,PI / 4,0,-PI / 4,-PI / 2};
 vector<float> salidas = {-3 * (2.0 / 8.0),-2 * (2.0 / 8.0),-1 * (2.0 / 8.0),0,(2.0 / 8.0),
                          2 * (2.0 / 8.0),3 * (2.0 / 8.0),4 * (2.0 / 8.0)};
@@ -27,17 +27,17 @@ double direccionSegura(sf::CircleShape ovni,sf::Vector2f posicionSegura, double 
             sf::Vector2f posicionOvni = ovni.getPosition();
             // Evita los limites del espacio
             if (posicionOvni.x < 0) {
-                posicionOvni.x = MAX_SIZE.x;
+                posicionOvni.x = resolucion.x;
                 ovni.setPosition(posicionOvni);
-            } else if (posicionOvni.x > MAX_SIZE.x) {
+            } else if (posicionOvni.x > resolucion.x) {
                 posicionOvni.x = 0;
                 ovni.setPosition(posicionOvni);
             }
 
             if (posicionOvni.y < 0) {
-                posicionOvni.y = MAX_SIZE.y;
+                posicionOvni.y = resolucion.y;
                 ovni.setPosition(posicionOvni);
-            } else if (posicionOvni.y > MAX_SIZE.y) {
+            } else if (posicionOvni.y > resolucion.y) {
                 posicionOvni.y = 0;
                 ovni.setPosition(posicionOvni);
             }
@@ -78,14 +78,14 @@ int main() {
     srand((unsigned long) time(NULL));
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
-    ventana.create(sf::VideoMode(MAX_SIZE.x, MAX_SIZE.y), "Ast3roiDs", sf::Style::Default, settings);
+    ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
     sf::Vector2f posicionAnterior;
     ventana.setFramerateLimit(60);
     sf::Clock reloj;
     sf::CircleShape sustitutoOvni(15);
     sustitutoOvni.setFillColor({200, 10, 10});
     sustitutoOvni.setOrigin(sustitutoOvni.getRadius(), sustitutoOvni.getRadius());
-    sustitutoOvni.setPosition({rand() % MAX_SIZE.x * 1.0f, rand() % MAX_SIZE.y * 1.0f});
+    sustitutoOvni.setPosition({rand() % resolucion.x * 1.0f, rand() % resolucion.y * 1.0f});
 
     bool continua = true;
 
@@ -96,7 +96,7 @@ int main() {
     //string inputRed = "entrenado.nn";
     //red = red.read(inputRed);
     unsigned int numAsteroides = 10;
-    Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, MAX_SIZE);
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion);
     int reinicios = 1;
     unsigned int iteraciones = 0;
     while (continua) {
@@ -164,17 +164,17 @@ int main() {
 
         // Evita los limites del espacio
         if (posicionOvni.x < 0) {
-            posicionOvni.x = MAX_SIZE.x;
+            posicionOvni.x = resolucion.x;
             sustitutoOvni.setPosition(posicionOvni);
-        } else if (posicionOvni.x > MAX_SIZE.x) {
+        } else if (posicionOvni.x > resolucion.x) {
             posicionOvni.x = 0;
             sustitutoOvni.setPosition(posicionOvni);
         }
 
         if (posicionOvni.y < 0) {
-            posicionOvni.y = MAX_SIZE.y;
+            posicionOvni.y = resolucion.y;
             sustitutoOvni.setPosition(posicionOvni);
-        } else if (posicionOvni.y > MAX_SIZE.y) {
+        } else if (posicionOvni.y > resolucion.y) {
             posicionOvni.y = 0;
             sustitutoOvni.setPosition(posicionOvni);
         }
@@ -182,7 +182,7 @@ int main() {
         //cout << salida << ' ' << posicionOvni.x << ' ' << posicionOvni.y << '\n';
         bool choque = false;
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
-            ast->mover(MAX_SIZE);
+            ast->mover(resolucion);
             ventana.draw(*ast);
             if (distanciaEuclidea(ast->getPosicion(), posicionOvni) < ast->getRadio() + sustitutoOvni.getRadius()) {
                 // Hay colision, se informa a la red y se reinicia la escena aleatoriamente
@@ -194,8 +194,8 @@ int main() {
             double salidaPre = red.run(entradasRed)[0];
             red.trainSingle(entradasRed, {direccionSegura(sustitutoOvni,posicionAnterior,salida)}, 0.3);
             //red.trainSingle(entradasRed, {-1.0*red.run(entradasRed)[0]}, 0.3);
-            Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, MAX_SIZE);
-            sustitutoOvni.setPosition({valorAleatorio(0, MAX_SIZE.x), valorAleatorio(0, MAX_SIZE.y)});
+            Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion);
+            sustitutoOvni.setPosition({valorAleatorio(0, resolucion.x), valorAleatorio(0, resolucion.y)});
             //cout << "La salida era: " << salidaPre << " y ahora es: " << red.run(entradasRed)[0] << '\n';
             cout << reinicios << " " << iteraciones / 60.0f << '\n';
             reinicios++;

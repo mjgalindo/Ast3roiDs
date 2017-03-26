@@ -60,6 +60,12 @@ Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel,
             poligono[11].position = {-0.362205f, -0.88189f};
     }
 
+
+    punto.setPrimitiveType(sf::LineStrip);
+    punto.resize(2);
+    punto[0].position = {0.0f, 0.0f};
+    punto[0].position = {0.2f, 0.2f};
+
 }
 
 //Getters
@@ -89,27 +95,82 @@ int Asteroide::getPuntuacion() const {
 }
 
 void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    sf::Transform t;
-    // El orden en el que se efectuan las transformaciones es importante!
-    t.translate(posicion).scale({radio, radio});
-    target.draw(poligono, t);
+    if (estado == MOVIMIENTO) {
+        sf::Transform t;
+        // El orden en el que se efectuan las transformaciones es importante!
+        t.translate(posicion).scale({radio, radio});
+        target.draw(poligono, t);
+    } else {
+        sf::Transform t0, t1, t2, t3, t4, t5, t6, t7;
+        t0.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion0);
+        t1.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion1);
+        t2.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion2);
+        t3.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion3);
+        t4.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion4);
+        t5.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion5);
+        t6.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion6);
+        t7.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion7);
+
+
+        target.draw(punto, t0);
+        target.draw(punto, t1);
+        target.draw(punto, t2);
+        target.draw(punto, t3);
+        target.draw(punto, t4);
+        target.draw(punto, t5);
+        target.draw(punto, t6);
+        target.draw(punto, t7);
+    }
+
 }
 
 void Asteroide::mover() {
-    posicion += velocidad;
-    if (posicion.x - 1 >= limites.x) {
-        posicion.x -= limites.x;
-    } else if (posicion.x + 1 <= 0.0) {
-        posicion.x += limites.x;
-    }
-    if (posicion.y - 1 >= limites.y) {
-        posicion.y -= limites.y;
-    } else if (posicion.y + 1 <= 0.0) {
-        posicion.y += limites.y;
+    switch (estado) {
+        case MOVIMIENTO: {
+            posicion += velocidad;
+            if (posicion.x - 1 >= limites.x) {
+                posicion.x -= limites.x;
+            } else if (posicion.x + 1 <= 0.0) {
+                posicion.x += limites.x;
+            }
+            if (posicion.y - 1 >= limites.y) {
+                posicion.y -= limites.y;
+            } else if (posicion.y + 1 <= 0.0) {
+                posicion.y += limites.y;
+            }
+            break;
+        }
+        case EXPLOSION: {
+            if (recienDestruida) {
+                posicion0 = posicion;
+                posicion1 = posicion;
+                posicion2 = posicion;
+                posicion3 = posicion;
+                posicion4 = posicion;
+                posicion5 = posicion;
+                posicion6 = posicion;
+                posicion7 = posicion;
+                recienDestruida = false;
+                start = clock();
+            }
+            if ((clock() - start) / (double) CLOCKS_PER_SEC > 2) {
+                estado = DESTRUIDO;
+            }
+            posicion0 = {posicion0.x + 1.0f, posicion0.y + 1.0f};
+            posicion1 = {posicion1.x + 1.2f, posicion1.y + 1.1f};
+            posicion2 = {posicion2.x + 1.0f, posicion2.y - 1.2f};
+            posicion3 = {posicion3.x - 0.5f, posicion3.y - 1.0f};
+            posicion4 = {posicion4.x + 0.75f, posicion4.y + 0.6f};
+            posicion5 = {posicion5.x - 0.65f, posicion5.y + 0.45f};
+            posicion6 = {posicion6.x + 0.4f, posicion6.y - 0.2f};
+            posicion7 = {posicion7.x - 0.9f, posicion7.y - 0.3f};
+
+        }
     }
 }
-
 void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v) {
+    estado = EXPLOSION;
+    recienDestruida = true;
     switch (tipoTamano) {
         case TAM_0:
             break;
