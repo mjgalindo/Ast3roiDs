@@ -229,7 +229,7 @@ Estado tratarMenu(Estado estado) {
                     break;
             }
 
-            sf::RectangleShape indicador({resolucion.x / 15.0f, resolucion.x / 15.0f});
+            sf::RectangleShape indicador({opcion1.getLocalBounds().height,opcion1.getLocalBounds().height});
             switch (seleccion) {
                 case 0:
                     indicador.setPosition({opcion1.getPosition().x - resolucion.x / 10, opcion1.getPosition().y});
@@ -435,13 +435,13 @@ Estado tratarGameOver(Estado estado) {
 
     opcion1.setFont(fuente);
     opcion1.setString("ACEPTAR");
-    opcion1.setCharacterSize(ajustar_h(40u));
-    opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - 5,
-                                     resolucion.y - opcion1.getLocalBounds().height - 5));
+    opcion1.setCharacterSize(ajustar_h(30u));
+    opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - ajustar_w(5),
+                                     resolucion.y - opcion1.getLocalBounds().height - ajustar_h(5)));
 
-    opcion1.setFillColor(sf::Color::White);
-    opcion1.setOutlineColor(sf::Color::White);
-    opcion1.setOutlineThickness(1.5);
+    sf::RectangleShape indicador({opcion1.getLocalBounds().height,opcion1.getLocalBounds().height});
+    indicador.setPosition({opcion1.getPosition().x - indicador.getLocalBounds().width - ajustar_w(10),
+                           opcion1.getPosition().y});
 
     float altura = resolucion.y / 3.0f;
 
@@ -577,6 +577,7 @@ Estado tratarGameOver(Estado estado) {
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
+            ventana.draw(indicador);
             ventana.draw(Snombre);
             nombre.setString(nombre_introducido);
             ventana.draw(nombre);
@@ -638,14 +639,13 @@ Estado tratarPuntuaciones(Estado estado) {
 
     opcion1.setFont(fuente);
     opcion1.setString("ACEPTAR");
-    opcion1.setCharacterSize(ajustar_h(40u));
-    opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - 5,
-                                     resolucion.y - opcion1.getLocalBounds().height - 5));
+    opcion1.setCharacterSize(ajustar_h(30u));
+    opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - ajustar_w(5),
+                                     resolucion.y - opcion1.getLocalBounds().height - ajustar_h(5)));
 
-    opcion1.setFillColor(sf::Color::White);
-    opcion1.setOutlineColor(sf::Color::White);
-    opcion1.setOutlineThickness(1.5);
-
+    sf::RectangleShape indicador({opcion1.getLocalBounds().height,opcion1.getLocalBounds().height});
+    indicador.setPosition({opcion1.getPosition().x - indicador.getLocalBounds().width - ajustar_w(10),
+                           opcion1.getPosition().y});
 
     while (true) {
         sf::Event event;
@@ -665,6 +665,7 @@ Estado tratarPuntuaciones(Estado estado) {
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
+            ventana.draw(indicador);
 
             for (unsigned int i = 0; i < punts.size(); i++) {
                 ventana.draw(punts[i]);
@@ -686,9 +687,11 @@ Estado tratarOpciones(Estado estado) {
 
     texto.setFont(fuente);
     texto.setString("OPCIONES");
-    texto.setCharacterSize(ajustar_h(40u));
+    texto.setCharacterSize(ajustar_h(75u));
+    texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
     texto.setFillColor(sf::Color::White);
-    texto.setPosition({(resolucion.x / 2.0f - texto.getLocalBounds().width / 2.0f), ajustar_h(10.0f)});
+    texto.setOutlineColor(sf::Color::White);
+    texto.setOutlineThickness(1.5);
 
     enum Opcion {
         RESOLUCION = 0, PANTALLA_COMPLETA = 1, VOLUMEN = 2, ANTIALIASING = 3, VOLVER = 4
@@ -706,7 +709,8 @@ Estado tratarOpciones(Estado estado) {
     array<tuple<sf::Text, sf::Text>, OPCIONES> opciones;
 
     float opcionX = resolucion.x / 6;
-    float opcionY = resolucion.y / (float) (OPCIONES + 1);
+    float opcionY = (resolucion.y - texto.getPosition().y - texto.getLocalBounds().height - ajustar_h(30u)) / (float) (OPCIONES + 1);
+    float offsetVertical = texto.getPosition().y + texto.getLocalBounds().height + ajustar_h(30u);
 
     for (unsigned int i = 0; i < OPCIONES; i++) {
         get<0>(opciones[i]).setFont(fuente);
@@ -721,8 +725,8 @@ Estado tratarOpciones(Estado estado) {
         get<0>(opciones[i]).setString(get<0>(textos[i]));
         get<1>(opciones[i]).setString(get<1>(textos[i]));
 
-        get<0>(opciones[i]).setPosition({opcionX, opcionY * (i + 1)});
-        get<1>(opciones[i]).setPosition({resolucion.x - 2 * opcionX, opcionY * (i + 1)});
+        get<0>(opciones[i]).setPosition({opcionX, offsetVertical + opcionY * (i + 1)});
+        get<1>(opciones[i]).setPosition({resolucion.x - 2 * opcionX, offsetVertical + opcionY * (i + 1)});
     }
 
     Opcion seleccion = RESOLUCION;
@@ -736,9 +740,15 @@ Estado tratarOpciones(Estado estado) {
                     return EXIT;
                 case sf::Event::KeyPressed:
                     if (event.key.code == sf::Keyboard::Up) {
-                        seleccion = (Opcion) ((seleccion - 1) % (unsigned int) opciones.size());
+                        seleccion = (Opcion) (seleccion-1);
+                        if(seleccion<0){
+                            seleccion = (Opcion)(opciones.size()-1);
+                        }
                     } else if (event.key.code == sf::Keyboard::Down) {
-                        seleccion = (Opcion) ((seleccion + 1) % (unsigned int) opciones.size());
+                        seleccion = (Opcion) (seleccion+1);
+                        if(seleccion>=opciones.size()){
+                            seleccion = (Opcion)0;
+                        }
                     } else if (event.key.code == sf::Keyboard::Return) {
                         if (seleccion == VOLVER) fin = true;
                     } else if (event.key.code == sf::Keyboard::Left) {
@@ -753,8 +763,9 @@ Estado tratarOpciones(Estado estado) {
                                 configuracionGlobal.pantallaCompleta = false;
                                 break;
                             case VOLUMEN:
-                                configuracionGlobal.volumen =
-                                        configuracionGlobal.volumen - 10 >= 0 ? configuracionGlobal.volumen - 10 : 0;
+                                if(configuracionGlobal.volumen!=0) {
+                                    configuracionGlobal.volumen = configuracionGlobal.volumen - 10;
+                                }
                                 break;
                             case ANTIALIASING:
                                 configuracionGlobal.antialiasing /= 2;
@@ -775,7 +786,7 @@ Estado tratarOpciones(Estado estado) {
                                 break;
                             case VOLUMEN:
                                 configuracionGlobal.volumen =
-                                        configuracionGlobal.volumen + 10 <= 100 ? configuracionGlobal.volumen + 10 : 0;
+                                        configuracionGlobal.volumen + 10 <= 100 ? configuracionGlobal.volumen + 10 : 100;
                                 break;
                             case ANTIALIASING:
                                 if (configuracionGlobal.antialiasing == 0) configuracionGlobal.antialiasing = 2;
@@ -803,9 +814,8 @@ Estado tratarOpciones(Estado estado) {
             get<0>(opciones[i]).setString(get<0>(textos[i]));
             get<1>(opciones[i]).setString(get<1>(textos[i]));
         }
-        sf::RectangleShape indicador({ajustar_h(30.0f), ajustar_h(30.0f)});
-        indicador.setPosition({opcionX - indicador.getLocalBounds().width - ajustar_w(10),
-                               opcionY + seleccion * opcionY});
+        sf::RectangleShape indicador({get<0>(opciones[0]).getLocalBounds().height,get<0>(opciones[0]).getLocalBounds().height});
+        indicador.setPosition({opcionX - ajustar_w(30), offsetVertical + opcionY * (seleccion + 1)});
         ventana.clear(sf::Color::Black);
         ventana.draw(texto);
         for (auto opcion : opciones) {
