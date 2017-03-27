@@ -75,6 +75,7 @@ Asteroide *asteroideMasCercano(sf::Vector2f posicion) {
 }
 
 int main() {
+
     srand((unsigned long) time(NULL));
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
@@ -87,10 +88,10 @@ int main() {
     sustitutoOvni.setOrigin(sustitutoOvni.getRadius(), sustitutoOvni.getRadius());
     sustitutoOvni.setPosition({rand() % resolucion.x * 1.0f, rand() % resolucion.y * 1.0f});
 
-    bool continua = true;
-
     // Inicializa una red neuronal nueva
     neural::Network red(4, 1, {120});
+
+    bool continua = true;
     // Opcionalmente la lee desde fichero
     // (descomentando las dos lineas siguientes y poniendo el nombre correcto)
     //string inputRed = "entrenado.nn";
