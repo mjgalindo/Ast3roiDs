@@ -70,7 +70,12 @@ long int puntuacion;
 void inicializaVentana() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = configuracionGlobal.antialiasing;
-    ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
+    if(configuracionGlobal.pantallaCompleta){
+        ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Fullscreen, settings);
+    }
+    else {
+        ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
+    }
     ventana.setFramerateLimit(60);
     ventana.setKeyRepeatEnabled(false);
     ventana.setVerticalSyncEnabled(true);
