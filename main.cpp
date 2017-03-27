@@ -282,19 +282,12 @@ void reproducirMusica(std::shared_ptr<bool> jugando, std::shared_ptr<bool> silen
 }
 
 void comprobarMuerteAsteroides(std::vector<Asteroide> &asteroides) {
-    for (int i = 0; i < asteroides.size(); i++) {
+    for (unsigned int i = 0; i < asteroides.size(); i++) {
         if (asteroides[i].estado == DESTRUIDO) {
             asteroides.erase(asteroides.begin() + i);
+            i--;
         }
     }
-
-}
-
-void comprobarMuerteOvni(Ovni ovni) {
-    if (ovni.estado == MUERTO) {
-        //ovni.erase(asteroides.begin() + i);
-    }
-
 
 }
 
@@ -383,7 +376,6 @@ Estado tratarJuego(Estado estado) {
         nave.frenar();
 
         comprobarMuerteAsteroides(asteroides);
-        comprobarMuerteOvni(ovni);
         punt.setString(std::to_string(puntuacion));
         punt.setString(std::to_string(puntuacion));
         vidas.setString(std::to_string(nave.getVidas()));
@@ -396,9 +388,18 @@ Estado tratarJuego(Estado estado) {
         ventana.draw(nave);
         ventana.draw(ovni);
 
+
+        bool reaparicion_ok = true;
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
             ast->mover();
+            if(distanciaEuclidea(ast->getPosicion(),nave.getPosicion())<ajustar_h(70)){
+                reaparicion_ok = false;
+            }
             ventana.draw(*ast);
+        }
+
+        if(reaparicion_ok && nave.getEstado()==REAPARECIENDO){
+            nave.cambiarEstado(REPOSO);
         }
 
         ventana.display();
