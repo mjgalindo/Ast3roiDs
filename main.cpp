@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <SFML/OpenGL.hpp>
 #include "Graficos/Nave.hpp"
 #include "Graficos/Ovni.hpp"
 
@@ -14,6 +13,20 @@ using namespace std;
 
 enum Estado {
     TITULO, MENU, JUEGO, GAME_OVER, PUNTUACIONES, OPCIONES, EXIT
+};
+
+struct Configuracion {
+    sf::Vector2u resolucion;
+    bool pantallaCompleta;
+    unsigned int volumen;
+    unsigned int antialiasing;
+
+    Configuracion() {
+        resolucion = RESOLUCION_BASE;
+        pantallaCompleta = false;
+        volumen = 50;
+        antialiasing = 2;
+    }
 };
 
 Estado tratarTitulo(Estado estado);
@@ -28,11 +41,15 @@ Estado tratarPuntuaciones(Estado estado);
 
 Estado tratarOpciones(Estado estado);
 
-//Tamaño de la ventana
-sf::Vector2u resolucion = 1u * RESOLUCION_BASE;
+Configuracion leeConfiguracion();
+
+void escribeConfiguracion(Configuracion config);
 
 double ratio_alto = 1.0 / RESOLUCION_BASE.x;
 double ratio_ancho = 1.0 / RESOLUCION_BASE.y;
+
+Configuracion configuracionGlobal;
+sf::Vector2u &resolucion = configuracionGlobal.resolucion;
 
 template<typename T>
 T ajustar_h(T valor) {
@@ -50,15 +67,18 @@ sf::RenderWindow ventana;
 //Puntuacion
 long int puntuacion;
 
-
-int main() {
+void inicializaVentana() {
     sf::ContextSettings settings;
-    settings.antialiasingLevel = 4;
+    settings.antialiasingLevel = configuracionGlobal.antialiasing;
     ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
-
     ventana.setFramerateLimit(60);
     ventana.setKeyRepeatEnabled(false);
     ventana.setVerticalSyncEnabled(true);
+}
+
+int main() {
+    configuracionGlobal = leeConfiguracion();
+    inicializaVentana();
 
     Estado estado_actual = TITULO;
     while (ventana.isOpen()) {
@@ -401,7 +421,7 @@ Estado tratarGameOver(Estado estado) {
 
     texto.setFont(fuente);
     texto.setString("GAME OVER");
-    texto.setCharacterSize(75);
+    texto.setCharacterSize(ajustar_h(75u));
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
     texto.setFillColor(sf::Color::White);
     texto.setOutlineColor(sf::Color::White);
@@ -421,7 +441,7 @@ Estado tratarGameOver(Estado estado) {
 
     Snombre.setFont(fuente);
     Snombre.setString("Nombre del piloto (3 letras): ");
-    Snombre.setCharacterSize(30);
+    Snombre.setCharacterSize(ajustar_h(30u));
     Snombre.setPosition(sf::Vector2f((resolucion.x - Snombre.getLocalBounds().width) / 2.0f, altura));
     Snombre.setFillColor(sf::Color::White);
 
@@ -430,21 +450,21 @@ Estado tratarGameOver(Estado estado) {
     altura += Snombre.getLocalBounds().height + 10;
     nombre.setFont(fuente);
     nombre.setString(nombre_introducido);
-    nombre.setCharacterSize(30);
+    nombre.setCharacterSize(ajustar_h(30u));
     nombre.setPosition(sf::Vector2f((resolucion.x - nombre.getLocalBounds().width) / 2.0f, altura));
     nombre.setFillColor(sf::Color::White);
 
     altura += nombre.getLocalBounds().height + 30;
     Spuntuacion.setFont(fuente);
     Spuntuacion.setString("Puntuacion obtenida: ");
-    Spuntuacion.setCharacterSize(30);
+    Spuntuacion.setCharacterSize(ajustar_h(30u));
     Spuntuacion.setPosition(sf::Vector2f((resolucion.x - Spuntuacion.getLocalBounds().width) / 2.0f, altura + 10));
     Spuntuacion.setFillColor(sf::Color::White);
 
     altura += Spuntuacion.getLocalBounds().height + 10;
     punt.setFont(fuente);
     punt.setString(to_string(puntuacion));
-    punt.setCharacterSize(30);
+    punt.setCharacterSize(ajustar_h(30u));
     punt.setPosition(sf::Vector2f((resolucion.x - punt.getLocalBounds().width) / 2.0f, altura + 10));
     punt.setFillColor(sf::Color::White);
 
@@ -462,12 +482,12 @@ Estado tratarGameOver(Estado estado) {
                         vector<long int> punts(0);
                         string nombre_aux = "";
                         long int puntuacion_aux = 0;
-                        if(f_puntuaciones.good()) {
+                        if (f_puntuaciones.good()) {
                             for (int i = 0; !f_puntuaciones.eof(); i++) {
                                 f_puntuaciones >> nombre_aux;
                                 f_puntuaciones >> puntuacion_aux;
 
-                                if(puntuacion_aux!=0){
+                                if (puntuacion_aux != 0) {
                                     nombres.push_back(nombre_aux);
                                     punts.push_back(puntuacion_aux);
                                     nombre_aux = "";
@@ -477,11 +497,10 @@ Estado tratarGameOver(Estado estado) {
 
                             nombre_aux = nombre_introducido;
                             puntuacion_aux = puntuacion;
-                            if(punts.empty()){
+                            if (punts.empty()) {
                                 nombres.push_back(nombre_aux);
                                 punts.push_back(puntuacion_aux);
-                            }
-                            else {
+                            } else {
                                 for (int i = 0; i < nombres.size(); i++) {
                                     if (puntuacion_aux > punts[i]) {
                                         long int p = punts[i];
@@ -493,7 +512,7 @@ Estado tratarGameOver(Estado estado) {
                                     }
                                 }
 
-                                if(nombres.size()<MAX_PUNTS){
+                                if (nombres.size() < MAX_PUNTS) {
                                     nombres.push_back(nombre_aux);
                                     punts.push_back(puntuacion_aux);
                                 }
@@ -502,13 +521,12 @@ Estado tratarGameOver(Estado estado) {
                         f_puntuaciones.close();
 
                         ofstream f_puntuaciones_out("puntuaciones.dat");
-                        if(f_puntuaciones_out.good()) {
+                        if (f_puntuaciones_out.good()) {
                             if (nombres.size() != 0) {
                                 for (int i = 0; i < nombres.size(); i++) {
                                     f_puntuaciones_out << nombres[i] << " " << punts[i] << endl;
                                 }
-                            }
-                            else {
+                            } else {
                                 f_puntuaciones_out << nombre_introducido << " " << puntuacion << endl;
                             }
 
@@ -543,10 +561,10 @@ Estado tratarPuntuaciones(Estado estado) {
     vector<sf::Text> punts(MAX_PUNTS);
 
     ifstream f_puntuaciones("puntuaciones.dat");
-    if(f_puntuaciones.good()){
+    if (f_puntuaciones.good()) {
         string nombre_aux;
         long int puntuacion_aux;
-        for(int i=0 ; i<MAX_PUNTS && !f_puntuaciones.eof() ; i++){
+        for (int i = 0; i < MAX_PUNTS && !f_puntuaciones.eof(); i++) {
             f_puntuaciones >> nombre_aux;
             f_puntuaciones >> puntuacion_aux;
 
@@ -555,13 +573,13 @@ Estado tratarPuntuaciones(Estado estado) {
             linea.append("    ");
             linea.append(to_string(puntuacion_aux));
 
-            if(nombre_aux.compare("")!=0) {
+            if (nombre_aux.compare("") != 0) {
                 nombre_aux = "";
                 puntuacion_aux = 0;
 
                 sf::Text punt;
                 punt.setFont(fuente);
-                punt.setCharacterSize(30);
+                punt.setCharacterSize(ajustar_h(30u));
                 punt.setString(linea);
                 punt.setPosition({(resolucion.x - punt.getLocalBounds().width) / 2.0f,
                                   resolucion.y / 3.5f + i * resolucion.y / 14.0f});
@@ -627,18 +645,52 @@ Estado tratarOpciones(Estado estado) {
     sf::Font fuente;
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
+    configuracionGlobal = leeConfiguracion();
+
     texto.setFont(fuente);
     texto.setString("OPCIONES");
-    texto.setCharacterSize(ajustar_h(30u));
+    texto.setCharacterSize(ajustar_h(40u));
     texto.setFillColor(sf::Color::White);
+    texto.setPosition({(resolucion.x / 2.0f - texto.getLocalBounds().width / 2.0f), ajustar_h(10.0f)});
 
-    opcion1.setFont(fuente);
-    opcion1.setString("1-MENU");
-    opcion1.setCharacterSize(ajustar_h(30u));
-    opcion1.setPosition({ajustar_w(0.0f), ajustar_h(35.0f)});
-    opcion1.setFillColor(sf::Color::White);
+    enum Opcion {
+        RESOLUCION = 0, PANTALLA_COMPLETA = 1, VOLUMEN = 2, ANTIALIASING = 3, VOLVER = 4
+    };
 
-    while (true) {
+    static constexpr int OPCIONES = 5;
+
+    array<tuple<string, string>, OPCIONES> textos{
+            make_tuple("RESOLUCION", ""),
+            make_tuple("PANTALLA COMPLETA", ""),
+            make_tuple("VOLUMEN", ""),
+            make_tuple("ANTIALIASING", ""),
+            make_tuple("VOLVER", "")
+    };
+    array<tuple<sf::Text, sf::Text>, OPCIONES> opciones;
+
+    float opcionX = resolucion.x / 6;
+    float opcionY = resolucion.y / (float) (OPCIONES + 1);
+
+    for (unsigned int i = 0; i < OPCIONES; i++) {
+        get<0>(opciones[i]).setFont(fuente);
+        get<1>(opciones[i]).setFont(fuente);
+
+        get<0>(opciones[i]).setCharacterSize(ajustar_h(30u));
+        get<1>(opciones[i]).setCharacterSize(ajustar_h(30u));
+
+        get<0>(opciones[i]).setFillColor(sf::Color::White);
+        get<1>(opciones[i]).setFillColor(sf::Color::White);
+
+        get<0>(opciones[i]).setString(get<0>(textos[i]));
+        get<1>(opciones[i]).setString(get<1>(textos[i]));
+
+        get<0>(opciones[i]).setPosition({opcionX, opcionY * (i + 1)});
+        get<1>(opciones[i]).setPosition({resolucion.x - 2 * opcionX, opcionY * (i + 1)});
+    }
+
+    Opcion seleccion = RESOLUCION;
+    bool fin = false;
+    while (!fin) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
             switch (event.type) {
@@ -646,17 +698,103 @@ Estado tratarOpciones(Estado estado) {
                     ventana.close();
                     return EXIT;
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Num1) {
-                        return MENU;
+                    if (event.key.code == sf::Keyboard::Up) {
+                        seleccion = (Opcion) ((seleccion - 1) % (unsigned int) opciones.size());
+                    } else if (event.key.code == sf::Keyboard::Down) {
+                        seleccion = (Opcion) ((seleccion + 1) % (unsigned int) opciones.size());
+                    } else if (event.key.code == sf::Keyboard::Return) {
+                        if (seleccion == VOLVER) fin = true;
+                    } else if (event.key.code == sf::Keyboard::Left) {
+                        switch (seleccion) {
+                            case RESOLUCION:
+                                configuracionGlobal.resolucion.y = configuracionGlobal.resolucion.y - 50;
+                                configuracionGlobal.resolucion.x = (unsigned int) (RESOLUCION_BASE.x /
+                                                                                   (RESOLUCION_BASE.y /
+                                                                                    (float) configuracionGlobal.resolucion.y));
+                                break;
+                            case PANTALLA_COMPLETA:
+                                configuracionGlobal.pantallaCompleta = false;
+                                break;
+                            case VOLUMEN:
+                                configuracionGlobal.volumen =
+                                        configuracionGlobal.volumen - 10 >= 0 ? configuracionGlobal.volumen - 10 : 0;
+                                break;
+                            case ANTIALIASING:
+                                configuracionGlobal.antialiasing /= 2;
+                                break;
+                            default:
+                                break;
+                        }
+                    } else if (event.key.code == sf::Keyboard::Right) {
+                        switch (seleccion) {
+                            case RESOLUCION:
+                                configuracionGlobal.resolucion.y = configuracionGlobal.resolucion.y + 50;
+                                configuracionGlobal.resolucion.x = (unsigned int) (RESOLUCION_BASE.x /
+                                                                                   (RESOLUCION_BASE.y /
+                                                                                    (float) configuracionGlobal.resolucion.y));
+                                break;
+                            case PANTALLA_COMPLETA:
+                                configuracionGlobal.pantallaCompleta = true;
+                                break;
+                            case VOLUMEN:
+                                configuracionGlobal.volumen =
+                                        configuracionGlobal.volumen + 10 <= 100 ? configuracionGlobal.volumen + 10 : 0;
+                                break;
+                            case ANTIALIASING:
+                                if (configuracionGlobal.antialiasing == 0) configuracionGlobal.antialiasing = 2;
+                                else configuracionGlobal.antialiasing *= 2;
+                                configuracionGlobal.antialiasing =
+                                        configuracionGlobal.antialiasing > 8 ? 8u : configuracionGlobal.antialiasing;
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 default:
                     break;
             }
 
-            ventana.clear(sf::Color::Black);
-            ventana.draw(texto);
-            ventana.draw(opcion1);
-            ventana.display();
         }
+
+        get<1>(textos[RESOLUCION]) =
+                to_string(configuracionGlobal.resolucion.x) + "x" + to_string(configuracionGlobal.resolucion.y);
+        get<1>(textos[PANTALLA_COMPLETA]) = configuracionGlobal.pantallaCompleta ? "SI" : "NO";
+        get<1>(textos[ANTIALIASING]) = to_string(configuracionGlobal.antialiasing);
+        get<1>(textos[VOLUMEN]) = to_string(configuracionGlobal.volumen);
+
+        for (unsigned int i = 0; i < OPCIONES; i++) {
+            get<0>(opciones[i]).setString(get<0>(textos[i]));
+            get<1>(opciones[i]).setString(get<1>(textos[i]));
+        }
+        sf::RectangleShape indicador({ajustar_h(30.0f), ajustar_h(30.0f)});
+        indicador.setPosition({opcionX - indicador.getLocalBounds().width - ajustar_w(10),
+                               opcionY + seleccion * opcionY});
+        ventana.clear(sf::Color::Black);
+        ventana.draw(texto);
+        for (auto opcion : opciones) {
+            ventana.draw(get<0>(opcion));
+            ventana.draw(get<1>(opcion));
+        }
+        ventana.draw(indicador);
+        ventana.display();
     }
+    escribeConfiguracion(configuracionGlobal);
+    inicializaVentana();
+    return MENU;
+}
+
+Configuracion leeConfiguracion() {
+    ifstream fichConfig("opciones.cfg");
+    Configuracion retVal;
+    if (!fichConfig.good()) return retVal;
+    unsigned int resVertical = 0;
+    fichConfig >> resVertical >> retVal.pantallaCompleta >> retVal.volumen >> retVal.antialiasing;
+    retVal.resolucion = {(unsigned int) (RESOLUCION_BASE.x / (RESOLUCION_BASE.y / (float) resVertical)), resVertical};
+    return retVal;
+}
+
+void escribeConfiguracion(Configuracion config) {
+    ofstream fichConfig("opciones.cfg");
+    fichConfig << config.resolucion.y << ' ' << config.pantallaCompleta << ' ' << config.volumen << ' '
+               << config.antialiasing;
 }
