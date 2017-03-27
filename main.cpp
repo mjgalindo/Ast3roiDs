@@ -425,7 +425,8 @@ Estado tratarGameOver(Estado estado) {
     Snombre.setPosition(sf::Vector2f((resolucion.x - Snombre.getLocalBounds().width) / 2.0f, altura));
     Snombre.setFillColor(sf::Color::White);
 
-    string nombre_introducido = "AAA";
+    char nombre_introducido[3] = { 'A' , 'A' , 'A' };
+    int indice = 0;
 
     altura += Snombre.getLocalBounds().height + 10;
     nombre.setFont(fuente);
@@ -456,6 +457,30 @@ Estado tratarGameOver(Estado estado) {
                     ventana.close();
                     return EXIT;
                 case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Right){
+                        indice = indice+1;
+                        if(indice>2){
+                            indice = 0;
+                        }
+                    }
+                    if (event.key.code == sf::Keyboard::Left){
+                        indice = indice-1;
+                        if(indice<0){
+                            indice = 2;
+                        }
+                    }
+                    if (event.key.code == sf::Keyboard::Up){
+                        nombre_introducido[indice] = nombre_introducido[indice]+1;
+                        if(nombre_introducido[indice]>'Z'){
+                            nombre_introducido[indice]='A';
+                        }
+                    }
+                    if (event.key.code == sf::Keyboard::Down){
+                        nombre_introducido[indice] = nombre_introducido[indice]-1;
+                        if(nombre_introducido[indice]<'A'){
+                            nombre_introducido[indice]='Z';
+                        }
+                    }
                     if (event.key.code == sf::Keyboard::Return) {
                         ifstream f_puntuaciones("puntuaciones.dat");
                         vector<string> nombres(0);
@@ -521,11 +546,17 @@ Estado tratarGameOver(Estado estado) {
                     break;
             }
 
+            sf::VertexArray seleccionada(sf::LinesStrip, 2);
+            seleccionada[0].position = sf::Vector2f(nombre.getPosition().x+indice*nombre.getLocalBounds().width/3.0, nombre.getPosition().y + nombre.getLocalBounds().height +4);
+            seleccionada[1].position = sf::Vector2f(nombre.getPosition().x+(indice+1)*nombre.getLocalBounds().width/3.0, nombre.getPosition().y + nombre.getLocalBounds().height +4);
+
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
             ventana.draw(Snombre);
+            nombre.setString(nombre_introducido);
             ventana.draw(nombre);
+            ventana.draw(seleccionada);
             ventana.draw(Spuntuacion);
             ventana.draw(punt);
             ventana.display();
