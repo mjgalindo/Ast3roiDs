@@ -446,7 +446,7 @@ Estado tratarGameOver(Estado estado) {
     Snombre.setPosition(sf::Vector2f((resolucion.x - Snombre.getLocalBounds().width) / 2.0f, altura));
     Snombre.setFillColor(sf::Color::White);
 
-    char nombre_introducido[3] = { 'A' , 'A' , 'A' };
+    char nombre_introducido[] = "AAA";
     int indice = 0;
 
     altura += Snombre.getLocalBounds().height + 10;
