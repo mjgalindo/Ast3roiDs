@@ -64,6 +64,7 @@ private:
     sf::Sound reproductorDeSonidoPropulsion;
     sf::Sound reproductorDeSonidoDestruccion;
 
+    clock_t cooldown;
     void reiniciar();
 
 public:
@@ -103,6 +104,8 @@ public:
     void rotarIzda();
 
     void rotarDcha();
+
+    void hiperEspacio();
 
     void mover(std::vector<Asteroide> &v, Circular &o);
 

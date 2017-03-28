@@ -35,7 +35,7 @@ Ovni::Ovni(sf::Vector2u limitesPantalla) :
     punto.setPrimitiveType(sf::LineStrip);
     punto.resize(2);
     punto[0].position = {0.0f, 0.0f};
-    punto[0].position = {0.2f, 0.2f};
+    punto[1].position = {0.2f, 0.2f};
 
     recienDestruida = true;
 }

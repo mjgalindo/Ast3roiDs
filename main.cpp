@@ -375,9 +375,9 @@ Estado tratarJuego(Estado estado) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
             nave.acelerar();
         }
-
-        
-
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            nave.hiperEspacio();
+        }
         ovni.mover(asteroides, nave);
         nave.mover(asteroides, ovni);
         nave.frenar();
