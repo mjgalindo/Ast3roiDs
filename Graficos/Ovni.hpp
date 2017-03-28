@@ -31,6 +31,7 @@ private:
     Disparo disparos[MAX_DISPAROS];
 
     sf::Vector2u limites;
+    sf::Color color;
 
     // Buffers de los distintos sonidos de un ovni
     sf::SoundBuffer bufferSonidoOvni;
@@ -42,7 +43,7 @@ private:
 
     clock_t start;
 public:
-    Ovni(sf::Vector2u limitesPantalla);
+    Ovni(sf::Vector2u limitesPantalla, sf::Color color);
 
     ~Ovni();
 

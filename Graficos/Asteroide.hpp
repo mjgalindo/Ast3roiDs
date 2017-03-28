@@ -22,11 +22,12 @@ private:
     sf::Vector2f velocidad;
     Tamano tipoTamano;
     sf::Vector2u limites;
+    sf::Color color;
     clock_t start;
 public:
 
     Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam,
-              sf::Vector2u limitesPantalla);
+              sf::Vector2u limitesPantalla, sf::Color color);
 
     ~Asteroide() {};
 
@@ -50,7 +51,7 @@ public:
     void gestionarDestruccion(std::vector<Asteroide> &v);
 
     static void nuevosAsteroidesAleatorios(std::vector<Asteroide> &vectorAsteroides, unsigned int numAsteroides,
-                                           sf::Vector2u limitesPantalla) {
+                                           sf::Vector2u limitesPantalla, sf::Color color) {
         vectorAsteroides.clear();
         for (int i = 0; i < numAsteroides; ++i) {
             float velocidad = valorAleatorio(0.2, 2.0) * limitesPantalla.y / (float) RESOLUCION_BASE.y;
@@ -69,7 +70,7 @@ public:
             vectorAsteroides.push_back(Asteroide(
                     {(float) posX, (float) posY},
                     direccion, {velocidad * (float) cos(direccion), velocidad * (float) sin(direccion)},
-                    (Tipo) enteroAleatorio(0, 2), TAM_2, limitesPantalla));
+                    (Tipo) enteroAleatorio(0, 2), TAM_2, limitesPantalla, color));
         }
 
     }

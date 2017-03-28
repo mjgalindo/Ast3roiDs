@@ -34,7 +34,7 @@ public:
     //Constructor
     Disparo();
 
-    Disparo(sf::Vector2f pos_inicial, float d, sf::Vector2u limitesPantalla);
+    Disparo(sf::Vector2f pos_inicial, float d, sf::Vector2u limitesPantalla, sf::Color color);
 
     //Destructor
     ~Disparo();

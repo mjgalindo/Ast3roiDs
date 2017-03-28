@@ -52,6 +52,7 @@ private:
     int vidas = 5;
     //Puntuacion
     long int *puntuacion;
+    sf::Color color;
 
     sf::Vector2u limites;
 
@@ -64,11 +65,12 @@ private:
     sf::Sound reproductorDeSonidoPropulsion;
     sf::Sound reproductorDeSonidoDestruccion;
 
+    clock_t cooldown;
     void reiniciar();
 
 public:
     //Constructor
-    Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int *p);
+    Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int *p, sf::Color color);
 
 
     //Destructor
@@ -103,6 +105,8 @@ public:
     void rotarIzda();
 
     void rotarDcha();
+
+    void hiperEspacio();
 
     void mover(std::vector<Asteroide> &v, Circular &o);
 

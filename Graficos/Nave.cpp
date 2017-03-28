@@ -2,8 +2,9 @@
 #include "Nave.hpp"
 
 //Constructor
-Nave::Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int *p)
-        : Triangular(posicion_inicial, (float) -PI / 2.0f, 10 * (limitesPantalla.y / (float) RESOLUCION_BASE.y)) {
+Nave::Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int *p, sf::Color color)
+        : Triangular(posicion_inicial, (float) -PI / 2.0f, 10 * (limitesPantalla.y / (float) RESOLUCION_BASE.y)),
+          color(color) {
 
     if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")) {
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
@@ -33,15 +34,23 @@ Nave::Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int
     linea0.resize(2);
     linea0[0].position = {1.0f, 0.0f};
     linea0[1].position = {-0.7071067812f, 0.7071067812f};
+    linea0[0].color = color;
+    linea0[1].color = color;
     linea1.resize(2);
     linea1[0].position = {-0.7071067812f, 0.7071067812f};
     linea1[1].position = {-0.4f, 0.0f};
+    linea1[0].color = color;
+    linea1[1].color = color;
     linea2.resize(2);
     linea2[0].position = {-0.4f, 0.0f};
     linea2[1].position = {-0.7071067812f, -0.7071067812f};
+    linea2[0].color = color;
+    linea2[1].color = color;
     linea3.resize(2);
     linea3[0].position = {-0.7071067812f, -0.7071067812f};
     linea3[1].position = {1.0f, 0.0f};
+    linea3[0].color = color;
+    linea3[1].color = color;
 
     poligono.setPrimitiveType(sf::LineStrip);
     poligono.resize(5);
@@ -50,15 +59,16 @@ Nave::Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int
     poligono[2].position = {-0.4f, 0.0f};
     poligono[3].position = {-0.7071067812f, -0.7071067812f};
     poligono[4].position = {1.0f, 0.0f};
+    for (int i = 0; i < poligono.getVertexCount(); i++) {
+        poligono[i].color = color;
+    }
 
-    //fuego.setPrimitiveType(sf::LineStrip);
     fuego.setPointCount(4);
     fuego.setPoint(0, sf::Vector2f(-0.55f, 0.0f));
     fuego.setPoint(1, sf::Vector2f(-0.7f, 0.5f));
     fuego.setPoint(2, sf::Vector2f(-1.0f, 0.0f));
     fuego.setPoint(3, sf::Vector2f(-0.7f, -0.5f));
-    //fuego.setPoint(0, sf::Vector2f(-0.55f, 0.0f));
-
+    fuego.setFillColor(color);
 
     //Posicion de la nave
     pos_inicial = posicion_inicial;
@@ -71,11 +81,13 @@ Nave::Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int
     //Disparos
     num_disparos = 0;
     for (int i = 0; i < MAX_DISPAROS; i++) {
-        disparos[i] = Disparo({0.0f, 0.0f}, 0.0f, limitesPantalla);
+        disparos[i] = Disparo({0.0f, 0.0f}, 0.0f, limitesPantalla, color);
     }
 
     limites = limitesPantalla;
     puntuacion = p;
+
+    cooldown = clock();
 }
 
 void Nave::reiniciar() {
@@ -140,14 +152,11 @@ void Nave::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         }
 
         case DESTRUIDA: {
-
-
             sf::Transform t0, t1, t2, t3;
             t0.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion0).scale({tamano, tamano});
             t1.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion1).scale({tamano, tamano});
             t2.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion2).scale({tamano, tamano});
             t3.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion3).scale({tamano, tamano});
-
 
             target.draw(linea0, t0);
             target.draw(linea1, t1);
@@ -178,7 +187,7 @@ void Nave::disparar() {
                                 poligono[0].position.y * tamano * sin(direccion));
             inicio.y = (float) (poligono[0].position.y * tamano * cos(direccion) +
                                 poligono[0].position.x * tamano * sin(direccion));
-            disparos[num_disparos] = Disparo(posicion + inicio, direccion, limites);
+            disparos[num_disparos] = Disparo(posicion + inicio, direccion, limites, color);
             num_disparos++;
             reproductorDeSonidoDisparos.play();
         }
@@ -200,6 +209,18 @@ void Nave::rotarDcha() {
         if (direccion > 2.0 * PI) {
             direccion -= 2 * PI;
         }
+    }
+}
+void Nave::hiperEspacio() {
+    double tiempo = (clock() - cooldown) / (double) CLOCKS_PER_SEC;
+    if ((estado == REPOSO || estado == ACELERANDO) && tiempo>2) {
+        cooldown = clock();
+        posicion = {valorAleatorio(0, limites.x), valorAleatorio(0, limites.y)};
+
+        if(valorAleatorio()<0.4){
+            cambiarEstado(DESTRUIDA);
+        }
+
     }
 }
 
@@ -367,6 +388,7 @@ void Nave::cambiarEstado(int nuevoEstado) {
         case REAPARECIENDO:
             if (ciclos >= 50) {
                 estado = REPOSO;
+                cooldown = clock();
                 ciclos = 0;
             } else {
                 ciclos++;
