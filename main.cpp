@@ -376,6 +376,8 @@ Estado tratarJuego(Estado estado) {
             nave.acelerar();
         }
 
+        
+
         ovni.mover(asteroides, nave);
         nave.mover(asteroides, ovni);
         nave.frenar();
