@@ -20,12 +20,34 @@ struct Configuracion {
     bool pantallaCompleta;
     unsigned int volumen;
     unsigned int antialiasing;
+    int colorId;
+    array<sf::Color, 4u> COLORES = {sf::Color::White, sf::Color::Red, sf::Color::Green, sf::Color::Blue};
 
     Configuracion() {
         resolucion = RESOLUCION_BASE;
         pantallaCompleta = false;
         volumen = 50;
         antialiasing = 2;
+        colorId = 0;
+    }
+
+    sf::Color color() {
+        return COLORES[colorId];
+    }
+
+    string colorString() {
+        switch (colorId) {
+            case 0:
+                return "BLANCO";
+            case 1:
+                return "ROJO";
+            case 2:
+                return "VERDE";
+            case 3:
+                return "AZUL";
+            default:
+                return "???";
+        }
     }
 };
 
@@ -123,14 +145,14 @@ Estado tratarTitulo(Estado estado) {
     titulo.setFont(fuente);
     titulo.setString("AST3ROIDS");
     titulo.setCharacterSize(ajustar_h(100u));
-    titulo.setFillColor(sf::Color::White);
+    titulo.setFillColor(configuracionGlobal.color());
     titulo.setPosition((resolucion.x - titulo.getLocalBounds().width) / 2, resolucion.y / 5);
 
     instrucciones.setFont(fuente);
     instrucciones.setString("<ENTER> PARA MENU");
     instrucciones.setCharacterSize(ajustar_h(30u));
     instrucciones.setPosition((resolucion.x - instrucciones.getLocalBounds().width) / 2, ajustar_h(360));
-    instrucciones.setFillColor(sf::Color::White);
+    instrucciones.setFillColor(configuracionGlobal.color());
 
     sf::Clock reloj;
     bool dibujaInstrucciones = true;
@@ -177,35 +199,35 @@ Estado tratarMenu(Estado estado) {
     texto.setString("MENU");
     texto.setCharacterSize(ajustar_h(80u));
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 10.0f});
-    texto.setFillColor(sf::Color::White);
+    texto.setFillColor(configuracionGlobal.color());
 
     opcion1.setFont(fuente);
     opcion1.setString("JUGAR");
     opcion1.setCharacterSize(ajustar_h(40u));
     opcion1.setPosition(
             {(resolucion.x - opcion1.getLocalBounds().width) / 2.0f, resolucion.y / 8 + resolucion.y / 5.0f});
-    opcion1.setFillColor(sf::Color::White);
+    opcion1.setFillColor(configuracionGlobal.color());
 
     opcion2.setFont(fuente);
     opcion2.setString("PUNTUACIONES");
     opcion2.setCharacterSize(ajustar_h(40u));
     opcion2.setPosition(
             {(resolucion.x - opcion2.getLocalBounds().width) / 2.0f, resolucion.y / 8 + 2 * resolucion.y / 5.0f});
-    opcion2.setFillColor(sf::Color::White);
+    opcion2.setFillColor(configuracionGlobal.color());
 
     opcion3.setFont(fuente);
     opcion3.setString("OPCIONES");
     opcion3.setCharacterSize(ajustar_h(40u));
     opcion3.setPosition(
             {(resolucion.x - opcion3.getLocalBounds().width) / 2, resolucion.y / 8.0f + 3 * resolucion.y / 5.0f});
-    opcion3.setFillColor(sf::Color::White);
+    opcion3.setFillColor(configuracionGlobal.color());
 
     opcion4.setFont(fuente);
     opcion4.setString("SALIR");
     opcion4.setCharacterSize(ajustar_h(40u));
     opcion4.setPosition(
             {(resolucion.x - opcion4.getLocalBounds().width) / 2, resolucion.y / 8.0f + 4 * resolucion.y / 5.0f});
-    opcion4.setFillColor(sf::Color::White);
+    opcion4.setFillColor(configuracionGlobal.color());
 
     array<Estado, 4> opciones = {JUEGO, PUNTUACIONES, OPCIONES, EXIT};
     int seleccion = 0;
@@ -230,6 +252,7 @@ Estado tratarMenu(Estado estado) {
             }
 
             sf::RectangleShape indicador({opcion1.getLocalBounds().height,opcion1.getLocalBounds().height});
+            indicador.setFillColor(configuracionGlobal.color());
             switch (seleccion) {
                 case 0:
                     indicador.setPosition({opcion1.getPosition().x - resolucion.x / 10, opcion1.getPosition().y});
@@ -310,12 +333,12 @@ Estado tratarJuego(Estado estado) {
     punt.setFont(fuente);
     punt.setCharacterSize(ajustar_h(30u));
     punt.setPosition({ajustar_w(20.0f), ajustar_h(10.0f)});
-    punt.setFillColor(sf::Color::White);
+    punt.setFillColor(configuracionGlobal.color());
 
     vidas.setFont(fuente);
     vidas.setCharacterSize(ajustar_h(30u));
     vidas.setPosition({ajustar_w(20.0f), ajustar_h(45.0f)});
-    vidas.setFillColor(sf::Color::White);
+    vidas.setFillColor(configuracionGlobal.color());
 
     shared_ptr<bool> jugando(new bool(true));
     shared_ptr<bool> silencioMusica(new bool(false));
@@ -325,12 +348,12 @@ Estado tratarJuego(Estado estado) {
     sf::Clock reloj;
     int nivel = 0;
 
-    Nave nave = Nave({resolucion.x / 2.0f, resolucion.y / 2.0f}, resolucion, &puntuacion);
-    Ovni ovni(resolucion);
+    Nave nave = Nave({resolucion.x / 2.0f, resolucion.y / 2.0f}, resolucion, &puntuacion, configuracionGlobal.color());
+    Ovni ovni(resolucion, configuracionGlobal.color());
 
     vector<Asteroide> asteroides;
     unsigned int numeroDeAsteroides = 4;
-    Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion);
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion, configuracionGlobal.color());
 
     while (true) {
         if (nave.getVidas() < 0) {
@@ -343,7 +366,8 @@ Estado tratarJuego(Estado estado) {
         if (asteroides.size() == 0) {
             nivel++;
             numeroDeAsteroides += 2;
-            Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion);
+            Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion,
+                                                  configuracionGlobal.color());
             *reiniciarMusica = true;
         }
 
@@ -393,7 +417,6 @@ Estado tratarJuego(Estado estado) {
         ventana.draw(nave);
         ventana.draw(ovni);
 
-
         bool reaparicion_ok = true;
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
             ast->mover();
@@ -429,8 +452,8 @@ Estado tratarGameOver(Estado estado) {
     texto.setString("GAME OVER");
     texto.setCharacterSize(ajustar_h(75u));
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
-    texto.setFillColor(sf::Color::White);
-    texto.setOutlineColor(sf::Color::White);
+    texto.setFillColor(configuracionGlobal.color());
+    texto.setOutlineColor(configuracionGlobal.color());
     texto.setOutlineThickness(1.5);
 
     opcion1.setFont(fuente);
@@ -449,7 +472,7 @@ Estado tratarGameOver(Estado estado) {
     Snombre.setString("Nombre del piloto (3 letras): ");
     Snombre.setCharacterSize(ajustar_h(30u));
     Snombre.setPosition(sf::Vector2f((resolucion.x - Snombre.getLocalBounds().width) / 2.0f, altura));
-    Snombre.setFillColor(sf::Color::White);
+    Snombre.setFillColor(configuracionGlobal.color());
 
     char nombre_introducido[] = "AAA";
     int indice = 0;
@@ -459,21 +482,21 @@ Estado tratarGameOver(Estado estado) {
     nombre.setString(nombre_introducido);
     nombre.setCharacterSize(ajustar_h(30u));
     nombre.setPosition(sf::Vector2f((resolucion.x - nombre.getLocalBounds().width) / 2.0f, altura));
-    nombre.setFillColor(sf::Color::White);
+    nombre.setFillColor(configuracionGlobal.color());
 
     altura += nombre.getLocalBounds().height + 30;
     Spuntuacion.setFont(fuente);
     Spuntuacion.setString("Puntuacion obtenida: ");
     Spuntuacion.setCharacterSize(ajustar_h(30u));
     Spuntuacion.setPosition(sf::Vector2f((resolucion.x - Spuntuacion.getLocalBounds().width) / 2.0f, altura + 10));
-    Spuntuacion.setFillColor(sf::Color::White);
+    Spuntuacion.setFillColor(configuracionGlobal.color());
 
     altura += Spuntuacion.getLocalBounds().height + 10;
     punt.setFont(fuente);
     punt.setString(to_string(puntuacion));
     punt.setCharacterSize(ajustar_h(30u));
     punt.setPosition(sf::Vector2f((resolucion.x - punt.getLocalBounds().width) / 2.0f, altura + 10));
-    punt.setFillColor(sf::Color::White);
+    punt.setFillColor(configuracionGlobal.color());
 
     while (true) {
         sf::Event event;
@@ -621,7 +644,7 @@ Estado tratarPuntuaciones(Estado estado) {
                 punt.setString(linea);
                 punt.setPosition({(resolucion.x - punt.getLocalBounds().width) / 2.0f,
                                   resolucion.y / 3.5f + i * resolucion.y / 14.0f});
-                punt.setFillColor(sf::Color::White);
+                punt.setFillColor(configuracionGlobal.color());
 
                 punts.push_back(punt);
             }
@@ -633,8 +656,8 @@ Estado tratarPuntuaciones(Estado estado) {
     texto.setString("PUNTUACIONES");
     texto.setCharacterSize(ajustar_h(75u));
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
-    texto.setFillColor(sf::Color::White);
-    texto.setOutlineColor(sf::Color::White);
+    texto.setFillColor(configuracionGlobal.color());
+    texto.setOutlineColor(configuracionGlobal.color());
     texto.setOutlineThickness(1.5);
 
     opcion1.setFont(fuente);
@@ -689,26 +712,27 @@ Estado tratarOpciones(Estado estado) {
     texto.setString("OPCIONES");
     texto.setCharacterSize(ajustar_h(75u));
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
-    texto.setFillColor(sf::Color::White);
-    texto.setOutlineColor(sf::Color::White);
+    texto.setFillColor(configuracionGlobal.color());
+    texto.setOutlineColor(configuracionGlobal.color());
     texto.setOutlineThickness(1.5);
 
     enum Opcion {
-        RESOLUCION = 0, PANTALLA_COMPLETA = 1, VOLUMEN = 2, ANTIALIASING = 3, VOLVER = 4
+        RESOLUCION = 0, PANTALLA_COMPLETA = 1, VOLUMEN = 2, ANTIALIASING = 3, COLOR = 4, VOLVER = 5
     };
 
-    static constexpr int OPCIONES = 5;
+    static constexpr int OPCIONES = 6;
 
     array<tuple<string, string>, OPCIONES> textos{
             make_tuple("RESOLUCION", ""),
             make_tuple("PANTALLA COMPLETA", ""),
             make_tuple("VOLUMEN", ""),
             make_tuple("ANTIALIASING", ""),
+            make_tuple("COLOR", ""),
             make_tuple("VOLVER", "")
     };
     array<tuple<sf::Text, sf::Text>, OPCIONES> opciones;
 
-    float opcionX = resolucion.x / 6;
+    float opcionX = resolucion.x / OPCIONES + 1;
     float opcionY = (resolucion.y - texto.getPosition().y - texto.getLocalBounds().height - ajustar_h(30u)) / (float) (OPCIONES + 1);
     float offsetVertical = texto.getPosition().y + texto.getLocalBounds().height + ajustar_h(30u);
 
@@ -719,8 +743,8 @@ Estado tratarOpciones(Estado estado) {
         get<0>(opciones[i]).setCharacterSize(ajustar_h(30u));
         get<1>(opciones[i]).setCharacterSize(ajustar_h(30u));
 
-        get<0>(opciones[i]).setFillColor(sf::Color::White);
-        get<1>(opciones[i]).setFillColor(sf::Color::White);
+        get<0>(opciones[i]).setFillColor(configuracionGlobal.color());
+        get<1>(opciones[i]).setFillColor(configuracionGlobal.color());
 
         get<0>(opciones[i]).setString(get<0>(textos[i]));
         get<1>(opciones[i]).setString(get<1>(textos[i]));
@@ -770,6 +794,9 @@ Estado tratarOpciones(Estado estado) {
                             case ANTIALIASING:
                                 configuracionGlobal.antialiasing /= 2;
                                 break;
+                            case COLOR:
+                                configuracionGlobal.colorId = (int) ((configuracionGlobal.colorId - 1) %
+                                                                     configuracionGlobal.COLORES.size());
                             default:
                                 break;
                         }
@@ -794,6 +821,9 @@ Estado tratarOpciones(Estado estado) {
                                 configuracionGlobal.antialiasing =
                                         configuracionGlobal.antialiasing > 8 ? 8u : configuracionGlobal.antialiasing;
                                 break;
+                            case COLOR:
+                                configuracionGlobal.colorId = (int) ((configuracionGlobal.colorId + 1) %
+                                                                     configuracionGlobal.COLORES.size());
                             default:
                                 break;
                         }
@@ -809,7 +839,7 @@ Estado tratarOpciones(Estado estado) {
         get<1>(textos[PANTALLA_COMPLETA]) = configuracionGlobal.pantallaCompleta ? "SI" : "NO";
         get<1>(textos[ANTIALIASING]) = to_string(configuracionGlobal.antialiasing);
         get<1>(textos[VOLUMEN]) = to_string(configuracionGlobal.volumen);
-
+        get<1>(textos[COLOR]) = configuracionGlobal.colorString();
         for (unsigned int i = 0; i < OPCIONES; i++) {
             get<0>(opciones[i]).setString(get<0>(textos[i]));
             get<1>(opciones[i]).setString(get<1>(textos[i]));
@@ -835,7 +865,7 @@ Configuracion leeConfiguracion() {
     Configuracion retVal;
     if (!fichConfig.good()) return retVal;
     unsigned int resVertical = 0;
-    fichConfig >> resVertical >> retVal.pantallaCompleta >> retVal.volumen >> retVal.antialiasing;
+    fichConfig >> resVertical >> retVal.pantallaCompleta >> retVal.volumen >> retVal.antialiasing >> retVal.colorId;
     retVal.resolucion = {(unsigned int) (RESOLUCION_BASE.x / (RESOLUCION_BASE.y / (float) resVertical)), resVertical};
     return retVal;
 }
@@ -843,5 +873,5 @@ Configuracion leeConfiguracion() {
 void escribeConfiguracion(Configuracion config) {
     ofstream fichConfig("opciones.cfg");
     fichConfig << config.resolucion.y << ' ' << config.pantallaCompleta << ' ' << config.volumen << ' '
-               << config.antialiasing;
+               << config.antialiasing << ' ' << config.colorId;
 }

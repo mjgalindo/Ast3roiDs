@@ -52,6 +52,7 @@ private:
     int vidas = 5;
     //Puntuacion
     long int *puntuacion;
+    sf::Color color;
 
     sf::Vector2u limites;
 
@@ -68,7 +69,7 @@ private:
 
 public:
     //Constructor
-    Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int *p);
+    Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int *p, sf::Color color);
 
 
     //Destructor

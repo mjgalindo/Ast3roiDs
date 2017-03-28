@@ -4,8 +4,8 @@
 static constexpr float tamanosReales[] = {7.25f, 12.5f, 25.0f};
 
 Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam,
-                     sf::Vector2u limitesPantalla) :
-        Circular(posicion_inicial, tamanosReales[tam] * (limitesPantalla.y / (float) RESOLUCION_BASE.y)) {
+                     sf::Vector2u limitesPantalla, sf::Color color) :
+        Circular(posicion_inicial, tamanosReales[tam] * (limitesPantalla.y / (float) RESOLUCION_BASE.y)), color(color) {
     direccion = dir;
     velocidad = vel;
     version = tipo;
@@ -59,12 +59,17 @@ Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel,
             poligono[10].position = {0.551181f, -0.866142f};
             poligono[11].position = {-0.362205f, -0.88189f};
     }
-
+    for (int i = 0; i < poligono.getVertexCount(); i++) {
+        poligono[i].color = color;
+    }
 
     punto.setPrimitiveType(sf::LineStrip);
     punto.resize(2);
     punto[0].position = {0.0f, 0.0f};
-    punto[0].position = {0.2f, 0.2f};
+    punto[1].position = {1.0f * limitesPantalla.y / (float) RESOLUCION_BASE.y,
+                         1.0f * limitesPantalla.y / (float) RESOLUCION_BASE.y};
+    punto[0].color = color;
+    punto[1].color = color;
     estado = MOVIMIENTO;
 }
 
@@ -111,10 +116,9 @@ void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         t6.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion6);
         t7.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion7);
 
-
-        target.draw(punto, t0);
         target.draw(punto, t1);
         target.draw(punto, t2);
+        target.draw(punto, t0);
         target.draw(punto, t3);
         target.draw(punto, t4);
         target.draw(punto, t5);
@@ -166,6 +170,8 @@ void Asteroide::mover() {
             posicion7 = {posicion7.x - 0.9f, posicion7.y - 0.3f};
 
         }
+        default:
+            break;
     }
 }
 void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v) {
@@ -177,18 +183,18 @@ void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v) {
         case TAM_1:
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x + valorAleatorio(0, (float)PI/2), velocidad.y + valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_0, limites));
+                                  TIPO_0, TAM_0, limites, color));
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x - valorAleatorio(0, (float)PI/2), velocidad.y - valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_0, limites));
+                                  TIPO_0, TAM_0, limites, color));
             break;
         case TAM_2:
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x + valorAleatorio(0, (float)PI/2), velocidad.y + valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_1, limites));
+                                  TIPO_0, TAM_1, limites, color));
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x - valorAleatorio(0, (float)PI/2), velocidad.y - valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_1, limites));
+                                  TIPO_0, TAM_1, limites, color));
             break;
     }
 }

@@ -3,7 +3,7 @@
 //Constructores
 Disparo::Disparo() {}
 
-Disparo::Disparo(sf::Vector2f pos_inicial, float d, sf::Vector2u limitesPantalla) {
+Disparo::Disparo(sf::Vector2f pos_inicial, float d, sf::Vector2u limitesPantalla, sf::Color color) {
 
     direccion = d;
 
@@ -11,7 +11,8 @@ Disparo::Disparo(sf::Vector2f pos_inicial, float d, sf::Vector2u limitesPantalla
     poligono.resize(2);
     poligono[0].position = {1.0f, 0.0f};
     poligono[1].position = {-1.0f, 0.0f};
-
+    poligono[0].color = color;
+    poligono[1].color = color;
     //Posicion de la nave
     posicion = pos_inicial;
     distancia = 0;

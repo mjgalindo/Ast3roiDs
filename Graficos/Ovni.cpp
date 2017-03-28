@@ -1,8 +1,8 @@
 #include "Ovni.hpp"
 #include <iostream>
 
-Ovni::Ovni(sf::Vector2u limitesPantalla) :
-        Circular({0, 0}, 15 * limitesPantalla.y / (float) RESOLUCION_BASE.y) {
+Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color) :
+        Circular({0, 0}, 15 * limitesPantalla.y / (float) RESOLUCION_BASE.y), color(color) {
     estado = MUERTO;
     if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")) {
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
@@ -31,12 +31,18 @@ Ovni::Ovni(sf::Vector2u limitesPantalla) :
     poligono[10].position = {-0.4f, -0.8f};
     poligono[11].position = {-0.6f, -0.4f};
 
+    for (int i = 0; i < poligono.getVertexCount(); i++) {
+        poligono[i].color = color;
+    }
+
     limites = limitesPantalla;
     punto.setPrimitiveType(sf::LineStrip);
     punto.resize(2);
     punto[0].position = {0.0f, 0.0f};
-    punto[0].position = {0.2f, 0.2f};
-
+    punto[1].position = {1.0f * limitesPantalla.y / (float) RESOLUCION_BASE.y,
+                         1.0f * limitesPantalla.y / (float) RESOLUCION_BASE.y};
+    punto[0].color = color;
+    punto[1].color = color;
     recienDestruida = true;
 }
 
@@ -57,7 +63,7 @@ int Ovni::getPuntuacion() const {
 void Ovni::disparar() {
     if (estado == VIVO) {
         if (num_disparos < MAX_DISPAROS) {
-            disparos[num_disparos] = Disparo(posicion, direccion, limites);
+            disparos[num_disparos] = Disparo(posicion, direccion, limites, color);
             disparos[num_disparos].setDireccion(anguloAleatorio());
             num_disparos++;
         }
