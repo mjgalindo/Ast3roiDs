@@ -86,6 +86,8 @@ Nave::Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int
 
     limites = limitesPantalla;
     puntuacion = p;
+
+    cooldown = clock();
 }
 
 void Nave::reiniciar() {
@@ -207,6 +209,18 @@ void Nave::rotarDcha() {
         if (direccion > 2.0 * PI) {
             direccion -= 2 * PI;
         }
+    }
+}
+void Nave::hiperEspacio() {
+    double tiempo = (clock() - cooldown) / (double) CLOCKS_PER_SEC;
+    if ((estado == REPOSO || estado == ACELERANDO) && tiempo>2) {
+        cooldown = clock();
+        posicion = {valorAleatorio(0, limites.x), valorAleatorio(0, limites.y)};
+
+        if(valorAleatorio()<0.4){
+            cambiarEstado(DESTRUIDA);
+        }
+
     }
 }
 
@@ -374,6 +388,7 @@ void Nave::cambiarEstado(int nuevoEstado) {
         case REAPARECIENDO:
             if (ciclos >= 50) {
                 estado = REPOSO;
+                cooldown = clock();
                 ciclos = 0;
             } else {
                 ciclos++;

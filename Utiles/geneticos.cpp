@@ -11,7 +11,7 @@ sf::Vector2u resolucion = {800, 600};
 vector<float> direcciones = {PI * 3 / 4,PI,-PI * 3 / 4,PI / 2,PI / 4,0,-PI / 4,-PI / 2};
 vector<float> salidas = {-3 * (2.0 / 8.0),-2 * (2.0 / 8.0),-1 * (2.0 / 8.0),0,(2.0 / 8.0),
                          2 * (2.0 / 8.0),3 * (2.0 / 8.0),4 * (2.0 / 8.0)};
-vector<double> estadoAnterior;
+vector<vector<double>> poblacion(6);
 
 // Inicializa una red neuronal nueva
 neural::Network red(6, 1, {20,20,20});
@@ -72,6 +72,7 @@ void mutacion(vector<double*> estado) {
 }
 
 void guardarEstado(vector<double*> estado) {
+    estadoAnterior.clear();
     for(unsigned int i = 0; i < estado.size(); i++) {
         estadoAnterior.push_back(*estado[i]);
     }
@@ -97,13 +98,19 @@ void entrenarGeneticos(vector<double*> pesos) {
 }
 
 int main() {
+    vector<double*> pesos = red.getWeights();
+    for(unsigned int i = 0; i < 6; i++) {
+        for(unsigned int j = 0; j < pesos.size(); j++) {
+            poblacion[i][j] = valorAleatorio(-0.5,0.5);
+        }
+    }
 
     srand((unsigned long) time(NULL));
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
     ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
     sf::Vector2f posicionAnterior;
-    ventana.setFramerateLimit(60);
+    //ventana.setFramerateLimit(60);
     sf::Clock reloj;
     sf::CircleShape sustitutoOvni(15);
     sustitutoOvni.setFillColor({200, 10, 10});
