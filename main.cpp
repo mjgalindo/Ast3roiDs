@@ -103,7 +103,18 @@ void inicializaVentana() {
     ventana.setVerticalSyncEnabled(true);
 }
 
+sf::Font fuenteAsteroids;
+
+inline void inicializaTexto(sf::Text &texto, unsigned int tamanoFuente, double grosorLinea = 0.3) {
+    texto.setFont(fuenteAsteroids);
+    texto.setOutlineThickness((float) grosorLinea);
+    texto.setOutlineColor(configuracionGlobal.color());
+    texto.setCharacterSize(tamanoFuente);
+    texto.setFillColor(configuracionGlobal.color());
+}
+
 int main() {
+    fuenteAsteroids.loadFromFile("Recursos/Fuentes/atari.ttf");
     configuracionGlobal = leeConfiguracion();
     inicializaVentana();
 
@@ -139,20 +150,13 @@ Estado tratarTitulo(Estado estado) {
     sf::Text titulo;
     sf::Text instrucciones;
 
-    sf::Font fuente;
-    fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
-
-    titulo.setFont(fuente);
+    inicializaTexto(titulo, ajustar_h(100u));
     titulo.setString("AST3ROIDS");
-    titulo.setCharacterSize(ajustar_h(100u));
-    titulo.setFillColor(configuracionGlobal.color());
     titulo.setPosition((resolucion.x - titulo.getLocalBounds().width) / 2, resolucion.y / 5);
 
-    instrucciones.setFont(fuente);
+    inicializaTexto(instrucciones, ajustar_h(30u));
     instrucciones.setString("<ENTER> PARA MENU");
-    instrucciones.setCharacterSize(ajustar_h(30u));
     instrucciones.setPosition((resolucion.x - instrucciones.getLocalBounds().width) / 2, ajustar_h(360));
-    instrucciones.setFillColor(configuracionGlobal.color());
 
     sf::Clock reloj;
     bool dibujaInstrucciones = true;
@@ -192,42 +196,30 @@ Estado tratarMenu(Estado estado) {
     sf::Text opcion3;
     sf::Text opcion4;
 
-    sf::Font fuente;
-    fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
-    texto.setFont(fuente);
+    inicializaTexto(texto, ajustar_h(80u));
     texto.setString("MENU");
-    texto.setCharacterSize(ajustar_h(80u));
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 10.0f});
-    texto.setFillColor(configuracionGlobal.color());
 
-    opcion1.setFont(fuente);
+    inicializaTexto(opcion1, ajustar_h(40u));
     opcion1.setString("JUGAR");
-    opcion1.setCharacterSize(ajustar_h(40u));
     opcion1.setPosition(
             {(resolucion.x - opcion1.getLocalBounds().width) / 2.0f, resolucion.y / 8 + resolucion.y / 5.0f});
-    opcion1.setFillColor(configuracionGlobal.color());
 
-    opcion2.setFont(fuente);
+    inicializaTexto(opcion2, ajustar_h(40u));
     opcion2.setString("PUNTUACIONES");
-    opcion2.setCharacterSize(ajustar_h(40u));
     opcion2.setPosition(
             {(resolucion.x - opcion2.getLocalBounds().width) / 2.0f, resolucion.y / 8 + 2 * resolucion.y / 5.0f});
-    opcion2.setFillColor(configuracionGlobal.color());
 
-    opcion3.setFont(fuente);
+    inicializaTexto(opcion3, ajustar_h(40u));
     opcion3.setString("OPCIONES");
-    opcion3.setCharacterSize(ajustar_h(40u));
     opcion3.setPosition(
             {(resolucion.x - opcion3.getLocalBounds().width) / 2, resolucion.y / 8.0f + 3 * resolucion.y / 5.0f});
-    opcion3.setFillColor(configuracionGlobal.color());
 
-    opcion4.setFont(fuente);
+    inicializaTexto(opcion4, ajustar_h(40u));
     opcion4.setString("SALIR");
-    opcion4.setCharacterSize(ajustar_h(40u));
     opcion4.setPosition(
             {(resolucion.x - opcion4.getLocalBounds().width) / 2, resolucion.y / 8.0f + 4 * resolucion.y / 5.0f});
-    opcion4.setFillColor(configuracionGlobal.color());
 
     array<Estado, 4> opciones = {JUEGO, PUNTUACIONES, OPCIONES, EXIT};
     int seleccion = 0;
@@ -327,18 +319,11 @@ Estado tratarJuego(Estado estado) {
     sf::Text punt;
     sf::Text vidas;
 
-    sf::Font fuente;
-    fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
-
-    punt.setFont(fuente);
-    punt.setCharacterSize(ajustar_h(30u));
+    inicializaTexto(punt, ajustar_h(30u));
     punt.setPosition({ajustar_w(20.0f), ajustar_h(10.0f)});
-    punt.setFillColor(configuracionGlobal.color());
 
-    vidas.setFont(fuente);
-    vidas.setCharacterSize(ajustar_h(30u));
+    inicializaTexto(vidas, ajustar_h(30u));
     vidas.setPosition({ajustar_w(20.0f), ajustar_h(45.0f)});
-    vidas.setFillColor(configuracionGlobal.color());
 
     shared_ptr<bool> jugando(new bool(true));
     shared_ptr<bool> silencioMusica(new bool(false));
@@ -447,20 +432,12 @@ Estado tratarGameOver(Estado estado) {
     sf::Text Spuntuacion;
     sf::Text punt;
 
-    sf::Font fuente;
-    fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
-
-    texto.setFont(fuente);
+    inicializaTexto(texto, ajustar_h(75u));
     texto.setString("GAME OVER");
-    texto.setCharacterSize(ajustar_h(75u));
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
-    texto.setFillColor(configuracionGlobal.color());
-    texto.setOutlineColor(configuracionGlobal.color());
-    texto.setOutlineThickness(1.5);
 
-    opcion1.setFont(fuente);
+    inicializaTexto(opcion1, ajustar_h(30u));
     opcion1.setString("ACEPTAR");
-    opcion1.setCharacterSize(ajustar_h(30u));
     opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - ajustar_w(5),
                                      resolucion.y - opcion1.getLocalBounds().height - ajustar_h(5)));
 
@@ -470,35 +447,29 @@ Estado tratarGameOver(Estado estado) {
 
     float altura = resolucion.y / 3.0f;
 
-    Snombre.setFont(fuente);
+    inicializaTexto(Snombre, ajustar_h(30u));
     Snombre.setString("Nombre del piloto (3 letras): ");
-    Snombre.setCharacterSize(ajustar_h(30u));
     Snombre.setPosition(sf::Vector2f((resolucion.x - Snombre.getLocalBounds().width) / 2.0f, altura));
-    Snombre.setFillColor(configuracionGlobal.color());
 
     char nombre_introducido[] = "AAA";
     int indice = 0;
 
     altura += Snombre.getLocalBounds().height + 10;
-    nombre.setFont(fuente);
+
+    inicializaTexto(nombre, ajustar_h(30u));
     nombre.setString(nombre_introducido);
-    nombre.setCharacterSize(ajustar_h(30u));
     nombre.setPosition(sf::Vector2f((resolucion.x - nombre.getLocalBounds().width) / 2.0f, altura));
-    nombre.setFillColor(configuracionGlobal.color());
 
     altura += nombre.getLocalBounds().height + 30;
-    Spuntuacion.setFont(fuente);
+
+    inicializaTexto(Spuntuacion, ajustar_h(30u));
     Spuntuacion.setString("Puntuacion obtenida: ");
-    Spuntuacion.setCharacterSize(ajustar_h(30u));
     Spuntuacion.setPosition(sf::Vector2f((resolucion.x - Spuntuacion.getLocalBounds().width) / 2.0f, altura + 10));
-    Spuntuacion.setFillColor(configuracionGlobal.color());
 
     altura += Spuntuacion.getLocalBounds().height + 10;
-    punt.setFont(fuente);
+    inicializaTexto(punt, ajustar_h(30u));
     punt.setString(to_string(puntuacion));
-    punt.setCharacterSize(ajustar_h(30u));
     punt.setPosition(sf::Vector2f((resolucion.x - punt.getLocalBounds().width) / 2.0f, altura + 10));
-    punt.setFillColor(configuracionGlobal.color());
 
     while (true) {
         sf::Event event;
@@ -618,9 +589,6 @@ Estado tratarPuntuaciones(Estado estado) {
     sf::Text texto;
     sf::Text opcion1;
 
-    sf::Font fuente;
-    fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
-
     vector<sf::Text> punts(MAX_PUNTS);
 
     ifstream f_puntuaciones("puntuaciones.dat");
@@ -641,12 +609,10 @@ Estado tratarPuntuaciones(Estado estado) {
                 puntuacion_aux = 0;
 
                 sf::Text punt;
-                punt.setFont(fuente);
-                punt.setCharacterSize(ajustar_h(30u));
+                inicializaTexto(punt, ajustar_h(30u));
                 punt.setString(linea);
                 punt.setPosition({(resolucion.x - punt.getLocalBounds().width) / 2.0f,
                                   resolucion.y / 3.5f + i * resolucion.y / 14.0f});
-                punt.setFillColor(configuracionGlobal.color());
 
                 punts.push_back(punt);
             }
@@ -654,15 +620,11 @@ Estado tratarPuntuaciones(Estado estado) {
     }
     f_puntuaciones.close();
 
-    texto.setFont(fuente);
+    inicializaTexto(texto, ajustar_h(75u), 1.5);
     texto.setString("PUNTUACIONES");
-    texto.setCharacterSize(ajustar_h(75u));
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
-    texto.setFillColor(configuracionGlobal.color());
-    texto.setOutlineColor(configuracionGlobal.color());
-    texto.setOutlineThickness(1.5);
 
-    opcion1.setFont(fuente);
+    inicializaTexto(opcion1, ajustar_h(30u));
     opcion1.setString("ACEPTAR");
     opcion1.setCharacterSize(ajustar_h(30u));
     opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - ajustar_w(5),
@@ -702,21 +664,14 @@ Estado tratarPuntuaciones(Estado estado) {
 }
 
 Estado tratarOpciones(Estado estado) {
-    sf::Text texto;
+    sf::Text titulo;
     sf::Text opcion1;
-
-    sf::Font fuente;
-    fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
     configuracionGlobal = leeConfiguracion();
 
-    texto.setFont(fuente);
-    texto.setString("OPCIONES");
-    texto.setCharacterSize(ajustar_h(75u));
-    texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
-    texto.setFillColor(configuracionGlobal.color());
-    texto.setOutlineColor(configuracionGlobal.color());
-    texto.setOutlineThickness(1.5);
+    inicializaTexto(titulo, ajustar_h(75u), 1.5);
+    titulo.setString("OPCIONES");
+    titulo.setPosition({(resolucion.x - titulo.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
 
     enum Opcion {
         RESOLUCION = 0, PANTALLA_COMPLETA = 1, VOLUMEN = 2, ANTIALIASING = 3, COLOR = 4, VOLVER = 5
@@ -735,18 +690,13 @@ Estado tratarOpciones(Estado estado) {
     array<tuple<sf::Text, sf::Text>, OPCIONES> opciones;
 
     float opcionX = resolucion.x / OPCIONES + 1;
-    float opcionY = (resolucion.y - texto.getPosition().y - texto.getLocalBounds().height - ajustar_h(30u)) / (float) (OPCIONES + 1);
-    float offsetVertical = texto.getPosition().y + texto.getLocalBounds().height + ajustar_h(30u);
+    float opcionY = (resolucion.y - titulo.getPosition().y - titulo.getLocalBounds().height - ajustar_h(30u)) /
+                    (float) (OPCIONES + 1);
+    float offsetVertical = titulo.getPosition().y + titulo.getLocalBounds().height + ajustar_h(30u);
 
     for (unsigned int i = 0; i < OPCIONES; i++) {
-        get<0>(opciones[i]).setFont(fuente);
-        get<1>(opciones[i]).setFont(fuente);
-
-        get<0>(opciones[i]).setCharacterSize(ajustar_h(30u));
-        get<1>(opciones[i]).setCharacterSize(ajustar_h(30u));
-
-        get<0>(opciones[i]).setFillColor(configuracionGlobal.color());
-        get<1>(opciones[i]).setFillColor(configuracionGlobal.color());
+        inicializaTexto(get<0>(opciones[i]), ajustar_h(30u));
+        inicializaTexto(get<1>(opciones[i]), ajustar_h(30u));
 
         get<0>(opciones[i]).setString(get<0>(textos[i]));
         get<1>(opciones[i]).setString(get<1>(textos[i]));
@@ -848,8 +798,10 @@ Estado tratarOpciones(Estado estado) {
         }
         sf::RectangleShape indicador({get<0>(opciones[0]).getLocalBounds().height,get<0>(opciones[0]).getLocalBounds().height});
         indicador.setPosition({opcionX - ajustar_w(30), offsetVertical + opcionY * (seleccion + 1)});
+        indicador.setFillColor(configuracionGlobal.color());
+
         ventana.clear(sf::Color::Black);
-        ventana.draw(texto);
+        ventana.draw(titulo);
         for (auto opcion : opciones) {
             ventana.draw(get<0>(opcion));
             ventana.draw(get<1>(opcion));
