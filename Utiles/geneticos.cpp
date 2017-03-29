@@ -5,14 +5,14 @@
 
 using namespace std;
 
-sf::RenderWindow ventana;
+//sf::RenderWindow ventana;
 sf::Vector2u resolucion = {800, 600};
-vector<vector<double>> poblacion(6);
-int mejorTiempo = 0;
+vector<vector<double>> poblacion(8);
+long int mejorDistancia = 0;
 vector<double> mejoresPesos;
 
 // Inicializa una red neuronal nueva
-neural::Network red(6, 1, {30});
+neural::Network red(12, 1, {24});
 
 
 vector<Asteroide> asteroides;
@@ -64,7 +64,7 @@ vector<Asteroide *> asteroideMasCercano(sf::Vector2f posicion) {
 void mutacion() {
     for(unsigned int i = 0; i < poblacion.size(); i++) {
         for(unsigned j = 0; j < poblacion[i].size(); j++) {
-            if(valorAleatorio() < 0.01) {
+            if(valorAleatorio() < 0.05) {
                 poblacion[i][j] = valorAleatorio((float)-0.5, (float)0.5);
             }
         }
@@ -73,7 +73,7 @@ void mutacion() {
 
 
 vector<vector<double>> combinar(vector<vector<double>> aux) {
-    while(aux.size() < 6) {
+    while(aux.size() < 8) {
         int aleatorio1 = enteroAleatorio(0,2);
         int aleatorio2 = aleatorio1;
         while(aleatorio2 == aleatorio1) {
@@ -92,36 +92,40 @@ vector<vector<double>> combinar(vector<vector<double>> aux) {
     return aux;
 }
 
-void sigGeneracion(int tiempo[6]) {
+void sigGeneracion(long int distancia[8]) {
     vector<vector<double>> aux(0);
-        int mayorTiempo[3] = {0, 0, 0};
+        int mayorDistancia[3] = {0, 0, 0};
         int mayoresIndice[3] = {0, 0, 0};
-        for(int k = 0; k < 6; k++) {
-            if(tiempo[k] > mayorTiempo[0]) {
-                mayorTiempo[2] = mayorTiempo[1];
+        for(int k = 0; k < 8; k++) {
+            if(distancia[k] > mayorDistancia[0]) {
+                mayorDistancia[2] = mayorDistancia[1];
                 mayoresIndice[2] = mayoresIndice[1];
-                mayorTiempo[1] = mayorTiempo[0];
+                mayorDistancia[1] = mayorDistancia[0];
                 mayoresIndice[1] = mayoresIndice[0];
-                mayorTiempo[0] = tiempo[k];
+                mayorDistancia[0] = distancia[k];
                 mayoresIndice[0] = k;
 
-            } else if(tiempo[k] > mayorTiempo[1]) {
-                mayorTiempo[2] = mayorTiempo[1];
+            } else if(distancia[k] > mayorDistancia[1]) {
+                mayorDistancia[2] = mayorDistancia[1];
                 mayoresIndice[2] = mayoresIndice[1];
-                mayorTiempo[1] = tiempo[k];
+                mayorDistancia[1] = distancia[k];
                 mayoresIndice[1] = k;
-            } else if(tiempo[k] > mayorTiempo[2]) {
-                mayorTiempo[2] = tiempo[k];
+            } else if(distancia[k] > mayorDistancia[2]) {
+                mayorDistancia[2] = distancia[k];
                 mayoresIndice[2] = k;
             }
         }
         for(int k = 0; k < 3; k++) {
             aux.push_back(poblacion[mayoresIndice[k]]);
+            cout << mayorDistancia[k] << " ";
         }
-        if(mayorTiempo[0] > mejorTiempo) {
-            mejorTiempo = mayorTiempo[0];
+        cout << endl;
+
+        if(mayorDistancia[0] > mejorDistancia) {
+            mejorDistancia = mayorDistancia[0];
             mejoresPesos = aux[0];
         }
+
         //COMBINAR
         poblacion = combinar(aux);
         mutacion();
@@ -129,16 +133,16 @@ void sigGeneracion(int tiempo[6]) {
 
 int main() {
     vector<double*> pesos = red.getWeights();
-    for(unsigned int i = 0; i < 6; i++) {
+    for(unsigned int i = 0; i < 8; i++) {
         for(unsigned int j = 0; j < pesos.size(); j++) {
-            poblacion[i].push_back(valorAleatorio((float)-0.5,(float)0.5));
+            poblacion[i].push_back(valorAleatorio(-1.0f,1.0f));
         }
     }
 
     srand((unsigned long) time(NULL));
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 4;
-    ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
+    //sf::ContextSettings settings;
+    //settings.antialiasingLevel = 4;
+    //ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
     sf::Vector2f posicionAnterior;
     //ventana.setFramerateLimit(60);
     sf::Clock reloj;
@@ -159,16 +163,17 @@ int main() {
     unsigned int iteraciones = 0;
     int choque = 0;
     reloj.restart();
+    long int distancia_aux[8];
     while (continua) {
-        int tiempo[6] = {0, 0, 0, 0, 0,0};
+        distancia_aux[0] = distancia_aux[1] = distancia_aux[2] = distancia_aux[3] = distancia_aux[4] = distancia_aux[5] = distancia_aux[6] = distancia_aux[7] = 0;
         for(unsigned int i = 0; i < poblacion.size(); i++) {
             for (unsigned int j = 0; j < pesos.size(); j++) {
                 *pesos[j] = poblacion[i][j];
             }
             reloj.restart();
             choque = 0;
-            while (choque < 5) {
-                sf::Event event;
+            while (choque < 10) {
+                /*sf::Event event;
                 if (ventana.pollEvent(event)) {
                     switch (event.type) {
                         case sf::Event::Closed:
@@ -191,16 +196,22 @@ int main() {
                     }
                 }
 
-                ventana.clear(sf::Color::Black);
+                ventana.clear(sf::Color::Black);*/
 
                 sf::Vector2f posicionOvni = sustitutoOvni.getPosition();
                 vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicionOvni);
                 vector<double> entradasRed{asteroidePeligroso[0]->getPosicion().x - posicionOvni.x,
                                            posicionOvni.y - asteroidePeligroso[0]->getPosicion().y,
+                                           asteroidePeligroso[0]->getVelocidad().x,
+                                           asteroidePeligroso[0]->getVelocidad().y,
                                            asteroidePeligroso[1]->getPosicion().x - posicionOvni.x,
                                            posicionOvni.y - asteroidePeligroso[1]->getPosicion().y,
+                                           asteroidePeligroso[1]->getVelocidad().x,
+                                           asteroidePeligroso[1]->getVelocidad().y,
                                            asteroidePeligroso[2]->getPosicion().x - posicionOvni.x,
-                                           posicionOvni.y - asteroidePeligroso[2]->getPosicion().y};
+                                           posicionOvni.y - asteroidePeligroso[2]->getPosicion().y,
+                                           asteroidePeligroso[2]->getVelocidad().x,
+                                           asteroidePeligroso[2]->getVelocidad().y,};
 
                 double salida = red.run(entradasRed)[0];
                 double angulo = 0;
@@ -235,6 +246,8 @@ int main() {
                 posicionAnterior = posicionOvni;
                 posicionOvni = sustitutoOvni.getPosition();
 
+                distancia_aux[i] += distancia(posicionAnterior,posicionOvni);
+
                 // Evita los limites del espacio
                 if (posicionOvni.x < 0) {
                     posicionOvni.x = resolucion.x;
@@ -255,7 +268,7 @@ int main() {
                 //cout << salida << ' ' << posicionOvni.x << ' ' << posicionOvni.y << '\n';
                 for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
                     ast->mover();
-                    ventana.draw(*ast);
+                    //ventana.draw(*ast);
                     if (distanciaEuclidea(ast->getPosicion(), posicionOvni) <
                         ast->getRadio() + sustitutoOvni.getRadius()) {
                         // Hay colision, se informa a la red y se reinicia la escena aleatoriamente
@@ -268,15 +281,12 @@ int main() {
                         break;
                     }
                 }
-                ventana.draw(sustitutoOvni);
-                ventana.display();
+                //ventana.draw(sustitutoOvni);
+                //ventana.display();
             }
-            tiempo[i] = reloj.getElapsedTime().asMilliseconds() / choque;
         }
-        for(int k = 0; k < 6; k++) {
-            cout << "Iteraciones poblacion " << k << ": " << tiempo[k] << endl;
-        }
-        sigGeneracion(tiempo);
+
+        sigGeneracion(distancia_aux);
     }
 
     cout << "Reinicios: " << reinicios << " tiempo: " << reloj.getElapsedTime().asSeconds() << endl;
