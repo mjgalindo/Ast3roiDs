@@ -8,9 +8,11 @@ using namespace std;
 sf::RenderWindow ventana;
 sf::Vector2u resolucion = {800, 600};
 vector<vector<double>> poblacion(6);
+int mejorTiempo = 0;
+vector<double> mejoresPesos;
 
 // Inicializa una red neuronal nueva
-neural::Network red(6, 1, {20,20,20});
+neural::Network red(6, 1, {30});
 
 
 vector<Asteroide> asteroides;
@@ -116,7 +118,10 @@ void sigGeneracion(int tiempo[6]) {
         for(int k = 0; k < 3; k++) {
             aux.push_back(poblacion[mayoresIndice[k]]);
         }
-
+        if(mayorTiempo[0] > mejorTiempo) {
+            mejorTiempo = mayorTiempo[0];
+            mejoresPesos = aux[0];
+        }
         //COMBINAR
         poblacion = combinar(aux);
         mutacion();
@@ -175,6 +180,9 @@ int main() {
                                 ventana.close();
                                 continua = false;
                                 string nombreFichero = "entrenando.nn";
+                                for (unsigned int j = 0; j < pesos.size(); j++) {
+                                    *pesos[j] = mejoresPesos[j];
+                                }
                                 red.write(nombreFichero);
                             }
                             break;
