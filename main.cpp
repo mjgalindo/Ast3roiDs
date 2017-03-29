@@ -567,8 +567,10 @@ Estado tratarGameOver(Estado estado) {
             }
 
             sf::VertexArray seleccionada(sf::LinesStrip, 2);
-            seleccionada[0].position = sf::Vector2f(nombre.getPosition().x+indice*nombre.getLocalBounds().width/3.0, nombre.getPosition().y + nombre.getLocalBounds().height +4);
-            seleccionada[1].position = sf::Vector2f(nombre.getPosition().x+(indice+1)*nombre.getLocalBounds().width/3.0, nombre.getPosition().y + nombre.getLocalBounds().height +4);
+            seleccionada[0].position = {nombre.getPosition().x + indice * nombre.getLocalBounds().width / 3.0f,
+                                        nombre.getPosition().y + nombre.getLocalBounds().height + 4};
+            seleccionada[1].position = {nombre.getPosition().x + (indice + 1) * nombre.getLocalBounds().width / 3.0f,
+                                        nombre.getPosition().y + nombre.getLocalBounds().height + 4};
 
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
@@ -673,6 +675,16 @@ Estado tratarOpciones(Estado estado) {
     titulo.setString("OPCIONES");
     titulo.setPosition({(resolucion.x - titulo.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
 
+    vector<sf::Vector2u> resoluciones = resolucionesValidas();
+    int resId = 0;
+    for (int i = 0; i < resoluciones.size(); i++) {
+        if (resoluciones[i].y == configuracionGlobal.resolucion.y and
+            resoluciones[i].x == configuracionGlobal.resolucion.x) {
+            resId = i;
+            break;
+        }
+    }
+
     enum Opcion {
         RESOLUCION = 0, PANTALLA_COMPLETA = 1, VOLUMEN = 2, ANTIALIASING = 3, COLOR = 4, VOLVER = 5
     };
@@ -730,10 +742,7 @@ Estado tratarOpciones(Estado estado) {
                     } else if (event.key.code == sf::Keyboard::Left) {
                         switch (seleccion) {
                             case RESOLUCION:
-                                configuracionGlobal.resolucion.y = configuracionGlobal.resolucion.y - 50;
-                                configuracionGlobal.resolucion.x = (unsigned int) (RESOLUCION_BASE.x /
-                                                                                   (RESOLUCION_BASE.y /
-                                                                                    (float) configuracionGlobal.resolucion.y));
+                                resId = (resId - 1) < 0 ? (int) resoluciones.size() - 1 : resId - 1;
                                 break;
                             case PANTALLA_COMPLETA:
                                 configuracionGlobal.pantallaCompleta = false;
@@ -755,10 +764,7 @@ Estado tratarOpciones(Estado estado) {
                     } else if (event.key.code == sf::Keyboard::Right) {
                         switch (seleccion) {
                             case RESOLUCION:
-                                configuracionGlobal.resolucion.y = configuracionGlobal.resolucion.y + 50;
-                                configuracionGlobal.resolucion.x = (unsigned int) (RESOLUCION_BASE.x /
-                                                                                   (RESOLUCION_BASE.y /
-                                                                                    (float) configuracionGlobal.resolucion.y));
+                                resId = (resId + 1) > resoluciones.size() - 1 ? 0 : resId + 1;
                                 break;
                             case PANTALLA_COMPLETA:
                                 configuracionGlobal.pantallaCompleta = true;
@@ -786,8 +792,7 @@ Estado tratarOpciones(Estado estado) {
 
         }
 
-        get<1>(textos[RESOLUCION]) =
-                to_string(configuracionGlobal.resolucion.x) + "x" + to_string(configuracionGlobal.resolucion.y);
+        get<1>(textos[RESOLUCION]) = to_string(resoluciones[resId].x) + "x" + to_string(resoluciones[resId].y);
         get<1>(textos[PANTALLA_COMPLETA]) = configuracionGlobal.pantallaCompleta ? "SI" : "NO";
         get<1>(textos[ANTIALIASING]) = to_string(configuracionGlobal.antialiasing);
         get<1>(textos[VOLUMEN]) = to_string(configuracionGlobal.volumen);
@@ -796,7 +801,8 @@ Estado tratarOpciones(Estado estado) {
             get<0>(opciones[i]).setString(get<0>(textos[i]));
             get<1>(opciones[i]).setString(get<1>(textos[i]));
         }
-        sf::RectangleShape indicador({get<0>(opciones[0]).getLocalBounds().height,get<0>(opciones[0]).getLocalBounds().height});
+        sf::RectangleShape indicador({get<0>(opciones[0]).getLocalBounds().height,
+                                      get<0>(opciones[0]).getLocalBounds().height});
         indicador.setPosition({opcionX - ajustar_w(30), offsetVertical + opcionY * (seleccion + 1)});
         indicador.setFillColor(configuracionGlobal.color());
 
@@ -809,6 +815,7 @@ Estado tratarOpciones(Estado estado) {
         ventana.draw(indicador);
         ventana.display();
     }
+    configuracionGlobal.resolucion = resoluciones[resId];
     escribeConfiguracion(configuracionGlobal);
     inicializaVentana();
     return MENU;
