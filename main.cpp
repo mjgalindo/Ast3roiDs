@@ -184,6 +184,12 @@ Estado tratarTitulo(Estado estado) {
     sf::Clock reloj;
     bool dibujaInstrucciones = true;
 
+    vector<Asteroide> asteroides;
+    unsigned int numeroDeAsteroides = 10;
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion, configuracionGlobal.color());
+    Nave nave = Nave({-100,-100}, resolucion, &puntuacion, configuracionGlobal.color());
+    Ovni ovni(resolucion, configuracionGlobal.color());
+
     while (true) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
@@ -201,6 +207,12 @@ Estado tratarTitulo(Estado estado) {
         }
 
         ventana.clear(sf::Color::Black);
+        for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
+            ast->mover();
+            ventana.draw(*ast);
+        }
+        ovni.mover(asteroides,nave);
+        ventana.draw(ovni);
         ventana.draw(titulo);
         if (reloj.getElapsedTime().asMilliseconds() > 1000) {
             dibujaInstrucciones = !dibujaInstrucciones;
@@ -209,6 +221,12 @@ Estado tratarTitulo(Estado estado) {
         if (dibujaInstrucciones)
             ventana.draw(instrucciones);
         ventana.display();
+
+        if(asteroides.size()==0){
+            Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion, configuracionGlobal.color());
+        }
+
+        ovni.cambiarEstado(ovni.getEstado());
     }
 }
 
