@@ -81,19 +81,25 @@ vector<Asteroide *> Ovni::asteroideMasCercano(sf::Vector2f posicion, vector<Aste
             masCercano2 = masCercano1;
             distanciaMenor1 = distanciatmp;
             masCercano1 = ast.base();
-        } else if(distanciatmp < distanciaMenor2) {
+        } else if (distanciatmp < distanciaMenor2) {
             distanciaMenor3 = distanciaMenor2;
             masCercano3 = masCercano2;
             distanciaMenor2 = distanciatmp;
             masCercano2 = ast.base();
-        } else if(distanciatmp < distanciaMenor3) {
+        } else if (distanciatmp < distanciaMenor3) {
             distanciaMenor3 = distanciatmp;
             masCercano3 = ast.base();
         }
     }
-    masCercanos.push_back(masCercano1);
-    masCercanos.push_back(masCercano2);
-    masCercanos.push_back(masCercano3);
+    if (distanciaMenor1 != 99999999.0) {
+        masCercanos.push_back(masCercano1);
+    }
+    if (distanciaMenor2 != 99999999.0) {
+        masCercanos.push_back(masCercano2);
+    }
+    if(distanciaMenor3 != 99999999.0) {
+        masCercanos.push_back(masCercano3);
+    }
     return masCercanos;
 }
 
@@ -156,18 +162,60 @@ void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
     if (estado == VIVO) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
         vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, v);
-        vector<double> entradasRed{asteroidePeligroso[0]->getPosicion().x - posicion.x,
-                                   posicion.y - asteroidePeligroso[0]->getPosicion().y,
-                                   asteroidePeligroso[0]->getVelocidad().x,
-                                   asteroidePeligroso[0]->getVelocidad().y,
-                                   asteroidePeligroso[1]->getPosicion().x - posicion.x,
-                                   posicion.y - asteroidePeligroso[1]->getPosicion().y,
-                                   asteroidePeligroso[1]->getVelocidad().x,
-                                   asteroidePeligroso[1]->getVelocidad().y,
-                                   asteroidePeligroso[2]->getPosicion().x - posicion.x,
-                                   posicion.y - asteroidePeligroso[2]->getPosicion().y,
-                                   asteroidePeligroso[2]->getVelocidad().x,
-                                   asteroidePeligroso[2]->getVelocidad().y,};
+        vector<double> entradasRed;
+        if(asteroidePeligroso.size() == 3) {
+            entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
+                        posicion.y - asteroidePeligroso[0]->getPosicion().y,
+                        asteroidePeligroso[0]->getVelocidad().x,
+                        asteroidePeligroso[0]->getVelocidad().y,
+                        asteroidePeligroso[1]->getPosicion().x - posicion.x,
+                        posicion.y - asteroidePeligroso[1]->getPosicion().y,
+                        asteroidePeligroso[1]->getVelocidad().x,
+                        asteroidePeligroso[1]->getVelocidad().y,
+                        asteroidePeligroso[2]->getPosicion().x - posicion.x,
+                        posicion.y - asteroidePeligroso[2]->getPosicion().y,
+                        asteroidePeligroso[2]->getVelocidad().x,
+                        asteroidePeligroso[2]->getVelocidad().y,};
+        } else if(asteroidePeligroso.size() == 2) {
+            entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
+                           posicion.y - asteroidePeligroso[0]->getPosicion().y,
+                           asteroidePeligroso[0]->getVelocidad().x,
+                           asteroidePeligroso[0]->getVelocidad().y,
+                           asteroidePeligroso[1]->getPosicion().x - posicion.x,
+                           posicion.y - asteroidePeligroso[1]->getPosicion().y,
+                           asteroidePeligroso[1]->getVelocidad().x,
+                           asteroidePeligroso[1]->getVelocidad().y,
+                           -99999.0,
+                           -99999.0,
+                           0.0,
+                           0.0,};
+        } else if(asteroidePeligroso.size() == 1) {
+            entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
+                           posicion.y - asteroidePeligroso[0]->getPosicion().y,
+                           asteroidePeligroso[0]->getVelocidad().x,
+                           asteroidePeligroso[0]->getVelocidad().y,
+                           -99999.0,
+                           -99999.0,
+                           0.0,
+                           0.0,
+                           -99999.0,
+                           -99999.0,
+                           0.0,
+                           0.0,};
+        } else {
+            entradasRed = {-99999.0,
+                           -99999.0,
+                           0.0,
+                           0.0,
+                           -99999.0,
+                           -99999.0,
+                           0.0,
+                           0.0,
+                           -99999.0,
+                           -99999.0,
+                           0.0,
+                           0.0,};
+        }
         direccion = redNormal.run(entradasRed)[0];
         /*if (valorAleatorio() < 0.0055) {
             direccion = anguloAleatorio();
