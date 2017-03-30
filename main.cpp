@@ -344,7 +344,8 @@ Estado tratarMenu(Estado estado) {
                             .scale(ajustar_h(35u),ajustar_w(20u));
                     break;
                 case 5:
-                    indicador.setPosition({opcion6.getPosition().x - resolucion.x / 10, opcion6.getPosition().y});
+                    t.translate({opcion6.getPosition().x - resolucion.x / 10, opcion6.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
                     break;
                 default:
                     break;
