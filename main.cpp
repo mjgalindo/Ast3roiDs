@@ -93,6 +93,8 @@ double ratio_ancho = 1.0 / RESOLUCION_BASE.y;
 Configuracion configuracionGlobal;
 sf::Vector2u &resolucion = configuracionGlobal.resolucion;
 
+sf::VertexArray poligono;
+
 template<typename T>
 T ajustar_h(T valor) {
     return (T) (valor * resolucion.y * ratio_alto);
@@ -138,6 +140,18 @@ int main() {
     configuracionGlobal = leeConfiguracion();
     inicializaVentana();
 
+    //icono nave
+    poligono.setPrimitiveType(sf::LineStrip);
+    poligono.resize(5);
+    poligono[0].position = {1.0f, 0.0f};
+    poligono[1].position = {-0.7071067812f, 0.7071067812f};
+    poligono[2].position = {-0.4f, 0.0f};
+    poligono[3].position = {-0.7071067812f, -0.7071067812f};
+    poligono[4].position = {1.0f, 0.0f};
+
+    for (int i = 0; i < poligono.getVertexCount(); i++) {
+        poligono[i].color = configuracionGlobal.color();
+    }
     Estado estado_actual = TITULO;
     while (ventana.isOpen()) {
         switch (estado_actual) {
@@ -290,30 +304,35 @@ Estado tratarMenu(Estado estado) {
                     break;
             }
 
-            sf::RectangleShape indicador({opcion1.getLocalBounds().height,opcion1.getLocalBounds().height});
-            indicador.setFillColor(configuracionGlobal.color());
+            //Indicador con forma de nave
+            sf::Transform t;
             switch (seleccion) {
                 case 0:
-                    indicador.setPosition({opcion1.getPosition().x - resolucion.x / 10, opcion1.getPosition().y});
+                    t.translate({opcion1.getPosition().x - resolucion.x / 10, opcion1.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
                     break;
                 case 1:
-                    indicador.setPosition({opcion2.getPosition().x - resolucion.x / 10, opcion2.getPosition().y});
+                    t.translate({opcion2.getPosition().x - resolucion.x / 10, opcion2.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
                     break;
                 case 2:
-                    indicador.setPosition({opcion3.getPosition().x - resolucion.x / 10, opcion3.getPosition().y});
+                    t.translate({opcion3.getPosition().x - resolucion.x / 10, opcion3.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
                     break;
                 case 3:
-                    indicador.setPosition({opcion4.getPosition().x - resolucion.x / 10, opcion4.getPosition().y});
+                    t.translate({opcion4.getPosition().x - resolucion.x / 10, opcion4.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
                     break;
                 case 4:
-                    indicador.setPosition({opcion5.getPosition().x - resolucion.x / 10, opcion5.getPosition().y});
+                    t.translate({opcion5.getPosition().x - resolucion.x / 10, opcion5.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
                     break;
                 default:
                     break;
             }
 
             ventana.clear(sf::Color::Black);
-            ventana.draw(indicador);
+            ventana.draw(poligono,t);
             ventana.draw(texto);
             ventana.draw(opcion1);
             ventana.draw(opcion2);
@@ -451,7 +470,16 @@ Estado tratarJuego(Estado estado) {
         ventana.draw(texto);
         ventana.draw(opcion1);
         ventana.draw(punt);
-        ventana.draw(vidas);
+
+        //dibujar vidas
+
+        for(int i=0; i<nave.getVidas(); i++){
+
+            sf::Transform t;
+            t.translate({ajustar_w(20.0f)*(i+1), ajustar_h(60.0f)})
+                    .scale(ajustar_h(10u),ajustar_w(6u)).rotate(-PI/2 * (180.0f / 3.14f));
+            ventana.draw(poligono,t);
+        }
         ventana.draw(nave);
         ventana.draw(ovni);
 
@@ -853,10 +881,9 @@ Estado tratarOpciones(Estado estado) {
             get<0>(opciones[i]).setString(get<0>(textos[i]));
             get<1>(opciones[i]).setString(get<1>(textos[i]));
         }
-        sf::RectangleShape indicador({get<0>(opciones[0]).getLocalBounds().height,
-                                      get<0>(opciones[0]).getLocalBounds().height});
-        indicador.setPosition({opcionX - ajustar_w(30), offsetVertical + opcionY * (seleccion + 1)});
-        indicador.setFillColor(configuracionGlobal.color());
+        sf::Transform t;
+        t.translate({opcionX - ajustar_w(30), offsetVertical + opcionY * (seleccion + 1)+ ajustar_h(20u)})
+                .scale(ajustar_h(35u),ajustar_w(20u));
 
         ventana.clear(sf::Color::Black);
         ventana.draw(titulo);
@@ -864,7 +891,7 @@ Estado tratarOpciones(Estado estado) {
             ventana.draw(get<0>(opcion));
             ventana.draw(get<1>(opcion));
         }
-        ventana.draw(indicador);
+        ventana.draw(poligono, t);
         ventana.display();
     }
     configuracionGlobal.resolucion = resoluciones[resId];
@@ -1050,10 +1077,12 @@ Estado tratarControles(Estado estado){
             get<0>(opciones[i]).setString(get<0>(textos[i]));
             get<1>(opciones[i]).setString(get<1>(textos[i]));
         }
-        sf::RectangleShape indicador({get<0>(opciones[0]).getLocalBounds().height,get<0>(opciones[0]).getLocalBounds().height});
-        indicador.setPosition({opcionX - ajustar_w(30), offsetVertical + opcionY * (seleccion + 1)});
+
         ventana.clear(sf::Color::Black);
 
+        sf::Transform t;
+        t.translate({opcionX - ajustar_w(30), offsetVertical + opcionY * (seleccion + 1)+ ajustar_h(20u)})
+                .scale(ajustar_h(35u),ajustar_w(20u));
         if(editando) {
             sf::VertexArray seleccionada(sf::LinesStrip, 2);
             seleccionada[0].position = sf::Vector2f(
@@ -1069,7 +1098,7 @@ Estado tratarControles(Estado estado){
             ventana.draw(get<0>(opcion));
             ventana.draw(get<1>(opcion));
         }
-        ventana.draw(indicador);
+        ventana.draw(poligono,t);
         ventana.display();
     }
     escribeConfiguracion(configuracionGlobal);
