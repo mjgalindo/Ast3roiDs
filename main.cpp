@@ -12,7 +12,10 @@
 using namespace std;
 
 enum Estado {
-    TITULO, MENU, JUEGO, GAME_OVER, PUNTUACIONES, OPCIONES, EXIT
+    TITULO, MENU, JUEGO, GAME_OVER, PUNTUACIONES, CONTROLES, OPCIONES, CREDITOS, EXIT
+};
+enum controles {
+    GIRAR_IZQUIERDA = 0, GIRAR_DERECHA = 1, ACELERAR = 2, DISPARAR = 3, HIPERESPACIO = 4, VOLVER = 5
 };
 
 struct Configuracion {
@@ -23,12 +26,24 @@ struct Configuracion {
     int colorId;
     array<sf::Color, 4u> COLORES = {sf::Color::White, sf::Color::Red, sf::Color::Green, sf::Color::Blue};
 
+    sf::Keyboard::Key girar_izquierda = sf::Keyboard::Left;
+    sf::Keyboard::Key girar_derecha;
+    sf::Keyboard::Key acelerar;
+    sf::Keyboard::Key disparar;
+    sf::Keyboard::Key hiperespacio;
+
     Configuracion() {
         resolucion = RESOLUCION_BASE;
         pantallaCompleta = false;
         volumen = 50;
         antialiasing = 2;
         colorId = 0;
+
+        girar_izquierda = sf::Keyboard::Left;
+        girar_derecha = sf::Keyboard::Right;
+        acelerar = sf::Keyboard::A;
+        disparar = sf::Keyboard::D;
+        hiperespacio = sf::Keyboard::Space;
     }
 
     sf::Color color() {
@@ -63,7 +78,13 @@ Estado tratarPuntuaciones(Estado estado);
 
 Estado tratarOpciones(Estado estado);
 
+Estado tratarControles(Estado estado);
+
+Estado tratarCreditos(Estado estado);
+
 Configuracion leeConfiguracion();
+
+char* keyToString(sf::Keyboard::Key k);
 
 void escribeConfiguracion(Configuracion config);
 
@@ -72,6 +93,8 @@ double ratio_ancho = 1.0 / RESOLUCION_BASE.y;
 
 Configuracion configuracionGlobal;
 sf::Vector2u &resolucion = configuracionGlobal.resolucion;
+
+sf::VertexArray poligono;
 
 template<typename T>
 T ajustar_h(T valor) {
@@ -118,6 +141,18 @@ int main() {
     configuracionGlobal = leeConfiguracion();
     inicializaVentana();
 
+    //icono nave
+    poligono.setPrimitiveType(sf::LineStrip);
+    poligono.resize(5);
+    poligono[0].position = {1.0f, 0.0f};
+    poligono[1].position = {-0.7071067812f, 0.7071067812f};
+    poligono[2].position = {-0.4f, 0.0f};
+    poligono[3].position = {-0.7071067812f, -0.7071067812f};
+    poligono[4].position = {1.0f, 0.0f};
+
+    for (int i = 0; i < poligono.getVertexCount(); i++) {
+        poligono[i].color = configuracionGlobal.color();
+    }
     Estado estado_actual = TITULO;
     while (ventana.isOpen()) {
         switch (estado_actual) {
@@ -136,8 +171,14 @@ int main() {
             case PUNTUACIONES:
                 estado_actual = tratarPuntuaciones(estado_actual);
                 break;
+            case CONTROLES:
+                estado_actual = tratarControles(estado_actual);
+                break;
             case OPCIONES:
                 estado_actual = tratarOpciones(estado_actual);
+                break;
+            case CREDITOS:
+                estado_actual = tratarCreditos(estado_actual);
                 break;
             default:
                 return 0;
@@ -161,6 +202,12 @@ Estado tratarTitulo(Estado estado) {
     sf::Clock reloj;
     bool dibujaInstrucciones = true;
 
+    vector<Asteroide> asteroides;
+    unsigned int numeroDeAsteroides = 10;
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion, configuracionGlobal.color());
+    Nave nave = Nave({-100,-100}, resolucion, &puntuacion, configuracionGlobal.color());
+    Ovni ovni(resolucion, configuracionGlobal.color());
+
     while (true) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
@@ -178,6 +225,12 @@ Estado tratarTitulo(Estado estado) {
         }
 
         ventana.clear(sf::Color::Black);
+        for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
+            ast->mover();
+            ventana.draw(*ast);
+        }
+        ovni.mover(asteroides,nave);
+        ventana.draw(ovni);
         ventana.draw(titulo);
         if (reloj.getElapsedTime().asMilliseconds() > 1000) {
             dibujaInstrucciones = !dibujaInstrucciones;
@@ -186,6 +239,12 @@ Estado tratarTitulo(Estado estado) {
         if (dibujaInstrucciones)
             ventana.draw(instrucciones);
         ventana.display();
+
+        if(asteroides.size()==0){
+            Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion, configuracionGlobal.color());
+        }
+
+        ovni.cambiarEstado(ovni.getEstado());
     }
 }
 
@@ -195,6 +254,8 @@ Estado tratarMenu(Estado estado) {
     sf::Text opcion2;
     sf::Text opcion3;
     sf::Text opcion4;
+    sf::Text opcion5;
+    sf::Text opcion6;
 
 
     inicializaTexto(texto, ajustar_h(80u));
@@ -204,24 +265,34 @@ Estado tratarMenu(Estado estado) {
     inicializaTexto(opcion1, ajustar_h(40u));
     opcion1.setString("JUGAR");
     opcion1.setPosition(
-            {(resolucion.x - opcion1.getLocalBounds().width) / 2.0f, resolucion.y / 8 + resolucion.y / 5.0f});
+            {(resolucion.x - opcion1.getLocalBounds().width) / 2.0f, resolucion.y / 8 + resolucion.y / 8.0f});
 
     inicializaTexto(opcion2, ajustar_h(40u));
     opcion2.setString("PUNTUACIONES");
     opcion2.setPosition(
-            {(resolucion.x - opcion2.getLocalBounds().width) / 2.0f, resolucion.y / 8 + 2 * resolucion.y / 5.0f});
+            {(resolucion.x - opcion2.getLocalBounds().width) / 2.0f, resolucion.y / 8 + 2 * resolucion.y / 8.0f});
 
     inicializaTexto(opcion3, ajustar_h(40u));
     opcion3.setString("OPCIONES");
     opcion3.setPosition(
-            {(resolucion.x - opcion3.getLocalBounds().width) / 2, resolucion.y / 8.0f + 3 * resolucion.y / 5.0f});
+            {(resolucion.x - opcion3.getLocalBounds().width) / 2, resolucion.y / 8.0f + 3 * resolucion.y / 8.0f});
 
     inicializaTexto(opcion4, ajustar_h(40u));
-    opcion4.setString("SALIR");
+    opcion4.setString("CONTROLES");
     opcion4.setPosition(
-            {(resolucion.x - opcion4.getLocalBounds().width) / 2, resolucion.y / 8.0f + 4 * resolucion.y / 5.0f});
+            {(resolucion.x - opcion4.getLocalBounds().width) / 2, resolucion.y / 8.0f + 4 * resolucion.y / 8.0f});
 
-    array<Estado, 4> opciones = {JUEGO, PUNTUACIONES, OPCIONES, EXIT};
+    inicializaTexto(opcion5, ajustar_h(40u));
+    opcion5.setString("CREDITOS");
+    opcion5.setPosition(
+            {(resolucion.x - opcion5.getLocalBounds().width) / 2, resolucion.y / 8.0f + 5 * resolucion.y / 8.0f});
+
+    inicializaTexto(opcion6, ajustar_h(40u));
+    opcion6.setString("SALIR");
+    opcion6.setPosition(
+            {(resolucion.x - opcion6.getLocalBounds().width) / 2, resolucion.y / 8.0f + 6 * resolucion.y / 8.0f});
+
+    array<Estado, 6> opciones = {JUEGO, PUNTUACIONES, OPCIONES, CONTROLES, CREDITOS ,EXIT};
     int seleccion = 0;
 
     while (true) {
@@ -235,40 +306,60 @@ Estado tratarMenu(Estado estado) {
                     if (event.key.code == sf::Keyboard::Return) {
                         return opciones[seleccion];
                     } else if (event.key.code == sf::Keyboard::Up) {
-                        seleccion = (seleccion - 1) % (unsigned int) opciones.size();
+                        seleccion--;
+                        if(seleccion<0){
+                            seleccion = opciones.size()-1;
+                        }
                     } else if (event.key.code == sf::Keyboard::Down) {
-                        seleccion = (seleccion + 1) % (unsigned int) opciones.size();
+                        seleccion++;
+                        if(seleccion>=opciones.size()){
+                            seleccion = 0;
+                        }
                     }
                 default:
                     break;
             }
 
-            sf::RectangleShape indicador({opcion1.getLocalBounds().height,opcion1.getLocalBounds().height});
-            indicador.setFillColor(configuracionGlobal.color());
+            //Indicador con forma de nave
+            sf::Transform t;
             switch (seleccion) {
                 case 0:
-                    indicador.setPosition({opcion1.getPosition().x - resolucion.x / 10, opcion1.getPosition().y});
+                    t.translate({opcion1.getPosition().x - resolucion.x / 10, opcion1.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
                     break;
                 case 1:
-                    indicador.setPosition({opcion2.getPosition().x - resolucion.x / 10, opcion2.getPosition().y});
+                    t.translate({opcion2.getPosition().x - resolucion.x / 10, opcion2.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
                     break;
                 case 2:
-                    indicador.setPosition({opcion3.getPosition().x - resolucion.x / 10, opcion3.getPosition().y});
+                    t.translate({opcion3.getPosition().x - resolucion.x / 10, opcion3.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
                     break;
                 case 3:
-                    indicador.setPosition({opcion4.getPosition().x - resolucion.x / 10, opcion4.getPosition().y});
+                    t.translate({opcion4.getPosition().x - resolucion.x / 10, opcion4.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
+                    break;
+                case 4:
+                    t.translate({opcion5.getPosition().x - resolucion.x / 10, opcion5.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
+                    break;
+                case 5:
+                    t.translate({opcion6.getPosition().x - resolucion.x / 10, opcion6.getPosition().y + ajustar_h(20u)})
+                            .scale(ajustar_h(35u),ajustar_w(20u));
                     break;
                 default:
                     break;
             }
 
             ventana.clear(sf::Color::Black);
-            ventana.draw(indicador);
+            ventana.draw(poligono,t);
             ventana.draw(texto);
             ventana.draw(opcion1);
             ventana.draw(opcion2);
             ventana.draw(opcion3);
             ventana.draw(opcion4);
+            ventana.draw(opcion5);
+            ventana.draw(opcion6);
             ventana.display();
         }
     }
@@ -382,7 +473,7 @@ Estado tratarJuego(Estado estado) {
                 musica.join();
                 return EXIT;
             case sf::Event::KeyPressed:
-                if (event.key.code == sf::Keyboard::D) {
+                if (event.key.code == configuracionGlobal.disparar) {
                     nave.disparar();
                 } else if (event.key.code == sf::Keyboard::M) {
                     (*silencioMusica) = !*silencioMusica;
@@ -391,16 +482,16 @@ Estado tratarJuego(Estado estado) {
                 break;
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_izquierda)) {
             nave.rotarIzda();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_derecha)) {
             nave.rotarDcha();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        if (sf::Keyboard::isKeyPressed(configuracionGlobal.acelerar)) {
             nave.acelerar();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+        if (sf::Keyboard::isKeyPressed(configuracionGlobal.hiperespacio)) {
             nave.hiperEspacio();
         }
         ovni->mover(asteroides, nave);
@@ -416,7 +507,16 @@ Estado tratarJuego(Estado estado) {
         ventana.draw(texto);
         ventana.draw(opcion1);
         ventana.draw(punt);
-        ventana.draw(vidas);
+
+        //dibujar vidas
+
+        for(int i=0; i<nave.getVidas(); i++){
+
+            sf::Transform t;
+            t.translate({ajustar_w(20.0f)*(i+1), ajustar_h(60.0f)})
+                    .scale(ajustar_h(10u),ajustar_w(6u)).rotate(-PI/2 * (180.0f / 3.14f));
+            ventana.draw(poligono,t);
+        }
         ventana.draw(nave);
         ventana.draw(*ovni);
 
@@ -752,7 +852,8 @@ Estado tratarOpciones(Estado estado) {
                             seleccion = (Opcion)(opciones.size()-1);
                         }
                     } else if (event.key.code == sf::Keyboard::Down) {
-                        seleccion = (Opcion) (seleccion+1);
+                        seleccion = (
+                                Opcion) (seleccion+1);
                         if(seleccion>=opciones.size()){
                             seleccion = (Opcion)0;
                         }
@@ -820,10 +921,9 @@ Estado tratarOpciones(Estado estado) {
             get<0>(opciones[i]).setString(get<0>(textos[i]));
             get<1>(opciones[i]).setString(get<1>(textos[i]));
         }
-        sf::RectangleShape indicador({get<0>(opciones[0]).getLocalBounds().height,
-                                      get<0>(opciones[0]).getLocalBounds().height});
-        indicador.setPosition({opcionX - ajustar_w(30), offsetVertical + opcionY * (seleccion + 1)});
-        indicador.setFillColor(configuracionGlobal.color());
+        sf::Transform t;
+        t.translate({opcionX - ajustar_w(30), offsetVertical + opcionY * (seleccion + 1)+ ajustar_h(20u)})
+                .scale(ajustar_h(35u),ajustar_w(20u));
 
         ventana.clear(sf::Color::Black);
         ventana.draw(titulo);
@@ -831,7 +931,7 @@ Estado tratarOpciones(Estado estado) {
             ventana.draw(get<0>(opcion));
             ventana.draw(get<1>(opcion));
         }
-        ventana.draw(indicador);
+        ventana.draw(poligono, t);
         ventana.display();
     }
     configuracionGlobal.resolucion = resoluciones[resId];
@@ -840,12 +940,224 @@ Estado tratarOpciones(Estado estado) {
     return MENU;
 }
 
+bool controlValido(controles c, sf::Keyboard::Key k){
+    if(GIRAR_IZQUIERDA!=c && configuracionGlobal.girar_izquierda==k){
+        return false;
+    }
+    if(GIRAR_DERECHA!=c && configuracionGlobal.girar_derecha==k){
+        return false;
+    }
+    if(ACELERAR!=c && configuracionGlobal.acelerar==k){
+        return false;
+    }
+    if(DISPARAR!=c && configuracionGlobal.disparar==k){
+        return false;
+    }if(HIPERESPACIO!=c && configuracionGlobal.hiperespacio==k){
+        return false;
+    }
+
+}
+
+Estado tratarControles(Estado estado){
+    sf::Text texto;
+    sf::Text opcion1;
+
+    sf::Font fuente;
+    fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
+
+    configuracionGlobal = leeConfiguracion();
+
+    texto.setFont(fuente);
+    texto.setString("OPCIONES");
+    texto.setCharacterSize(ajustar_h(75u));
+    texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
+    texto.setFillColor(configuracionGlobal.color());
+    texto.setOutlineColor(configuracionGlobal.color());
+    texto.setOutlineThickness(1.5);
+
+
+
+    static constexpr int OPCIONES = 6;
+
+    array<tuple<string, string>, OPCIONES> textos{
+            make_tuple("GIRAR IZQUIERDA", ""),
+            make_tuple("GIRAR DERECHA", ""),
+            make_tuple("ACELERAR", ""),
+            make_tuple("DISPARAR", ""),
+            make_tuple("HIPERESPACIO", ""),
+            make_tuple("VOLVER", "")
+    };
+    array<tuple<sf::Text, sf::Text>, OPCIONES> opciones;
+
+    float opcionX = resolucion.x / OPCIONES + 1;
+    float opcionY = (resolucion.y - texto.getPosition().y - texto.getLocalBounds().height - ajustar_h(30u)) / (float) (OPCIONES + 1);
+    float offsetVertical = texto.getPosition().y + texto.getLocalBounds().height + ajustar_h(30u);
+
+    for (unsigned int i = 0; i < OPCIONES; i++) {
+        get<0>(opciones[i]).setFont(fuente);
+        get<1>(opciones[i]).setFont(fuente);
+
+        get<0>(opciones[i]).setCharacterSize(ajustar_h(30u));
+        get<1>(opciones[i]).setCharacterSize(ajustar_h(30u));
+
+        get<0>(opciones[i]).setFillColor(configuracionGlobal.color());
+        get<1>(opciones[i]).setFillColor(configuracionGlobal.color());
+
+        get<0>(opciones[i]).setString(get<0>(textos[i]));
+        get<1>(opciones[i]).setString(get<1>(textos[i]));
+
+        get<0>(opciones[i]).setPosition({opcionX, offsetVertical + opcionY * (i + 1)});
+        get<1>(opciones[i]).setPosition({resolucion.x - 2 * opcionX, offsetVertical + opcionY * (i + 1)});
+    }
+
+    controles seleccion = GIRAR_IZQUIERDA;
+    bool fin = false;
+    bool editando = false;
+    while (!fin) {
+        sf::Event event;
+        while (ventana.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    ventana.close();
+                    return EXIT;
+                case sf::Event::KeyPressed:
+                    if(editando){
+                        if (event.key.code == sf::Keyboard::Return) {
+                            editando = false;
+                        }
+                        else{
+                            switch(seleccion) {
+                                case GIRAR_IZQUIERDA:
+                                    if (controlValido(GIRAR_IZQUIERDA, event.key.code)) {
+
+                                        configuracionGlobal.girar_izquierda = event.key.code;
+                                    }
+                                    break;
+                                case GIRAR_DERECHA:
+                                    if (controlValido(GIRAR_DERECHA, event.key.code)) {
+                                        configuracionGlobal.girar_derecha = event.key.code;
+                                    }
+                                    break;
+                                case ACELERAR:
+                                    if (controlValido(ACELERAR, event.key.code)) {
+                                        configuracionGlobal.acelerar = event.key.code;
+                                    }
+                                    break;
+                                case DISPARAR:
+                                    if (controlValido(DISPARAR, event.key.code)) {
+                                        configuracionGlobal.disparar = event.key.code;
+                                    }
+                                    break;
+                                case HIPERESPACIO:
+                                    if (controlValido(HIPERESPACIO, event.key.code)) {
+                                        configuracionGlobal.hiperespacio = event.key.code;
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                    }
+                    else if (event.key.code == sf::Keyboard::Up) {
+                        seleccion = (controles) (seleccion-1);
+                        if(seleccion<0){
+                            seleccion = (controles)(opciones.size()-1);
+                        }
+                    } else if (event.key.code == sf::Keyboard::Down) {
+                        seleccion = (controles) (seleccion+1);
+                        if(seleccion>=opciones.size()){
+                            seleccion = (controles)0;
+                        }
+                    } else if (event.key.code == sf::Keyboard::Return) {
+                        if (seleccion == VOLVER) fin = true;
+                        else {
+                            editando = true;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        if (configuracionGlobal.girar_izquierda>=0 && configuracionGlobal.girar_izquierda<25){
+            get<1>(textos[GIRAR_IZQUIERDA]) = configuracionGlobal.girar_izquierda - sf::Keyboard::A + 'A';
+        }
+        else{
+            get<1>(textos[GIRAR_IZQUIERDA]) = keyToString(configuracionGlobal.girar_izquierda);
+        }
+        if (configuracionGlobal.girar_derecha>=0 && configuracionGlobal.girar_derecha<25){
+            get<1>(textos[GIRAR_DERECHA]) = configuracionGlobal.girar_derecha - sf::Keyboard::A + 'A';
+        }
+        else{
+            get<1>(textos[GIRAR_DERECHA]) = keyToString(configuracionGlobal.girar_derecha);
+        }
+        if (configuracionGlobal.acelerar>=0 && configuracionGlobal.acelerar<25){
+            get<1>(textos[ACELERAR]) = configuracionGlobal.acelerar - sf::Keyboard::A + 'A';
+        }
+        else{
+            get<1>(textos[ACELERAR]) = keyToString(configuracionGlobal.acelerar);
+        }
+        if (configuracionGlobal.disparar>=0 && configuracionGlobal.disparar<25){
+            get<1>(textos[DISPARAR]) = configuracionGlobal.disparar - sf::Keyboard::A + 'A';
+        }
+        else{
+            get<1>(textos[DISPARAR]) = keyToString(configuracionGlobal.disparar);
+        }
+        if (configuracionGlobal.hiperespacio>=0 && configuracionGlobal.hiperespacio<25){
+            get<1>(textos[HIPERESPACIO]) = configuracionGlobal.hiperespacio - sf::Keyboard::A + 'A';
+        }
+        else{
+            get<1>(textos[HIPERESPACIO]) = keyToString(configuracionGlobal.hiperespacio);
+        }
+
+        for (unsigned int i = 0; i < OPCIONES; i++) {
+            get<0>(opciones[i]).setString(get<0>(textos[i]));
+            get<1>(opciones[i]).setString(get<1>(textos[i]));
+        }
+
+        ventana.clear(sf::Color::Black);
+
+        sf::Transform t;
+        t.translate({opcionX - ajustar_w(30), offsetVertical + opcionY * (seleccion + 1)+ ajustar_h(20u)})
+                .scale(ajustar_h(35u),ajustar_w(20u));
+        if(editando) {
+            sf::VertexArray seleccionada(sf::LinesStrip, 2);
+            seleccionada[0].position = sf::Vector2f(
+                    get<1>(opciones[seleccion]).getPosition().x + get<1>(opciones[seleccion]).getLocalBounds().width / 3.0 - 10,
+                    get<1>(opciones[seleccion]).getPosition().y + get<1>(opciones[seleccion]).getLocalBounds().height + 4);
+            seleccionada[1].position = sf::Vector2f(
+                    get<1>(opciones[seleccion]).getPosition().x +  get<1>(opciones[seleccion]).getLocalBounds().width / 3.0 + 25,
+                    get<1>(opciones[seleccion]).getPosition().y +  get<1>(opciones[seleccion]).getLocalBounds().height + 4);
+            ventana.draw(seleccionada);
+        }
+        ventana.draw(texto);
+        for (auto opcion : opciones) {
+            ventana.draw(get<0>(opcion));
+            ventana.draw(get<1>(opcion));
+        }
+        ventana.draw(poligono,t);
+        ventana.display();
+    }
+    escribeConfiguracion(configuracionGlobal);
+    inicializaVentana();
+    return MENU;
+}
 Configuracion leeConfiguracion() {
     ifstream fichConfig("opciones.cfg");
     Configuracion retVal;
     if (!fichConfig.good()) return retVal;
     unsigned int resVertical = 0;
-    fichConfig >> resVertical >> retVal.pantallaCompleta >> retVal.volumen >> retVal.antialiasing >> retVal.colorId;
+    int gir_izq, gir_der, acel, disp, hiper;
+    fichConfig >> resVertical >> retVal.pantallaCompleta >> retVal.volumen >> retVal.antialiasing >> retVal.colorId
+               >> gir_izq >> gir_der >> acel >> disp >> hiper;
+    retVal.girar_izquierda = (sf::Keyboard::Key) gir_izq;
+    retVal.girar_derecha = (sf::Keyboard::Key) gir_der;
+    retVal.disparar = (sf::Keyboard::Key) disp;
+    retVal.acelerar = (sf::Keyboard::Key) acel;
+    retVal.hiperespacio = (sf::Keyboard::Key) hiper;
     retVal.resolucion = {(unsigned int) (RESOLUCION_BASE.x / (RESOLUCION_BASE.y / (float) resVertical)), resVertical};
     return retVal;
 }
@@ -853,5 +1165,98 @@ Configuracion leeConfiguracion() {
 void escribeConfiguracion(Configuracion config) {
     ofstream fichConfig("opciones.cfg");
     fichConfig << config.resolucion.y << ' ' << config.pantallaCompleta << ' ' << config.volumen << ' '
-               << config.antialiasing << ' ' << config.colorId;
+               << config.antialiasing << ' ' << config.colorId << ' ' << config.girar_izquierda << ' '
+               << config.girar_derecha << ' ' <<  config.acelerar << ' ' << config.disparar << ' '
+               << config.hiperespacio;
+}
+
+char* keyToString(sf::Keyboard::Key k){
+     if(k==sf::Keyboard::RShift || k==sf::Keyboard::LShift ){
+        return "Shift";
+    }
+    else if(k==sf::Keyboard::RControl || k==sf::Keyboard::LControl){
+        return "Ctrl";
+    }else if(k==sf::Keyboard::RAlt || k==sf::Keyboard::LAlt){
+        return "Alt";
+    }else if(k==sf::Keyboard::Space || k==sf::Keyboard::LControl){
+        return "Space";
+    }else if(k==sf::Keyboard::Left){
+        return "Left";
+    }else if(k==sf::Keyboard::Right){
+        return "Right";
+    }else if(k==sf::Keyboard::Up){
+        return "Up";
+    }else if(k==sf::Keyboard::Down){
+        return "Down";
+    }
+}
+
+Estado tratarCreditos(Estado estado){
+    sf::Text texto;
+    sf::Text opcion1;
+    sf::Text opcion2;
+    sf::Text opcion3;
+    sf::Text opcion4;
+
+    inicializaTexto(texto, ajustar_h(75u), 1.5);
+    inicializaTexto(opcion1, ajustar_h(30u), 1.5);
+    inicializaTexto(opcion2, ajustar_h(30u), 1.5);
+    inicializaTexto(opcion3, ajustar_h(30u), 1.5);
+    inicializaTexto(opcion4, ajustar_h(30u), 1.5);
+
+    string creditos1 = "JORGE ANDRES GALINDO (679155)";
+    string creditos2 = "MIGUEL JORGE GALINDO (679954)";
+    string creditos3 = "ALEJANDRO FERNANDEZ POZA (679890)";
+    string creditos4 = "ADRIAN ALEJANDRE ESCRICHE (682237)";
+
+    texto.setString("CREDITOS");
+    opcion1.setString(creditos1);
+    opcion2.setString(creditos2);
+    opcion3.setString(creditos3);
+    opcion4.setString(creditos4);
+
+    texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});;
+    opcion1.setPosition({(resolucion.x - opcion1.getLocalBounds().width) / 2, resolucion.y});
+    opcion2.setPosition({(resolucion.x - opcion2.getLocalBounds().width) / 2, opcion1.getPosition().y+opcion1.getLocalBounds().height+ajustar_h(25u)});
+    opcion3.setPosition({(resolucion.x - opcion3.getLocalBounds().width) / 2, opcion2.getPosition().y+opcion2.getLocalBounds().height+ajustar_h(25u)});
+    opcion4.setPosition({(resolucion.x - opcion4.getLocalBounds().width) / 2, opcion3.getPosition().y+opcion3.getLocalBounds().height+ajustar_h(25u)});
+
+    sf::Clock reloj;
+    reloj.restart();
+    while(opcion4.getPosition().y>0){
+        if(reloj.getElapsedTime().asMilliseconds()>150) {
+            if (opcion1.getCharacterSize()>=ajustar_h(14) && opcion1.getPosition().y + opcion1.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
+                opcion1.setCharacterSize(opcion1.getCharacterSize() - 1);
+            }
+
+            if (opcion2.getCharacterSize()>=ajustar_h(14) && opcion2.getPosition().y + opcion2.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
+                opcion2.setCharacterSize(opcion2.getCharacterSize() - 1);
+            }
+
+            if (opcion3.getCharacterSize()>=ajustar_h(14) && opcion3.getPosition().y + opcion3.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
+                opcion3.setCharacterSize(opcion3.getCharacterSize() - 1);
+            }
+
+            if (opcion4.getCharacterSize()>=ajustar_h(14) && opcion4.getPosition().y + opcion4.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
+                opcion4.setCharacterSize(opcion4.getCharacterSize() - 1);
+            }
+
+            reloj.restart();
+        }
+
+        opcion1.setPosition((resolucion.x - opcion1.getLocalBounds().width) / 2,opcion1.getPosition().y-1);
+        opcion2.setPosition((resolucion.x - opcion2.getLocalBounds().width) / 2,opcion2.getPosition().y-1);
+        opcion3.setPosition((resolucion.x - opcion3.getLocalBounds().width) / 2,opcion3.getPosition().y-1);
+        opcion4.setPosition((resolucion.x - opcion4.getLocalBounds().width) / 2,opcion4.getPosition().y-1);
+
+        ventana.clear(sf::Color::Black);
+        ventana.draw(texto);
+        ventana.draw(opcion1);
+        ventana.draw(opcion2);
+        ventana.draw(opcion3);
+        ventana.draw(opcion4);
+        ventana.display();
+    }
+
+    return MENU;
 }
