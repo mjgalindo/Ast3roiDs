@@ -1,6 +1,10 @@
 #include "Ovni.hpp"
 #include <iostream>
 
+
+//Red neural que se usara para esquivar asteroides
+neural::Network redNormal(12, 1, {24});
+
 Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color) :
         Circular({0, 0}, 15 * limitesPantalla.y / (float) RESOLUCION_BASE.y), color(color) {
     estado = MUERTO;
@@ -44,9 +48,54 @@ Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color) :
     punto[0].color = color;
     punto[1].color = color;
     recienDestruida = true;
+
+    redNormal.read(fichero);
 }
 
 Ovni::~Ovni() {}
+
+double Ovni::distancia(sf::Vector2f a, sf::Vector2f b) {
+    double distanciaX = (a.x - b.x);
+    double distanciaY = (a.y - b.y);
+    if((limites.x + a.x) - b.x < abs(distanciaX)) {
+        distanciaX = (limites.x + a.x) - b.x;
+    }
+    if((limites.y + a.y) - b.y < abs(distanciaY)) {
+        distanciaY = (limites.y + a.y) - b.y;
+    }
+    return sqrt(distanciaX * distanciaX + (distanciaY * distanciaY));
+}
+
+vector<Asteroide *> Ovni::asteroideMasCercano(sf::Vector2f posicion, vector<Asteroide> asteroides) {
+    double distanciaMenor1 = 99999999.0;
+    double distanciaMenor2 = 99999999.0;
+    double distanciaMenor3 = 99999999.0;
+    Asteroide *masCercano1 = 0, *masCercano2 = 0, *masCercano3 = 0;
+    vector<Asteroide *> masCercanos;
+    for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
+        double distanciatmp = distancia(ast->getPosicion(), posicion);
+        if (distanciatmp < distanciaMenor1) {
+            distanciaMenor3 = distanciaMenor2;
+            masCercano3 = masCercano2;
+            distanciaMenor2 = distanciaMenor1;
+            masCercano2 = masCercano1;
+            distanciaMenor1 = distanciatmp;
+            masCercano1 = ast.base();
+        } else if(distanciatmp < distanciaMenor2) {
+            distanciaMenor3 = distanciaMenor2;
+            masCercano3 = masCercano2;
+            distanciaMenor2 = distanciatmp;
+            masCercano2 = ast.base();
+        } else if(distanciatmp < distanciaMenor3) {
+            distanciaMenor3 = distanciatmp;
+            masCercano3 = ast.base();
+        }
+    }
+    masCercanos.push_back(masCercano1);
+    masCercanos.push_back(masCercano2);
+    masCercanos.push_back(masCercano3);
+    return masCercanos;
+}
 
 float Ovni::getDireccion() {
     return direccion;
@@ -57,7 +106,7 @@ sf::Vector2f Ovni::getVelocidad() {
 }
 
 int Ovni::getPuntuacion() const {
-    return 1000;
+    return 300;
 }
 
 void Ovni::disparar() {
@@ -106,9 +155,23 @@ void Ovni::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
     if (estado == VIVO) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
-        if (valorAleatorio() < 0.0055) {
+        vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, v);
+        vector<double> entradasRed{asteroidePeligroso[0]->getPosicion().x - posicion.x,
+                                   posicion.y - asteroidePeligroso[0]->getPosicion().y,
+                                   asteroidePeligroso[0]->getVelocidad().x,
+                                   asteroidePeligroso[0]->getVelocidad().y,
+                                   asteroidePeligroso[1]->getPosicion().x - posicion.x,
+                                   posicion.y - asteroidePeligroso[1]->getPosicion().y,
+                                   asteroidePeligroso[1]->getVelocidad().x,
+                                   asteroidePeligroso[1]->getVelocidad().y,
+                                   asteroidePeligroso[2]->getPosicion().x - posicion.x,
+                                   posicion.y - asteroidePeligroso[2]->getPosicion().y,
+                                   asteroidePeligroso[2]->getVelocidad().x,
+                                   asteroidePeligroso[2]->getVelocidad().y,};
+        direccion = redNormal.run(entradasRed)[0];
+        /*if (valorAleatorio() < 0.0055) {
             direccion = anguloAleatorio();
-        }
+        }*/
         posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         if (posicion.x - 1 >= limites.x) {
             posicion.x -= limites.x;

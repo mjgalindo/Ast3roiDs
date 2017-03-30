@@ -14,7 +14,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 project(Ast3roiDs)
 set(EXECUTABLE_NAME Ast3roiDs)
-set(SOURCE_FILES main.cpp Estados.hpp Colisiones.hpp Colisiones.cpp Graficos/Triangular.hpp Graficos/Triangular.cpp Graficos/Circular.hpp Graficos/Circular.cpp Graficos/Disparo.hpp Graficos/Disparo.cpp Graficos/Nave.hpp Graficos/Nave.cpp Graficos/Asteroide.cpp Graficos/Asteroide.hpp Graficos/Ovni.cpp Graficos/Ovni.hpp matematicas.hpp constantesGlobales.hpp)
+set(SOURCE_FILES main.cpp Estados.hpp Colisiones.hpp Colisiones.cpp Graficos/Triangular.hpp Graficos/Triangular.cpp Graficos/Circular.hpp Graficos/Circular.cpp Graficos/Disparo.hpp Graficos/Disparo.cpp Graficos/Nave.hpp Graficos/Nave.cpp Graficos/Asteroide.cpp Graficos/Asteroide.hpp Graficos/Ovni.cpp Graficos/Ovni.hpp matematicas.hpp constantesGlobales.hpp Graficos/OvniInteligente.cpp)
 set(SFML_ROOT "C:/Program Files (x86)/SFML")
 
 add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
