@@ -1,5 +1,4 @@
 #include "Ovni.hpp"
-#include <iostream>
 
 //Red neural que se usara para esquivar asteroides
 neural::Network redNormal(12, 1, {24});
@@ -54,10 +53,10 @@ Ovni::~Ovni() {
 double Ovni::distancia(sf::Vector2f a, sf::Vector2f b) {
     double distanciaX = (a.x - b.x);
     double distanciaY = (a.y - b.y);
-    if((limites.x + a.x) - b.x < abs(distanciaX)) {
+    if ((limites.x + a.x) - b.x < abs(distanciaX)) {
         distanciaX = (limites.x + a.x) - b.x;
     }
-    if((limites.y + a.y) - b.y < abs(distanciaY)) {
+    if ((limites.y + a.y) - b.y < abs(distanciaY)) {
         distanciaY = (limites.y + a.y) - b.y;
     }
     return sqrt(distanciaX * distanciaX + (distanciaY * distanciaY));
@@ -94,7 +93,7 @@ vector<Asteroide *> Ovni::asteroideMasCercano(sf::Vector2f posicion, vector<Aste
     if (distanciaMenor2 != 99999999.0) {
         masCercanos.push_back(masCercano2);
     }
-    if(distanciaMenor3 != 99999999.0) {
+    if (distanciaMenor3 != 99999999.0) {
         masCercanos.push_back(masCercano3);
     }
     return masCercanos;
@@ -160,20 +159,20 @@ void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
         vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, v);
         vector<double> entradasRed;
-        if(asteroidePeligroso.size() == 3) {
+        if (asteroidePeligroso.size() == 3) {
             entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
-                        posicion.y - asteroidePeligroso[0]->getPosicion().y,
-                        asteroidePeligroso[0]->getVelocidad().x,
-                        asteroidePeligroso[0]->getVelocidad().y,
-                        asteroidePeligroso[1]->getPosicion().x - posicion.x,
-                        posicion.y - asteroidePeligroso[1]->getPosicion().y,
-                        asteroidePeligroso[1]->getVelocidad().x,
-                        asteroidePeligroso[1]->getVelocidad().y,
-                        asteroidePeligroso[2]->getPosicion().x - posicion.x,
-                        posicion.y - asteroidePeligroso[2]->getPosicion().y,
-                        asteroidePeligroso[2]->getVelocidad().x,
-                        asteroidePeligroso[2]->getVelocidad().y,};
-        } else if(asteroidePeligroso.size() == 2) {
+                           posicion.y - asteroidePeligroso[0]->getPosicion().y,
+                           asteroidePeligroso[0]->getVelocidad().x,
+                           asteroidePeligroso[0]->getVelocidad().y,
+                           asteroidePeligroso[1]->getPosicion().x - posicion.x,
+                           posicion.y - asteroidePeligroso[1]->getPosicion().y,
+                           asteroidePeligroso[1]->getVelocidad().x,
+                           asteroidePeligroso[1]->getVelocidad().y,
+                           asteroidePeligroso[2]->getPosicion().x - posicion.x,
+                           posicion.y - asteroidePeligroso[2]->getPosicion().y,
+                           asteroidePeligroso[2]->getVelocidad().x,
+                           asteroidePeligroso[2]->getVelocidad().y,};
+        } else if (asteroidePeligroso.size() == 2) {
             entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
                            posicion.y - asteroidePeligroso[0]->getPosicion().y,
                            asteroidePeligroso[0]->getVelocidad().x,
@@ -186,7 +185,7 @@ void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
                            -99999.0,
                            0.0,
                            0.0,};
-        } else if(asteroidePeligroso.size() == 1) {
+        } else if (asteroidePeligroso.size() == 1) {
             entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
                            posicion.y - asteroidePeligroso[0]->getPosicion().y,
                            asteroidePeligroso[0]->getVelocidad().x,

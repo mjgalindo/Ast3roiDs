@@ -430,10 +430,11 @@ Estado tratarJuego(Estado estado) {
     sf::Clock reloj;
     int nivel = 0;
 
-    Nave nave = Nave({resolucion.x / 2.0f, resolucion.y / 2.0f}, resolucion, &puntuacion, configuracionGlobal.color());
+    Nave nave = Nave({resolucion.x / 2.0f, resolucion.y / 2.0f}, resolucion, &puntuacion, configuracionGlobal.color(),
+                     &csonido);
     Ovni *ovni;
-    Ovni ovniNormal(resolucion, configuracionGlobal.color());
-    OvniInteligente ovniInteligente(resolucion, configuracionGlobal.color());
+    Ovni ovniNormal(resolucion, configuracionGlobal.color(), &csonido);
+    OvniInteligente ovniInteligente(resolucion, configuracionGlobal.color(), &csonido);
     ovni = &ovniNormal;
     bool ovniElegido = false;
     float probabilidadOvniInt = 0.1;
@@ -461,9 +462,9 @@ Estado tratarJuego(Estado estado) {
             *reiniciarMusica = true;
         }
 
-        if(ovni->getEstado()==MUERTO && !ovniElegido) {
+        if (ovni->getEstado() == MUERTO && !ovniElegido) {
             ovniElegido = true;
-            if(valorAleatorio() < probabilidadOvniInt) {
+            if (valorAleatorio() < probabilidadOvniInt) {
                 ovni = &ovniInteligente;
             } else {
                 ovni = &ovniNormal;
@@ -544,7 +545,7 @@ Estado tratarJuego(Estado estado) {
         reloj.restart();
         nave.cambiarEstado(nave.getEstado());
         ovni->cambiarEstado(ovni->getEstado());
-        if(ovni->getEstado()==VIVO) {
+        if (ovni->getEstado() == VIVO) {
             ovniElegido = false;
         }
     }

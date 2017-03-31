@@ -4,15 +4,11 @@
 //Red neural que se usara para esquivar asteroides
 neural::Network redInteligente(12, 1, {24});
 
-OvniInteligente::OvniInteligente(sf::Vector2u limitesPantalla, sf::Color color) :
-        Ovni(limitesPantalla, color) {
-    radio = radio*3 /4;
-
-    if (!bufferSonidoOvni.loadFromFile("Recursos/Sonido/saucerSmall.wav")) {
-        throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/thrust.wav\"");
-    }
-
-    reproductorDeSonidoOvni.setBuffer(bufferSonidoOvni);
+OvniInteligente::OvniInteligente(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
+        Ovni(limitesPantalla, color, cs) {
+    radio = radio * 3 / 4;
+    SonidoPresencia = ControladorSonido::OVNI_PEQUENO;
+    SonidoDestruccion = ControladorSonido::EXP_1;
     redInteligente.read(fichero);
 }
 
@@ -21,14 +17,14 @@ OvniInteligente::~OvniInteligente() {}
 void OvniInteligente::disparar(sf::Vector2f nave) {
     if (estado == VIVO) {
         if (num_disparos < MAX_DISPAROS) {
-            sf::Vector2f vectorDir = (nave-posicion);
-            float direccionDisp = atan2f(vectorDir.y,vectorDir.x);
+            sf::Vector2f vectorDir = (nave - posicion);
+            float direccionDisp = atan2f(vectorDir.y, vectorDir.x);
             disparos[num_disparos] = Disparo(posicion, direccion, limites, color);
-            direccionDisp = direccionDisp + valorAleatorio(-error,error);
+            direccionDisp = direccionDisp + valorAleatorio(-error, error);
             disparos[num_disparos].setDireccion(direccionDisp);
             num_disparos++;
         }
-        reproductorDeSonidoDisparos.play();
+        cs->reproducir(SonidoDisparo);
     }
 }
 
@@ -37,7 +33,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
         vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, v);
         vector<double> entradasRed;
-        if(asteroidePeligroso.size() == 3) {
+        if (asteroidePeligroso.size() == 3) {
             entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
                            posicion.y - asteroidePeligroso[0]->getPosicion().y,
                            asteroidePeligroso[0]->getVelocidad().x,
@@ -50,7 +46,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
                            posicion.y - asteroidePeligroso[2]->getPosicion().y,
                            asteroidePeligroso[2]->getVelocidad().x,
                            asteroidePeligroso[2]->getVelocidad().y,};
-        } else if(asteroidePeligroso.size() == 2) {
+        } else if (asteroidePeligroso.size() == 2) {
             entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
                            posicion.y - asteroidePeligroso[0]->getPosicion().y,
                            asteroidePeligroso[0]->getVelocidad().x,
@@ -63,7 +59,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
                            -99999.0,
                            0.0,
                            0.0,};
-        } else if(asteroidePeligroso.size() == 1) {
+        } else if (asteroidePeligroso.size() == 1) {
             entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
                            posicion.y - asteroidePeligroso[0]->getPosicion().y,
                            asteroidePeligroso[0]->getVelocidad().x,
@@ -108,7 +104,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
             posicion.y += limites.y;
         }
 
-        if (num_disparos<2 && enteroAleatorio(0, 100)==0) {
+        if (num_disparos < 2 && enteroAleatorio(0, 100) == 0) {
             disparar(n.posicion);
         }
 
@@ -183,8 +179,8 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
 }
 
 void OvniInteligente::disminuirError() {
-    if(error > 0.0) {
-        error = error - PI/36;
+    if (error > 0.0) {
+        error = error - PI / 36;
     } else {
         error = 0.0;
     }
