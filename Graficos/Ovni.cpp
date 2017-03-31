@@ -1,18 +1,12 @@
 #include "Ovni.hpp"
 #include <iostream>
 
-Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color) :
-        Circular({0, 0}, 15 * limitesPantalla.y / (float) RESOLUCION_BASE.y), color(color) {
+Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
+        Circular({0, 0}, 15 * limitesPantalla.y / (float) RESOLUCION_BASE.y), color(color), cs(cs) {
     estado = MUERTO;
-    if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")) {
-        throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
-    }
-    if (!bufferSonidoOvni.loadFromFile("Recursos/Sonido/saucerBig.wav")) {
-        throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/thrust.wav\"");
-    }
 
-    reproductorDeSonidoOvni.setBuffer(bufferSonidoOvni);
-    reproductorDeSonidoDisparos.setBuffer(bufferSonidoDisparo);
+    SonidoPresencia = ControladorSonido::OVNI_GRANDE;
+    SonidoDestruccion = ControladorSonido::EXP_2;
 
     num_disparos = 0;
 
@@ -46,7 +40,10 @@ Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color) :
     recienDestruida = true;
 }
 
-Ovni::~Ovni() {}
+Ovni::~Ovni() {
+    cs->detener(SonidoDestruccion);
+    cs->detener(SonidoPresencia);
+}
 
 float Ovni::getDireccion() {
     return direccion;
@@ -67,7 +64,7 @@ void Ovni::disparar() {
             disparos[num_disparos].setDireccion(anguloAleatorio());
             num_disparos++;
         }
-        reproductorDeSonidoDisparos.play();
+        cs->reproducir(SonidoDisparo, true);
     }
 }
 
@@ -184,7 +181,6 @@ void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
         double tiempo = (clock() - start) / (double) CLOCKS_PER_SEC;
         if (tiempo > 2.0) {
             estado = MUERTO;
-            //cambiarEstado(MUERTO,{0, 0});
         }
         posicion0 = {posicion0.x + 1.0f, posicion0.y + 1.0f};
         posicion1 = {posicion1.x + 1.2f, posicion1.y + 1.1f};
@@ -217,9 +213,10 @@ void Ovni::cambiarEstado(int nuevoEstado) {
             break;
         case EXP1:
             num_disparos = 0;
-            reproductorDeSonidoOvni.setLoop(false);
-            reproductorDeSonidoOvni.stop();
-
+            if (recienDestruida) {
+                cs->reproducir(SonidoDestruccion);
+                cs->detener(SonidoPresencia);
+            }
             break;
         case MUERTO:
             if (rand() % 200 == 0) {
@@ -233,9 +230,10 @@ void Ovni::cambiarEstado(int nuevoEstado) {
                 direccion = anguloAleatorio();
                 num_disparos = 0;
                 recienDestruida = true;
-                reproductorDeSonidoOvni.setLoop(true);
-                reproductorDeSonidoOvni.play();
+                cs->reproducir(SonidoPresencia);
             }
+            break;
+        default:
             break;
     }
     ciclo++;

@@ -158,7 +158,7 @@ int main() {
     //string inputRed = "entrenado.nn";
     //red = red.read(inputRed);
     unsigned int numAsteroides = 12;
-    Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White);
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White, NULL);
     int reinicios = 1;
     unsigned int iteraciones = 0;
     int choque = 0;
@@ -273,7 +273,8 @@ int main() {
                         ast->getRadio() + sustitutoOvni.getRadius()) {
                         // Hay colision, se informa a la red y se reinicia la escena aleatoriamente
 
-                        Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White);
+                        Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White,
+                                                              NULL);
                         sustitutoOvni.setPosition({valorAleatorio(0, resolucion.x), valorAleatorio(0, resolucion.y)});
                         choque++;
                        // cout << reinicios << " " << reloj.getElapsedTime().asSeconds() << '\n';

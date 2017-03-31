@@ -4,8 +4,9 @@
 static constexpr float tamanosReales[] = {7.25f, 12.5f, 25.0f};
 
 Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam,
-                     sf::Vector2u limitesPantalla, sf::Color color) :
-        Circular(posicion_inicial, tamanosReales[tam] * (limitesPantalla.y / (float) RESOLUCION_BASE.y)), color(color) {
+                     sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
+        Circular(posicion_inicial, tamanosReales[tam] * (limitesPantalla.y / (float) RESOLUCION_BASE.y)), color(color),
+        cs(cs) {
     direccion = dir;
     velocidad = vel;
     version = tipo;
@@ -71,6 +72,21 @@ Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel,
     punto[0].color = color;
     punto[1].color = color;
     estado = MOVIMIENTO;
+    if (cs != nullptr) {
+        switch (tam) {
+            case TAM_0:
+                sonidoDestruccion = ControladorSonido::EXP_0;
+                break;
+            case TAM_1:
+                sonidoDestruccion = ControladorSonido::EXP_1;
+                break;
+            case TAM_2:
+                sonidoDestruccion = ControladorSonido::EXP_2;
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 //Getters
@@ -177,24 +193,25 @@ void Asteroide::mover() {
 void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v) {
     estado = EXPLOSION;
     recienDestruida = true;
+    cs->reproducir(sonidoDestruccion, true);
     switch (tipoTamano) {
         case TAM_0:
             break;
         case TAM_1:
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x + valorAleatorio(0, (float)PI/2), velocidad.y + valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_0, limites, color));
+                                  TIPO_0, TAM_0, limites, color, cs));
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x - valorAleatorio(0, (float)PI/2), velocidad.y - valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_0, limites, color));
+                                  TIPO_0, TAM_0, limites, color, cs));
             break;
         case TAM_2:
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x + valorAleatorio(0, (float)PI/2), velocidad.y + valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_1, limites, color));
+                                  TIPO_0, TAM_1, limites, color, cs));
             v.push_back(Asteroide(posicion, direccion,
                                   {velocidad.x - valorAleatorio(0, (float)PI/2), velocidad.y - valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_1, limites, color));
+                                  TIPO_0, TAM_1, limites, color, cs));
             break;
     }
 }
