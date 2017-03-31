@@ -5,6 +5,8 @@
 
 using namespace std;
 
+bool continua = true;
+
 //sf::RenderWindow ventana;
 sf::Vector2u resolucion = {800, 600};
 vector<vector<double>> poblacion(8);
@@ -12,8 +14,8 @@ long int mejorDistancia = 0;
 vector<double> mejoresPesos;
 
 // Inicializa una red neuronal nueva
-neural::Network red(8, 1, {16});
-vector<double *> pesos = red.getWeights();
+neural::Network red(12, 1, {24});
+vector<double*> pesos = red.getWeights();
 
 
 vector<Asteroide> asteroides;
@@ -132,7 +134,7 @@ void sigGeneracion(long int distancia[8]) {
             aux.push_back(poblacion[mayoresIndice[k]]);
             cout << mayorDistancia[k] << " ";
         }
-    cout << mayoresIndice[0] << endl;
+        cout << mayoresIndice[0] << endl;
 
         if(mayorDistancia[0] > mejorDistancia) {
             mejorDistancia = mayorDistancia[0];
@@ -144,14 +146,43 @@ void sigGeneracion(long int distancia[8]) {
 
             string nombreFichero = "entrenando.nn";
             red.write(nombreFichero);
+
+            ofstream f_pesos_out("savedpoint.dat");
+            if (f_pesos_out.good()) {
+                f_pesos_out << mejorDistancia << " ";
+                for(int o=0 ; o<poblacion.size() ; o++) {
+                    for (int p = 0; p < pesos.size(); p++) {
+                        f_pesos_out << poblacion[o][p] << " ";
+                    }
+                }
+            }
+            f_pesos_out.close();
+
+            if(mejorDistancia>250000){
+                continua = false;
+            }
         }
 
         //COMBINAR
-    poblacion = completar(combinar(aux));
+        poblacion = completar(combinar(aux));
         mutacion();
 }
 
 int main() {
+    ifstream f_pesos("savedpoint.dat");
+    if(f_pesos.good()){
+        f_pesos >> mejorDistancia;
+
+        for(int o=0 ; o<poblacion.size() ; o++) {
+            for (int p = 0; p < pesos.size(); p++) {
+                double peso;
+                f_pesos >> peso;
+                poblacion[o].push_back(peso);
+            }
+        }
+    }
+    f_pesos.close();
+
     for(unsigned int i = 0; i < 8; i++) {
         for(unsigned int j = 0; j < pesos.size(); j++) {
             poblacion[i].push_back(valorAleatorio(-1.0f,1.0f));
@@ -170,14 +201,12 @@ int main() {
     sustitutoOvni.setOrigin(sustitutoOvni.getRadius(), sustitutoOvni.getRadius());
     sustitutoOvni.setPosition({rand() % resolucion.x * 1.0f, rand() % resolucion.y * 1.0f});
 
-
-    bool continua = true;
     // Opcionalmente la lee desde fichero
     // (descomentando las dos lineas siguientes y poniendo el nombre correcto)
     //string inputRed = "entrenado.nn";
     //red = red.read(inputRed);
-    unsigned int numAsteroides = 12;
-    Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White, NULL);
+    unsigned int numAsteroides = 10;
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White);
     int reinicios = 1;
     unsigned int iteraciones = 0;
     int choque = 0;
@@ -226,7 +255,11 @@ int main() {
                                            asteroidePeligroso[1]->getPosicion().x - posicionOvni.x,
                                            asteroidePeligroso[1]->getPosicion().y - posicionOvni.y,
                                            asteroidePeligroso[1]->getVelocidad().x,
-                                           asteroidePeligroso[1]->getVelocidad().y};
+                                           asteroidePeligroso[1]->getVelocidad().y,
+                                           asteroidePeligroso[2]->getPosicion().x - posicionOvni.x,
+                                           asteroidePeligroso[2]->getPosicion().y - posicionOvni.y,
+                                           asteroidePeligroso[2]->getVelocidad().x,
+                                           asteroidePeligroso[2]->getVelocidad().y};
 
                 double salida = red.run(entradasRed)[0];
                 double angulo = 0;

@@ -27,10 +27,10 @@ struct Configuracion {
     array<sf::Color, 4u> COLORES = {sf::Color::White, sf::Color::Red, sf::Color::Green, sf::Color::Blue};
 
     sf::Keyboard::Key girar_izquierda = sf::Keyboard::Left;
-    sf::Keyboard::Key girar_derecha;
-    sf::Keyboard::Key acelerar;
-    sf::Keyboard::Key disparar;
-    sf::Keyboard::Key hiperespacio;
+    sf::Keyboard::Key girar_derecha = sf::Keyboard::Right;
+    sf::Keyboard::Key acelerar = sf::Keyboard::A;
+    sf::Keyboard::Key disparar = sf::Keyboard::D;
+    sf::Keyboard::Key hiperespacio = sf::Keyboard::Space;
 
     Configuracion() {
         resolucion = RESOLUCION_BASE;
@@ -457,6 +457,9 @@ Estado tratarJuego(Estado estado) {
             probabilidadOvniInt += 0.05;
             ovniInteligente.disminuirError();
             numeroDeAsteroides += 2;
+            if(numeroDeAsteroides>12){
+                numeroDeAsteroides = 12;
+            }
             Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion,
                                                   configuracionGlobal.color(), &csonido);
             *reiniciarMusica = true;
@@ -1158,11 +1161,21 @@ Configuracion leeConfiguracion() {
     int gir_izq, gir_der, acel, disp, hiper;
     fichConfig >> resVertical >> retVal.pantallaCompleta >> retVal.volumen >> retVal.antialiasing >> retVal.colorId
                >> gir_izq >> gir_der >> acel >> disp >> hiper;
-    retVal.girar_izquierda = (sf::Keyboard::Key) gir_izq;
-    retVal.girar_derecha = (sf::Keyboard::Key) gir_der;
-    retVal.disparar = (sf::Keyboard::Key) disp;
-    retVal.acelerar = (sf::Keyboard::Key) acel;
-    retVal.hiperespacio = (sf::Keyboard::Key) hiper;
+    if(gir_izq!=0) {
+        retVal.girar_izquierda = (sf::Keyboard::Key) gir_izq;
+    }
+    if(gir_der!=0) {
+        retVal.girar_derecha = (sf::Keyboard::Key) gir_der;
+    }
+    if(disp!=0) {
+        retVal.disparar = (sf::Keyboard::Key) disp;
+    }
+    if(acel!=0) {
+        retVal.acelerar = (sf::Keyboard::Key) acel;
+    }
+    if(hiper!=0) {
+        retVal.hiperespacio = (sf::Keyboard::Key) hiper;
+    }
     retVal.resolucion = {(unsigned int) (RESOLUCION_BASE.x / (RESOLUCION_BASE.y / (float) resVertical)), resVertical};
     return retVal;
 }
