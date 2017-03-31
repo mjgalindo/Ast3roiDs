@@ -36,20 +36,18 @@ protected:
     sf::Vector2u limites;
     sf::Color color;
 
-    // Buffers de los distintos sonidos de un ovni
-    sf::SoundBuffer bufferSonidoOvni;
-    sf::SoundBuffer bufferSonidoDisparo;
+    ControladorSonido *cs;
+    const ControladorSonido::Sonido
+            SonidoDisparo = ControladorSonido::DISPARO;
 
-    // Reproductores de sonido
-    sf::Sound reproductorDeSonidoDisparos;
-    sf::Sound reproductorDeSonidoOvni;
+    ControladorSonido::Sonido SonidoPresencia, SonidoDestruccion;
 
     //Fichero con los pesos de la red
     string fichero = "entrenando.nn";
 
     clock_t start;
 public:
-    Ovni(sf::Vector2u limitesPantalla, sf::Color color);
+    Ovni(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs);
 
     ~Ovni();
 

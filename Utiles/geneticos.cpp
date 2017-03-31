@@ -5,6 +5,8 @@
 
 using namespace std;
 
+bool continua = true;
+
 //sf::RenderWindow ventana;
 sf::Vector2u resolucion = {800, 600};
 vector<vector<double>> poblacion(8);
@@ -12,7 +14,7 @@ long int mejorDistancia = 0;
 vector<double> mejoresPesos;
 
 // Inicializa una red neuronal nueva
-neural::Network red(8, 1, {16});
+neural::Network red(12, 1, {24});
 vector<double*> pesos = red.getWeights();
 
 
@@ -66,7 +68,7 @@ void mutacion() {
     for(unsigned int i = 0; i < poblacion.size(); i++) {
         for(unsigned j = 0; j < poblacion[i].size(); j++) {
             if(valorAleatorio() < 0.05) {
-                poblacion[i][j] += valorAleatorio((float)-0.5, (float)0.5);
+                poblacion[i][j] += valorAleatorio((float) -0.5, (float) 0.5);
             }
         }
     }
@@ -74,7 +76,7 @@ void mutacion() {
 
 
 vector<vector<double>> combinar(vector<vector<double>> aux) {
-    while(aux.size() < 6) {
+    while (aux.size() < 6) {
         int aleatorio1 = enteroAleatorio(0,2);
         int aleatorio2 = aleatorio1;
         while(aleatorio2 == aleatorio1) {
@@ -82,11 +84,11 @@ vector<vector<double>> combinar(vector<vector<double>> aux) {
         }
 
         vector<double> p1;
-        int aleatorio3 = enteroAleatorio(0,aux[aleatorio1].size());
-        for(unsigned int j = 0; j < aleatorio3; j++) {
+        int aleatorio3 = enteroAleatorio(0, aux[aleatorio1].size());
+        for (unsigned int j = 0; j < aleatorio3; j++) {
             p1.push_back(aux[aleatorio1][j]);
         }
-        for(unsigned int j = aleatorio3 ; j < aux[aleatorio2].size(); j++) {
+        for (unsigned int j = aleatorio3; j < aux[aleatorio2].size(); j++) {
             p1.push_back(aux[aleatorio2][j]);
         }
         aux.push_back(p1);
@@ -94,11 +96,11 @@ vector<vector<double>> combinar(vector<vector<double>> aux) {
     return aux;
 }
 
-vector<vector<double>> completar(vector<vector<double>> aux){
-    while(aux.size()<8){
+vector<vector<double>> completar(vector<vector<double>> aux) {
+    while (aux.size() < 8) {
         vector<double> p1;
-        for(unsigned int j = 0; j < pesos.size(); j++) {
-            p1.push_back(valorAleatorio(-1.0f,1.0f));
+        for (unsigned int j = 0; j < pesos.size(); j++) {
+            p1.push_back(valorAleatorio(-1.0f, 1.0f));
         }
         aux.push_back(p1);
     }
@@ -144,6 +146,21 @@ void sigGeneracion(long int distancia[8]) {
 
             string nombreFichero = "entrenando.nn";
             red.write(nombreFichero);
+
+            ofstream f_pesos_out("savedpoint.dat");
+            if (f_pesos_out.good()) {
+                f_pesos_out << mejorDistancia << " ";
+                for(int o=0 ; o<poblacion.size() ; o++) {
+                    for (int p = 0; p < pesos.size(); p++) {
+                        f_pesos_out << poblacion[o][p] << " ";
+                    }
+                }
+            }
+            f_pesos_out.close();
+
+            if(mejorDistancia>250000){
+                continua = false;
+            }
         }
 
         //COMBINAR
@@ -152,11 +169,30 @@ void sigGeneracion(long int distancia[8]) {
 }
 
 int main() {
-    for(unsigned int i = 0; i < 8; i++) {
-        for(unsigned int j = 0; j < pesos.size(); j++) {
-            poblacion[i].push_back(valorAleatorio(-1.0f,1.0f));
+    ifstream f_pesos("savedpoint.dat");
+    if(f_pesos.good()){
+        cout << "Leido desde fichero" << endl;
+
+        f_pesos >> mejorDistancia;
+
+        for(int o=0 ; o<poblacion.size() ; o++) {
+            for (int p = 0; p < pesos.size(); p++) {
+                double peso;
+                f_pesos >> peso;
+                poblacion[o].push_back(peso);
+            }
         }
     }
+    else{
+        for(unsigned int i = 0; i < 8; i++) {
+            for(unsigned int j = 0; j < pesos.size(); j++) {
+                poblacion[i].push_back(valorAleatorio(-1.0f,1.0f));
+            }
+        }
+    }
+    f_pesos.close();
+
+
 
     srand((unsigned long) time(NULL));
     //sf::ContextSettings settings;
@@ -170,14 +206,12 @@ int main() {
     sustitutoOvni.setOrigin(sustitutoOvni.getRadius(), sustitutoOvni.getRadius());
     sustitutoOvni.setPosition({rand() % resolucion.x * 1.0f, rand() % resolucion.y * 1.0f});
 
-
-    bool continua = true;
     // Opcionalmente la lee desde fichero
     // (descomentando las dos lineas siguientes y poniendo el nombre correcto)
     //string inputRed = "entrenado.nn";
     //red = red.read(inputRed);
-    unsigned int numAsteroides = 7;
-    Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White);
+    unsigned int numAsteroides = 12;
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White,NULL);
     int reinicios = 1;
     unsigned int iteraciones = 0;
     int choque = 0;
@@ -220,13 +254,17 @@ int main() {
                 sf::Vector2f posicionOvni = sustitutoOvni.getPosition();
                 vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicionOvni);
                 vector<double> entradasRed{asteroidePeligroso[0]->getPosicion().x - posicionOvni.x,
-                                           asteroidePeligroso[0]->getPosicion().y - posicionOvni.y ,
+                                           asteroidePeligroso[0]->getPosicion().y - posicionOvni.y,
                                            asteroidePeligroso[0]->getVelocidad().x,
                                            asteroidePeligroso[0]->getVelocidad().y,
                                            asteroidePeligroso[1]->getPosicion().x - posicionOvni.x,
                                            asteroidePeligroso[1]->getPosicion().y - posicionOvni.y,
                                            asteroidePeligroso[1]->getVelocidad().x,
-                                           asteroidePeligroso[1]->getVelocidad().y};
+                                           asteroidePeligroso[1]->getVelocidad().y,
+                                           asteroidePeligroso[2]->getPosicion().x - posicionOvni.x,
+                                           asteroidePeligroso[2]->getPosicion().y - posicionOvni.y,
+                                           asteroidePeligroso[2]->getVelocidad().x,
+                                           asteroidePeligroso[2]->getVelocidad().y};
 
                 double salida = red.run(entradasRed)[0];
                 double angulo = 0;
@@ -288,7 +326,8 @@ int main() {
                         ast->getRadio() + sustitutoOvni.getRadius()) {
                         // Hay colision, se informa a la red y se reinicia la escena aleatoriamente
 
-                        Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White);
+                        Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White,
+                                                              NULL);
                         sustitutoOvni.setPosition({valorAleatorio(0, resolucion.x), valorAleatorio(0, resolucion.y)});
                         choque++;
                        // cout << reinicios << " " << reloj.getElapsedTime().asSeconds() << '\n';

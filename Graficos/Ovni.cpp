@@ -1,22 +1,15 @@
 #include "Ovni.hpp"
-#include <iostream>
-
 
 //Red neural que se usara para esquivar asteroides
 neural::Network redNormal(12, 1, {24});
 
-Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color) :
-        Circular({0, 0}, 15 * limitesPantalla.y / (float) RESOLUCION_BASE.y), color(color) {
-    estado = MUERTO;
-    if (!bufferSonidoDisparo.loadFromFile("Recursos/Sonido/fire.wav")) {
-        throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/fire.wav\"");
-    }
-    if (!bufferSonidoOvni.loadFromFile("Recursos/Sonido/saucerBig.wav")) {
-        throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/thrust.wav\"");
-    }
+Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
+        Circular({0, 0}, 15 * limitesPantalla.y / (float) RESOLUCION_BASE.y), color(color), cs(cs) {
 
-    reproductorDeSonidoOvni.setBuffer(bufferSonidoOvni);
-    reproductorDeSonidoDisparos.setBuffer(bufferSonidoDisparo);
+    estado = MUERTO;
+
+    SonidoPresencia = ControladorSonido::OVNI_GRANDE;
+    SonidoDestruccion = ControladorSonido::EXP_2;
 
     num_disparos = 0;
 
@@ -52,15 +45,18 @@ Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color) :
     redNormal.read(fichero);
 }
 
-Ovni::~Ovni() {}
+Ovni::~Ovni() {
+    cs->detener(SonidoDestruccion);
+    cs->detener(SonidoPresencia);
+}
 
 double Ovni::distancia(sf::Vector2f a, sf::Vector2f b) {
     double distanciaX = (a.x - b.x);
     double distanciaY = (a.y - b.y);
-    if((limites.x + a.x) - b.x < abs(distanciaX)) {
+    if ((limites.x + a.x) - b.x < abs(distanciaX)) {
         distanciaX = (limites.x + a.x) - b.x;
     }
-    if((limites.y + a.y) - b.y < abs(distanciaY)) {
+    if ((limites.y + a.y) - b.y < abs(distanciaY)) {
         distanciaY = (limites.y + a.y) - b.y;
     }
     return sqrt(distanciaX * distanciaX + (distanciaY * distanciaY));
@@ -97,7 +93,7 @@ vector<Asteroide *> Ovni::asteroideMasCercano(sf::Vector2f posicion, vector<Aste
     if (distanciaMenor2 != 99999999.0) {
         masCercanos.push_back(masCercano2);
     }
-    if(distanciaMenor3 != 99999999.0) {
+    if (distanciaMenor3 != 99999999.0) {
         masCercanos.push_back(masCercano3);
     }
     return masCercanos;
@@ -122,7 +118,7 @@ void Ovni::disparar() {
             disparos[num_disparos].setDireccion(anguloAleatorio());
             num_disparos++;
         }
-        reproductorDeSonidoDisparos.play();
+        cs->reproducir(SonidoDisparo, true);
     }
 }
 
@@ -193,20 +189,20 @@ void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
         vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, v);
         vector<double> entradasRed;
-        if(asteroidePeligroso.size() == 3) {
+        if (asteroidePeligroso.size() == 3) {
             entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
-                        posicion.y - asteroidePeligroso[0]->getPosicion().y,
-                        asteroidePeligroso[0]->getVelocidad().x,
-                        asteroidePeligroso[0]->getVelocidad().y,
-                        asteroidePeligroso[1]->getPosicion().x - posicion.x,
-                        posicion.y - asteroidePeligroso[1]->getPosicion().y,
-                        asteroidePeligroso[1]->getVelocidad().x,
-                        asteroidePeligroso[1]->getVelocidad().y,
-                        asteroidePeligroso[2]->getPosicion().x - posicion.x,
-                        posicion.y - asteroidePeligroso[2]->getPosicion().y,
-                        asteroidePeligroso[2]->getVelocidad().x,
-                        asteroidePeligroso[2]->getVelocidad().y,};
-        } else if(asteroidePeligroso.size() == 2) {
+                           posicion.y - asteroidePeligroso[0]->getPosicion().y,
+                           asteroidePeligroso[0]->getVelocidad().x,
+                           asteroidePeligroso[0]->getVelocidad().y,
+                           asteroidePeligroso[1]->getPosicion().x - posicion.x,
+                           posicion.y - asteroidePeligroso[1]->getPosicion().y,
+                           asteroidePeligroso[1]->getVelocidad().x,
+                           asteroidePeligroso[1]->getVelocidad().y,
+                           asteroidePeligroso[2]->getPosicion().x - posicion.x,
+                           posicion.y - asteroidePeligroso[2]->getPosicion().y,
+                           asteroidePeligroso[2]->getVelocidad().x,
+                           asteroidePeligroso[2]->getVelocidad().y,};
+        } else if (asteroidePeligroso.size() == 2) {
             entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
                            posicion.y - asteroidePeligroso[0]->getPosicion().y,
                            asteroidePeligroso[0]->getVelocidad().x,
@@ -219,7 +215,7 @@ void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
                            -99999.0,
                            0.0,
                            0.0,};
-        } else if(asteroidePeligroso.size() == 1) {
+        } else if (asteroidePeligroso.size() == 1) {
             entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
                            posicion.y - asteroidePeligroso[0]->getPosicion().y,
                            asteroidePeligroso[0]->getVelocidad().x,
@@ -325,7 +321,6 @@ void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
         double tiempo = (clock() - start) / (double) CLOCKS_PER_SEC;
         if (tiempo > 2.0) {
             estado = MUERTO;
-            //cambiarEstado(MUERTO,{0, 0});
         }
         posicion0 = {posicion0.x + 1.0f, posicion0.y + 1.0f};
         posicion1 = {posicion1.x + 1.2f, posicion1.y + 1.1f};
@@ -358,9 +353,10 @@ void Ovni::cambiarEstado(int nuevoEstado) {
             break;
         case EXP1:
             num_disparos = 0;
-            reproductorDeSonidoOvni.setLoop(false);
-            reproductorDeSonidoOvni.stop();
-
+            if (recienDestruida) {
+                cs->reproducir(SonidoDestruccion);
+                cs->detener(SonidoPresencia);
+            }
             break;
         case MUERTO:
             if (rand() % 200 == 0) {
@@ -374,9 +370,10 @@ void Ovni::cambiarEstado(int nuevoEstado) {
                 direccion = anguloAleatorio();
                 num_disparos = 0;
                 recienDestruida = true;
-                reproductorDeSonidoOvni.setLoop(true);
-                reproductorDeSonidoOvni.play();
+                cs->reproducir(SonidoPresencia);
             }
+            break;
+        default:
             break;
     }
     ciclo++;

@@ -8,6 +8,7 @@
 #include "../Estados.hpp"
 #include "../matematicas.hpp"
 #include "../constantesGlobales.hpp"
+#include "../ControladorSonido.hpp"
 
 class Asteroide : public sf::Drawable, public Circular {
 
@@ -22,14 +23,16 @@ private:
     sf::Vector2f velocidad;
     Tamano tipoTamano;
     sf::Vector2u limites;
+
+    ControladorSonido *cs;
+    ControladorSonido::Sonido sonidoDestruccion;
     sf::Color color;
     clock_t start;
 public:
-
     Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam,
-              sf::Vector2u limitesPantalla, sf::Color color);
+              sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs);
 
-    ~Asteroide() {};
+    ~Asteroide() {}
 
     sf::VertexArray getPuntos();
 
@@ -51,7 +54,7 @@ public:
     void gestionarDestruccion(std::vector<Asteroide> &v);
 
     static void nuevosAsteroidesAleatorios(std::vector<Asteroide> &vectorAsteroides, unsigned int numAsteroides,
-                                           sf::Vector2u limitesPantalla, sf::Color color) {
+                                           sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) {
         vectorAsteroides.clear();
         for (int i = 0; i < numAsteroides; ++i) {
             float velocidad = valorAleatorio(0.2, 2.0) * limitesPantalla.y / (float) RESOLUCION_BASE.y;
@@ -67,10 +70,10 @@ public:
                 posY = enteroAleatorio(0, limitesPantalla.y);
             }
 
-            vectorAsteroides.push_back(Asteroide(
-                    {(float) posX, (float) posY},
-                    direccion, {velocidad * (float) cos(direccion), velocidad * (float) sin(direccion)},
-                    (Tipo) enteroAleatorio(0, 2), TAM_2, limitesPantalla, color));
+            vectorAsteroides.emplace_back(
+                    sf::Vector2f((float) posX, (float) posY),
+                    direccion, sf::Vector2f(velocidad * (float) cos(direccion), velocidad * (float) sin(direccion)),
+                    (Tipo) enteroAleatorio(0, 2), TAM_2, limitesPantalla, color, cs);
         }
 
     }

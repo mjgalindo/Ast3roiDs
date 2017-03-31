@@ -11,6 +11,7 @@
 #include "Disparo.hpp"
 #include "Asteroide.hpp"
 #include "../matematicas.hpp"
+#include "../ControladorSonido.hpp"
 
 #define UMBRAL 0.07
 
@@ -56,21 +57,19 @@ private:
 
     sf::Vector2u limites;
 
-    // Buffers de los distintos sonidos de una nave
-    sf::SoundBuffer bufferSonidoDisparo;
-    sf::SoundBuffer bufferSonidoPropulsion;
-    sf::SoundBuffer bufferSonidoDestruccion;
-    // Reproductores de sonido
-    sf::Sound reproductorDeSonidoDisparos;
-    sf::Sound reproductorDeSonidoPropulsion;
-    sf::Sound reproductorDeSonidoDestruccion;
+    ControladorSonido *cs;
+    const ControladorSonido::Sonido
+            SonidoDisparo = ControladorSonido::DISPARO,
+            SonidoAcelerar = ControladorSonido::ACELERAR,
+            SonidoDestruccion = ControladorSonido::EXP_0;
 
     clock_t cooldown;
     void reiniciar();
 
 public:
     //Constructor
-    Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int *p, sf::Color color);
+    Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int *p, sf::Color color,
+         ControladorSonido *cs);
 
 
     //Destructor

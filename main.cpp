@@ -27,10 +27,10 @@ struct Configuracion {
     array<sf::Color, 4u> COLORES = {sf::Color::White, sf::Color::Red, sf::Color::Green, sf::Color::Blue};
 
     sf::Keyboard::Key girar_izquierda = sf::Keyboard::Left;
-    sf::Keyboard::Key girar_derecha;
-    sf::Keyboard::Key acelerar;
-    sf::Keyboard::Key disparar;
-    sf::Keyboard::Key hiperespacio;
+    sf::Keyboard::Key girar_derecha = sf::Keyboard::Right;
+    sf::Keyboard::Key acelerar = sf::Keyboard::A;
+    sf::Keyboard::Key disparar = sf::Keyboard::D;
+    sf::Keyboard::Key hiperespacio = sf::Keyboard::Space;
 
     Configuracion() {
         resolucion = RESOLUCION_BASE;
@@ -84,7 +84,7 @@ Estado tratarCreditos(Estado estado);
 
 Configuracion leeConfiguracion();
 
-char* keyToString(sf::Keyboard::Key k);
+string keyToString(sf::Keyboard::Key k);
 
 void escribeConfiguracion(Configuracion config);
 
@@ -136,9 +136,12 @@ inline void inicializaTexto(sf::Text &texto, unsigned int tamanoFuente, double g
     texto.setFillColor(configuracionGlobal.color());
 }
 
+ControladorSonido csonido;
+
 int main() {
     fuenteAsteroids.loadFromFile("Recursos/Fuentes/atari.ttf");
     configuracionGlobal = leeConfiguracion();
+    csonido.setVolumen(configuracionGlobal.volumen);
     inicializaVentana();
 
     //icono nave
@@ -204,9 +207,10 @@ Estado tratarTitulo(Estado estado) {
 
     vector<Asteroide> asteroides;
     unsigned int numeroDeAsteroides = 10;
-    Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion, configuracionGlobal.color());
-    Nave nave = Nave({-100,-100}, resolucion, &puntuacion, configuracionGlobal.color());
-    Ovni ovni(resolucion, configuracionGlobal.color());
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion, configuracionGlobal.color(),
+                                          &csonido);
+    Nave nave = Nave({-100, -100}, resolucion, &puntuacion, configuracionGlobal.color(), &csonido);
+    Ovni ovni(resolucion, configuracionGlobal.color(), &csonido);
 
     while (true) {
         sf::Event event;
@@ -241,7 +245,8 @@ Estado tratarTitulo(Estado estado) {
         ventana.display();
 
         if(asteroides.size()==0){
-            Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion, configuracionGlobal.color());
+            Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion,
+                                                  configuracionGlobal.color(), &csonido);
         }
 
         ovni.cambiarEstado(ovni.getEstado());
@@ -370,7 +375,8 @@ Estado tratarMenu(Estado estado) {
 /// más comunicación con el thread del juego. Además, cada vez
 /// debería ser más rapido dependiendo de la puntuación o del
 /// avance en cada nivel.
-void reproducirMusica(std::shared_ptr<bool> jugando, std::shared_ptr<bool> silencio, std::shared_ptr<bool> reiniciar) {
+void reproducirMusica(std::shared_ptr<bool> jugando, std::shared_ptr<bool> silencio, std::shared_ptr<bool> reiniciar,
+                      int volumen) {
     sf::SoundBuffer sonido1, sonido2;
     sonido1.loadFromFile("Recursos/Sonido/beat1.wav");
     sonido2.loadFromFile("Recursos/Sonido/beat2.wav");
@@ -420,21 +426,23 @@ Estado tratarJuego(Estado estado) {
     shared_ptr<bool> silencioMusica(new bool(false));
     shared_ptr<bool> reiniciarMusica(new bool(false));
 
-    thread musica(&reproducirMusica, jugando, silencioMusica, reiniciarMusica);
+    thread musica(&reproducirMusica, jugando, silencioMusica, reiniciarMusica, configuracionGlobal.volumen * 1.5);
     sf::Clock reloj;
     int nivel = 0;
 
-    Nave nave = Nave({resolucion.x / 2.0f, resolucion.y / 2.0f}, resolucion, &puntuacion, configuracionGlobal.color());
+    Nave nave = Nave({resolucion.x / 2.0f, resolucion.y / 2.0f}, resolucion, &puntuacion, configuracionGlobal.color(),
+                     &csonido);
     Ovni *ovni;
-    Ovni ovniNormal(resolucion, configuracionGlobal.color());
-    OvniInteligente ovniInteligente(resolucion, configuracionGlobal.color());
+    Ovni ovniNormal(resolucion, configuracionGlobal.color(), &csonido);
+    OvniInteligente ovniInteligente(resolucion, configuracionGlobal.color(), &csonido);
     ovni = &ovniNormal;
     bool ovniElegido = false;
     float probabilidadOvniInt = 0.1;
 
     vector<Asteroide> asteroides;
     unsigned int numeroDeAsteroides = 4;
-    Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion, configuracionGlobal.color());
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion, configuracionGlobal.color(),
+                                          &csonido);
 
     while (true) {
         if (nave.getVidas() < 0) {
@@ -449,14 +457,17 @@ Estado tratarJuego(Estado estado) {
             probabilidadOvniInt += 0.05;
             ovniInteligente.disminuirError();
             numeroDeAsteroides += 2;
+            if(numeroDeAsteroides>12){
+                numeroDeAsteroides = 12;
+            }
             Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion,
-                                                  configuracionGlobal.color());
+                                                  configuracionGlobal.color(), &csonido);
             *reiniciarMusica = true;
         }
 
-        if(ovni->getEstado()==MUERTO && !ovniElegido) {
+        if (ovni->getEstado() == MUERTO && !ovniElegido) {
             ovniElegido = true;
-            if(valorAleatorio() < probabilidadOvniInt) {
+            if (valorAleatorio() < probabilidadOvniInt) {
                 ovni = &ovniInteligente;
             } else {
                 ovni = &ovniNormal;
@@ -514,7 +525,7 @@ Estado tratarJuego(Estado estado) {
 
             sf::Transform t;
             t.translate({ajustar_w(20.0f)*(i+1), ajustar_h(60.0f)})
-                    .scale(ajustar_h(10u),ajustar_w(6u)).rotate(-PI/2 * (180.0f / 3.14f));
+                    .scale(ajustar_h(10u), ajustar_w(6u)).rotate((float) (-PI / 2.0 * (180.0 / 3.14)));
             ventana.draw(poligono,t);
         }
         ventana.draw(nave);
@@ -537,7 +548,7 @@ Estado tratarJuego(Estado estado) {
         reloj.restart();
         nave.cambiarEstado(nave.getEstado());
         ovni->cambiarEstado(ovni->getEstado());
-        if(ovni->getEstado()==VIVO) {
+        if (ovni->getEstado() == VIVO) {
             ovniElegido = false;
         }
     }
@@ -936,6 +947,7 @@ Estado tratarOpciones(Estado estado) {
     }
     configuracionGlobal.resolucion = resoluciones[resId];
     escribeConfiguracion(configuracionGlobal);
+    csonido.setVolumen(configuracionGlobal.volumen);
     inicializaVentana();
     return MENU;
 }
@@ -952,10 +964,11 @@ bool controlValido(controles c, sf::Keyboard::Key k){
     }
     if(DISPARAR!=c && configuracionGlobal.disparar==k){
         return false;
-    }if(HIPERESPACIO!=c && configuracionGlobal.hiperespacio==k){
+    }
+    if (HIPERESPACIO != c && configuracionGlobal.hiperespacio == k) {
         return false;
     }
-
+    return false;
 }
 
 Estado tratarControles(Estado estado){
@@ -966,16 +979,11 @@ Estado tratarControles(Estado estado){
     fuente.loadFromFile("Recursos/Fuentes/atari.ttf");
 
     configuracionGlobal = leeConfiguracion();
+    csonido = ControladorSonido(configuracionGlobal.volumen);
 
-    texto.setFont(fuente);
+    inicializaTexto(texto, ajustar_h(75u), 1.5);
     texto.setString("OPCIONES");
-    texto.setCharacterSize(ajustar_h(75u));
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
-    texto.setFillColor(configuracionGlobal.color());
-    texto.setOutlineColor(configuracionGlobal.color());
-    texto.setOutlineThickness(1.5);
-
-
 
     static constexpr int OPCIONES = 6;
 
@@ -1153,11 +1161,21 @@ Configuracion leeConfiguracion() {
     int gir_izq, gir_der, acel, disp, hiper;
     fichConfig >> resVertical >> retVal.pantallaCompleta >> retVal.volumen >> retVal.antialiasing >> retVal.colorId
                >> gir_izq >> gir_der >> acel >> disp >> hiper;
-    retVal.girar_izquierda = (sf::Keyboard::Key) gir_izq;
-    retVal.girar_derecha = (sf::Keyboard::Key) gir_der;
-    retVal.disparar = (sf::Keyboard::Key) disp;
-    retVal.acelerar = (sf::Keyboard::Key) acel;
-    retVal.hiperespacio = (sf::Keyboard::Key) hiper;
+    if(gir_izq!=0) {
+        retVal.girar_izquierda = (sf::Keyboard::Key) gir_izq;
+    }
+    if(gir_der!=0) {
+        retVal.girar_derecha = (sf::Keyboard::Key) gir_der;
+    }
+    if(disp!=0) {
+        retVal.disparar = (sf::Keyboard::Key) disp;
+    }
+    if(acel!=0) {
+        retVal.acelerar = (sf::Keyboard::Key) acel;
+    }
+    if(hiper!=0) {
+        retVal.hiperespacio = (sf::Keyboard::Key) hiper;
+    }
     retVal.resolucion = {(unsigned int) (RESOLUCION_BASE.x / (RESOLUCION_BASE.y / (float) resVertical)), resVertical};
     return retVal;
 }
@@ -1170,7 +1188,7 @@ void escribeConfiguracion(Configuracion config) {
                << config.hiperespacio;
 }
 
-char* keyToString(sf::Keyboard::Key k){
+string keyToString(sf::Keyboard::Key k) {
      if(k==sf::Keyboard::RShift || k==sf::Keyboard::LShift ){
         return "Shift";
     }
@@ -1216,7 +1234,7 @@ Estado tratarCreditos(Estado estado){
     opcion4.setString(creditos4);
 
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});;
-    opcion1.setPosition({(resolucion.x - opcion1.getLocalBounds().width) / 2, resolucion.y});
+    opcion1.setPosition({(resolucion.x - opcion1.getLocalBounds().width) / 2, (float) resolucion.y});
     opcion2.setPosition({(resolucion.x - opcion2.getLocalBounds().width) / 2, opcion1.getPosition().y+opcion1.getLocalBounds().height+ajustar_h(25u)});
     opcion3.setPosition({(resolucion.x - opcion3.getLocalBounds().width) / 2, opcion2.getPosition().y+opcion2.getLocalBounds().height+ajustar_h(25u)});
     opcion4.setPosition({(resolucion.x - opcion4.getLocalBounds().width) / 2, opcion3.getPosition().y+opcion3.getLocalBounds().height+ajustar_h(25u)});
