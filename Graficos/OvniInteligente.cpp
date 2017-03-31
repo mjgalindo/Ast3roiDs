@@ -90,7 +90,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
                            0.0,
                            0.0,};
         }
-        direccion = redInteligente.run(entradasRed)[0];
+        direccion = network2Radianes(redInteligente.run(entradasRed)[0]);
         /*if (valorAleatorio() < 0.0055) {
             direccion = anguloAleatorio();
         }*/

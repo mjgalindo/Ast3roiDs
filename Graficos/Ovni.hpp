@@ -75,6 +75,8 @@ public:
     bool comprobarColision(Circular &c);
 
     virtual void cambiarEstado(int nuevoEstado);
+
+    double network2Radianes(double salida);
 };
 
 

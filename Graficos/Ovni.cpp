@@ -158,6 +158,36 @@ void Ovni::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     }
 }
 
+double Ovni::network2Radianes(double salida) {
+    double angulo = 0.0;
+    if (salida < -3 * (2.0 / 8.0)) {
+        angulo = PI * 3 / 4;
+        //cout << "UL ";
+    } else if (salida < -2 * (2.0 / 8.0)) {
+        angulo = PI;
+        //cout << "L ";
+    } else if (salida < -1 * (2.0 / 8.0)) {
+        angulo = -PI * 3 / 4;
+        //cout << "DL ";
+    } else if (salida < 0 * (2.0 / 8.0)) {
+        angulo = PI / 2;
+        //cout << "U ";
+    } else if (salida < 1 * (2.0 / 8.0)) {
+        angulo = PI / 4;
+        //cout << "UR ";
+    } else if (salida < 2 * (2.0 / 8.0)) {
+        angulo = 0;
+        //cout << "R ";
+    } else if (salida < 3 * (2.0 / 8.0)) {
+        angulo = -PI / 4;
+        //cout << "DR ";
+    } else if (salida < 4 * (2.0 / 8.0)) {
+        angulo = -PI / 2;
+        //cout << "D ";
+    }
+    return angulo;
+}
+
 void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
     if (estado == VIVO) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
@@ -216,7 +246,7 @@ void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
                            0.0,
                            0.0,};
         }
-        direccion = redNormal.run(entradasRed)[0];
+        direccion = network2Radianes(redNormal.run(entradasRed)[0]);
         /*if (valorAleatorio() < 0.0055) {
             direccion = anguloAleatorio();
         }*/
