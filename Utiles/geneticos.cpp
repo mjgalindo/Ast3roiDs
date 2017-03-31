@@ -171,6 +171,8 @@ void sigGeneracion(long int distancia[8]) {
 int main() {
     ifstream f_pesos("savedpoint.dat");
     if(f_pesos.good()){
+        cout << "Leido desde fichero" << endl;
+
         f_pesos >> mejorDistancia;
 
         for(int o=0 ; o<poblacion.size() ; o++) {
@@ -181,13 +183,16 @@ int main() {
             }
         }
     }
-    f_pesos.close();
-
-    for(unsigned int i = 0; i < 8; i++) {
-        for(unsigned int j = 0; j < pesos.size(); j++) {
-            poblacion[i].push_back(valorAleatorio(-1.0f,1.0f));
+    else{
+        for(unsigned int i = 0; i < 8; i++) {
+            for(unsigned int j = 0; j < pesos.size(); j++) {
+                poblacion[i].push_back(valorAleatorio(-1.0f,1.0f));
+            }
         }
     }
+    f_pesos.close();
+
+
 
     srand((unsigned long) time(NULL));
     //sf::ContextSettings settings;
@@ -205,8 +210,8 @@ int main() {
     // (descomentando las dos lineas siguientes y poniendo el nombre correcto)
     //string inputRed = "entrenado.nn";
     //red = red.read(inputRed);
-    unsigned int numAsteroides = 10;
-    Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White);
+    unsigned int numAsteroides = 12;
+    Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White,NULL);
     int reinicios = 1;
     unsigned int iteraciones = 0;
     int choque = 0;
