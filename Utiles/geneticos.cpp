@@ -12,7 +12,8 @@ long int mejorDistancia = 0;
 vector<double> mejoresPesos;
 
 // Inicializa una red neuronal nueva
-neural::Network red(12, 1, {24});
+neural::Network red(8, 1, {16});
+vector<double*> pesos = red.getWeights();
 
 
 vector<Asteroide> asteroides;
@@ -65,7 +66,7 @@ void mutacion() {
     for(unsigned int i = 0; i < poblacion.size(); i++) {
         for(unsigned j = 0; j < poblacion[i].size(); j++) {
             if(valorAleatorio() < 0.05) {
-                poblacion[i][j] = valorAleatorio((float)-0.5, (float)0.5);
+                poblacion[i][j] += valorAleatorio((float)-0.5, (float)0.5);
             }
         }
     }
@@ -73,7 +74,7 @@ void mutacion() {
 
 
 vector<vector<double>> combinar(vector<vector<double>> aux) {
-    while(aux.size() < 8) {
+    while(aux.size() < 6) {
         int aleatorio1 = enteroAleatorio(0,2);
         int aleatorio2 = aleatorio1;
         while(aleatorio2 == aleatorio1) {
@@ -81,11 +82,23 @@ vector<vector<double>> combinar(vector<vector<double>> aux) {
         }
 
         vector<double> p1;
-        for(unsigned int j = 0; j < aux[aleatorio1].size()/2; j++) {
+        int aleatorio3 = enteroAleatorio(0,aux[aleatorio1].size());
+        for(unsigned int j = 0; j < aleatorio3; j++) {
             p1.push_back(aux[aleatorio1][j]);
         }
-        for(unsigned long long int j = aux[aleatorio2].size()/2; j < aux[aleatorio2].size(); j++) {
+        for(unsigned int j = aleatorio3 ; j < aux[aleatorio2].size(); j++) {
             p1.push_back(aux[aleatorio2][j]);
+        }
+        aux.push_back(p1);
+    }
+    return aux;
+}
+
+vector<vector<double>> completar(vector<vector<double>> aux){
+    while(aux.size()<8){
+        vector<double> p1;
+        for(unsigned int j = 0; j < pesos.size(); j++) {
+            p1.push_back(valorAleatorio(-1.0f,1.0f));
         }
         aux.push_back(p1);
     }
@@ -119,20 +132,26 @@ void sigGeneracion(long int distancia[8]) {
             aux.push_back(poblacion[mayoresIndice[k]]);
             cout << mayorDistancia[k] << " ";
         }
-        cout << endl;
+        cout << mayoresIndice[0] << endl;
 
         if(mayorDistancia[0] > mejorDistancia) {
             mejorDistancia = mayorDistancia[0];
             mejoresPesos = aux[0];
+
+            for (unsigned int j = 0; j < mejoresPesos.size(); j++) {
+                *pesos[j] = mejoresPesos[j];
+            }
+
+            string nombreFichero = "entrenando.nn";
+            red.write(nombreFichero);
         }
 
         //COMBINAR
-        poblacion = combinar(aux);
+        poblacion = completar(combinar(aux));
         mutacion();
 }
 
 int main() {
-    vector<double*> pesos = red.getWeights();
     for(unsigned int i = 0; i < 8; i++) {
         for(unsigned int j = 0; j < pesos.size(); j++) {
             poblacion[i].push_back(valorAleatorio(-1.0f,1.0f));
@@ -201,17 +220,13 @@ int main() {
                 sf::Vector2f posicionOvni = sustitutoOvni.getPosition();
                 vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicionOvni);
                 vector<double> entradasRed{asteroidePeligroso[0]->getPosicion().x - posicionOvni.x,
-                                           posicionOvni.y - asteroidePeligroso[0]->getPosicion().y,
+                                           asteroidePeligroso[0]->getPosicion().y - posicionOvni.y ,
                                            asteroidePeligroso[0]->getVelocidad().x,
                                            asteroidePeligroso[0]->getVelocidad().y,
                                            asteroidePeligroso[1]->getPosicion().x - posicionOvni.x,
-                                           posicionOvni.y - asteroidePeligroso[1]->getPosicion().y,
+                                           asteroidePeligroso[1]->getPosicion().y - posicionOvni.y,
                                            asteroidePeligroso[1]->getVelocidad().x,
-                                           asteroidePeligroso[1]->getVelocidad().y,
-                                           asteroidePeligroso[2]->getPosicion().x - posicionOvni.x,
-                                           posicionOvni.y - asteroidePeligroso[2]->getPosicion().y,
-                                           asteroidePeligroso[2]->getVelocidad().x,
-                                           asteroidePeligroso[2]->getVelocidad().y,};
+                                           asteroidePeligroso[1]->getVelocidad().y};
 
                 double salida = red.run(entradasRed)[0];
                 double angulo = 0;

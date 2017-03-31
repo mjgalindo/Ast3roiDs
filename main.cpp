@@ -5,7 +5,7 @@
 #include <fstream>
 
 #include "Graficos/Nave.hpp"
-#include "Graficos/Ovni.hpp"
+#include "Graficos/OvniInteligente.hpp"
 
 #define MAX_PUNTS 10
 
@@ -430,9 +430,13 @@ Estado tratarJuego(Estado estado) {
     sf::Clock reloj;
     int nivel = 0;
 
-    Nave nave = Nave({resolucion.x / 2.0f, resolucion.y / 2.0f}, resolucion, &puntuacion, configuracionGlobal.color(),
-                     &csonido);
-    Ovni ovni(resolucion, configuracionGlobal.color(), &csonido);
+    Nave nave = Nave({resolucion.x / 2.0f, resolucion.y / 2.0f}, resolucion, &puntuacion, configuracionGlobal.color());
+    Ovni *ovni;
+    Ovni ovniNormal(resolucion, configuracionGlobal.color());
+    OvniInteligente ovniInteligente(resolucion, configuracionGlobal.color());
+    ovni = &ovniNormal;
+    bool ovniElegido = false;
+    float probabilidadOvniInt = 0.1;
 
     vector<Asteroide> asteroides;
     unsigned int numeroDeAsteroides = 4;
@@ -449,10 +453,21 @@ Estado tratarJuego(Estado estado) {
 
         if (asteroides.size() == 0) {
             nivel++;
+            probabilidadOvniInt += 0.05;
+            ovniInteligente.disminuirError();
             numeroDeAsteroides += 2;
             Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion,
                                                   configuracionGlobal.color(), &csonido);
             *reiniciarMusica = true;
+        }
+
+        if(ovni->getEstado()==MUERTO && !ovniElegido) {
+            ovniElegido = true;
+            if(valorAleatorio() < probabilidadOvniInt) {
+                ovni = &ovniInteligente;
+            } else {
+                ovni = &ovniNormal;
+            }
         }
 
         sf::Event event;
@@ -486,8 +501,8 @@ Estado tratarJuego(Estado estado) {
         if (sf::Keyboard::isKeyPressed(configuracionGlobal.hiperespacio)) {
             nave.hiperEspacio();
         }
-        ovni.mover(asteroides, nave);
-        nave.mover(asteroides, ovni);
+        ovni->mover(asteroides, nave);
+        nave.mover(asteroides, *ovni);
         nave.frenar();
 
         comprobarMuerteAsteroides(asteroides);
@@ -510,7 +525,7 @@ Estado tratarJuego(Estado estado) {
             ventana.draw(poligono,t);
         }
         ventana.draw(nave);
-        ventana.draw(ovni);
+        ventana.draw(*ovni);
 
         bool reaparicion_ok = true;
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
@@ -528,7 +543,10 @@ Estado tratarJuego(Estado estado) {
         ventana.display();
         reloj.restart();
         nave.cambiarEstado(nave.getEstado());
-        ovni.cambiarEstado(ovni.getEstado());
+        ovni->cambiarEstado(ovni->getEstado());
+        if(ovni->getEstado()==VIVO) {
+            ovniElegido = false;
+        }
     }
 }
 
