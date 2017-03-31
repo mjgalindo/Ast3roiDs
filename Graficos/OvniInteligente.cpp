@@ -87,9 +87,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
                            0.0,};
         }
         direccion = redInteligente.run(entradasRed)[0];
-        /*if (valorAleatorio() < 0.0055) {
-            direccion = anguloAleatorio();
-        }*/
+
         posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         if (posicion.x - 1 >= limites.x) {
             posicion.x -= limites.x;
@@ -110,7 +108,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
 
         //Colision del ovni con un asteroide
         for (int i = 0; i < v.size(); i++) {
-            if (comprobarColision(v[i])) {
+            if (v[i].estado == MOVIMIENTO and comprobarColision(v[i])) {
                 cambiarEstado(EXP1);
                 //Destruir asteroide, dividirlo o lo que sea....
                 v[i].gestionarDestruccion(v);
