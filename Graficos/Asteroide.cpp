@@ -60,8 +60,12 @@ Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel,
             poligono[10].position = {0.551181f, -0.866142f};
             poligono[11].position = {-0.362205f, -0.88189f};
     }
+    sf::Transform t;
+    std::cout << direccion * (float) (180.0 / PI) << std::endl;
+    t.rotate(direccion * (float) (180.0 / PI));
     for (int i = 0; i < poligono.getVertexCount(); i++) {
         poligono[i].color = color;
+        poligono[i].position = t.transformPoint(poligono[i].position);
     }
 
     punto.setPrimitiveType(sf::LineStrip);
@@ -123,14 +127,14 @@ void Asteroide::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         target.draw(poligono, t);
     } else {
         sf::Transform t0, t1, t2, t3, t4, t5, t6, t7;
-        t0.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion0);
-        t1.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion1);
-        t2.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion2);
-        t3.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion3);
-        t4.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion4);
-        t5.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion5);
-        t6.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion6);
-        t7.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion7);
+        t0.translate(posicion0);
+        t1.translate(posicion1);
+        t2.translate(posicion2);
+        t3.translate(posicion3);
+        t4.translate(posicion4);
+        t5.translate(posicion5);
+        t6.translate(posicion6);
+        t7.translate(posicion7);
 
         target.draw(punto, t1);
         target.draw(punto, t2);
@@ -199,24 +203,24 @@ void Asteroide::gestionarDestruccion(std::vector<Asteroide> &astds) {
         case TAM_0:
             break;
         case TAM_1:
-            astds.push_back(Asteroide(posicion, direccion,
+            astds.push_back(Asteroide(posicion, anguloAleatorio(),
                                       {velocidad.x + valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
                                        velocidad.y + valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
-                                      TIPO_0, TAM_0, limites, color, cs));
-            astds.push_back(Asteroide(posicion, direccion,
+                                      (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+            astds.push_back(Asteroide(posicion, anguloAleatorio(),
                                       {velocidad.x - valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
                                        velocidad.y - valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
-                                      TIPO_0, TAM_0, limites, color, cs));
+                                      (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
             break;
         case TAM_2:
-            astds.push_back(Asteroide(posicion, direccion,
+            astds.push_back(Asteroide(posicion, anguloAleatorio(),
                                       {velocidad.x + valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
                                        velocidad.y + valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
-                                      TIPO_0, TAM_1, limites, color, cs));
-            astds.push_back(Asteroide(posicion, direccion,
+                                      (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+            astds.push_back(Asteroide(posicion, anguloAleatorio(),
                                       {velocidad.x - valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
                                        velocidad.y - valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
-                                      TIPO_0, TAM_1, limites, color, cs));
+                                      (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
             break;
     }
 }
