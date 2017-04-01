@@ -115,15 +115,18 @@ long int puntuacion;
 void inicializaVentana() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = configuracionGlobal.antialiasing;
-    if(configuracionGlobal.pantallaCompleta){
+
+    if (configuracionGlobal.pantallaCompleta) {
         ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Fullscreen, settings);
-    }
-    else {
+        ventana.setMouseCursorVisible(false);
+    } else {
         ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
+        ventana.setMouseCursorVisible(true);
     }
     ventana.setFramerateLimit(60);
     ventana.setKeyRepeatEnabled(false);
     ventana.setVerticalSyncEnabled(true);
+    ventana.requestFocus();
 }
 
 sf::Font fuenteAsteroids;
