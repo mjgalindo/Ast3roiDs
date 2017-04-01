@@ -416,6 +416,7 @@ void comprobarMuerteAsteroides(std::vector<Asteroide> &asteroides) {
 Estado tratarJuego(Estado estado) {
 
     puntuacion = 0;
+    int vidas_puntuacion = 0;
 
     sf::Text texto;
     sf::Text opcion1;
@@ -639,6 +640,11 @@ Estado tratarJuego(Estado estado) {
 
             if (reaparicion_ok && nave.getEstado() == REAPARECIENDO) {
                 nave.cambiarEstado(REPOSO);
+            }
+
+            if(puntuacion-vidas_puntuacion>=10000){
+                vidas_puntuacion += 10000;
+                nave.setVidas(nave.getVidas()+1);
             }
 
             ventana.display();
