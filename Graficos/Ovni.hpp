@@ -81,7 +81,7 @@ public:
 
     double network2Radianes(double salida);
 
-    double direccionSegura(sf::CircleShape ovni,sf::Vector2f posicionSegura, std::vector<Asteroide> v);
+    double direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, std::vector<Asteroide> v);
 };
 
 

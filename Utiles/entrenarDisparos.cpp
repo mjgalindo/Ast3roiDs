@@ -14,7 +14,6 @@ sf::Vector2u resolucion = {800, 600};
 neural::Network red(2, 1, {4});
 
 
-
 struct Configuracion {
     sf::Vector2u resolucion;
     bool pantallaCompleta;
@@ -134,7 +133,7 @@ int main() {
     long puntuacion = 0;
     ControladorSonido csonido;
     Configuracion configuracionGlobal;
-    Nave nave({rand() % resolucion.x * 1.0f, rand() % resolucion.y * 1.0f},resolucion,&puntuacion,
+    Nave nave({rand() % resolucion.x * 1.0f, rand() % resolucion.y * 1.0f}, resolucion, &puntuacion,
               configuracionGlobal.color(), &csonido);
 
     // Opcionalmente la lee desde fichero
@@ -173,25 +172,25 @@ int main() {
 
                 ventana.clear(sf::Color::Black);*/
 
-        vector<double> entradasRed{nave.getPosicion().x-sustitutoOvni.getPosition().x,
-                                   nave.getPosicion().y-sustitutoOvni.getPosition().y
-                                            };
+        vector<double> entradasRed{nave.getPosicion().x - sustitutoOvni.getPosition().x,
+                                   nave.getPosicion().y - sustitutoOvni.getPosition().y
+        };
 
-        double salida = red.run(entradasRed)[0]*PI;
-        Disparo disparo(sustitutoOvni.getPosition(),salida,resolucion,sf::Color::White);
-        disparo.setDireccion((float)salida);
+        double salida = red.run(entradasRed)[0] * PI;
+        Disparo disparo(sustitutoOvni.getPosition(), salida, resolucion, sf::Color::White);
+        disparo.setDireccion((float) salida);
         bool acertado = false;
-        while(!acertado && disparo.comprobarAlcance()) {
+        while (!acertado && disparo.comprobarAlcance()) {
             disparo.mover();
-            if(disparo.comprobarColision(nave)) {
+            if (disparo.comprobarColision(nave)) {
                 acertado = true;
             }
         }
-        if(!acertado) {
+        if (!acertado) {
             sf::Vector2f vectorDir = (nave.getPosicion() - sustitutoOvni.getPosition());
-            double direccionDisp = atan2(vectorDir.y, vectorDir.x)/PI;
-            red.trainSingle(entradasRed,{direccionDisp},0.3);
-           cout << aciertos << " " << disparos << " Fallo" << endl;
+            double direccionDisp = atan2(vectorDir.y, vectorDir.x) / PI;
+            red.trainSingle(entradasRed, {direccionDisp}, 0.3);
+            cout << aciertos << " " << disparos << " Fallo" << endl;
         } else {
             aciertos++;
             cout << aciertos << " " << disparos << " Acierto" << endl;

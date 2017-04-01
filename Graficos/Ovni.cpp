@@ -42,10 +42,10 @@ Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs)
     punto[1].color = color;
     recienDestruida = true;
 
-    direcciones = {PI * 3 / 4,PI,-PI * 3 / 4,PI / 2,PI / 4,0,-PI / 4,-PI / 2};
-   // redNormal.read(fichero);
+    direcciones = {PI * 3 / 4, PI, -PI * 3 / 4, PI / 2, PI / 4, 0, -PI / 4, -PI / 2};
+    // redNormal.read(fichero);
 
-    ultimaDireccion = direcciones[enteroAleatorio(0,direcciones.size())];
+    ultimaDireccion = direcciones[enteroAleatorio(0, direcciones.size())];
 }
 
 Ovni::~Ovni() {
@@ -187,69 +187,11 @@ double Ovni::network2Radianes(double salida) {
     return angulo;
 }
 
-void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
+void Ovni::mover(std::vector<Asteroide> &astds, Triangular &nave) {
     if (estado == VIVO) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
-        vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, v);
-        /*vector<double> entradasRed;
-        if (asteroidePeligroso.size() == 3) {
-            entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[0]->getPosicion().y,
-                           asteroidePeligroso[0]->getVelocidad().x,
-                           asteroidePeligroso[0]->getVelocidad().y,
-                           asteroidePeligroso[1]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[1]->getPosicion().y,
-                           asteroidePeligroso[1]->getVelocidad().x,
-                           asteroidePeligroso[1]->getVelocidad().y,
-                           asteroidePeligroso[2]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[2]->getPosicion().y,
-                           asteroidePeligroso[2]->getVelocidad().x,
-                           asteroidePeligroso[2]->getVelocidad().y,};
-        } else if (asteroidePeligroso.size() == 2) {
-            entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[0]->getPosicion().y,
-                           asteroidePeligroso[0]->getVelocidad().x,
-                           asteroidePeligroso[0]->getVelocidad().y,
-                           asteroidePeligroso[1]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[1]->getPosicion().y,
-                           asteroidePeligroso[1]->getVelocidad().x,
-                           asteroidePeligroso[1]->getVelocidad().y,
-                           -99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,};
-        } else if (asteroidePeligroso.size() == 1) {
-            entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[0]->getPosicion().y,
-                           asteroidePeligroso[0]->getVelocidad().x,
-                           asteroidePeligroso[0]->getVelocidad().y,
-                           -99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,
-                           -99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,};
-        } else {
-            entradasRed = {-99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,
-                           -99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,
-                           -99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,};
-        }*/
-        //direccion = network2Radianes(redNormal.run(entradasRed)[0]);
-        /*if (valorAleatorio() < 0.0055) {
-            direccion = anguloAleatorio();
-        }*/
-        direccion = direccionSegura(sf::CircleShape(radio),posicion,v);
+        vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, astds);
+        direccion = direccionSegura(sf::CircleShape(radio), posicion, astds);
         posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         posicion.x += VELOCIDAD * cos(direccion) * ratio(limites);
         if (posicion.x - 1 >= limites.x) {
@@ -381,7 +323,7 @@ void Ovni::cambiarEstado(int nuevoEstado) {
     ciclo++;
 }
 
-double Ovni::direccionSegura(sf::CircleShape ovni,sf::Vector2f posicionSegura, std::vector<Asteroide> v) {
+double Ovni::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, std::vector<Asteroide> v) {
     float vMax = 3.0f;
     float radioPeligro = 250.0f;
     ovni.setRadius(radio);
@@ -390,11 +332,11 @@ double Ovni::direccionSegura(sf::CircleShape ovni,sf::Vector2f posicionSegura, s
     for (auto ast = v.begin(); ast != v.end(); ++ast) {
         posiciones.push_back(ast->getPosicion());
     }
-    for(unsigned long long i = 0; i < direcciones.size(); i++) {
+    for (unsigned long long i = 0; i < direcciones.size(); i++) {
         ovni.setPosition(posicionSegura);
         bool choque = false;
         float distanciaRecorrida = 60.0f;
-        while(distanciaRecorrida < radioPeligro && !choque) {
+        while (distanciaRecorrida < radioPeligro && !choque) {
             //MOVER OVNI Y COMPROBAR QUE CHOCA
             ovni.move({vMax * (float) cos(direcciones.at(i)), vMax * (float) -sin(direcciones.at(i))});
             sf::Vector2f posicionOvni = ovni.getPosition();
@@ -416,7 +358,7 @@ double Ovni::direccionSegura(sf::CircleShape ovni,sf::Vector2f posicionSegura, s
             }
             for (auto ast = v.begin(); ast != v.end(); ++ast) {
                 ast->mover();
-                if(colisionCirculos(posicionOvni, ovni.getRadius(), ast->getPosicion(), ast->getRadio())) {
+                if (colisionCirculos(posicionOvni, ovni.getRadius(), ast->getPosicion(), ast->getRadio())) {
                     // Hay colision, se informa a la red y se reinicia la escena aleatoriamente
                     choque = true;
                     break;
@@ -424,8 +366,8 @@ double Ovni::direccionSegura(sf::CircleShape ovni,sf::Vector2f posicionSegura, s
             }
             distanciaRecorrida += VELOCIDAD;
         }
-        if(!choque) {
-            if(direcciones[i] == ultimaDireccion) {
+        if (!choque) {
+            if (direcciones[i] == ultimaDireccion) {
                 return ultimaDireccion;
             }
             direccionesSeguras.push_back(direcciones[i]);
@@ -434,7 +376,7 @@ double Ovni::direccionSegura(sf::CircleShape ovni,sf::Vector2f posicionSegura, s
             v[i].setPosicion(posiciones[i]);
         }
     }
-    if(direccionesSeguras.size()==0){
+    if (direccionesSeguras.size() == 0) {
         return ultimaDireccion;
     }
     ultimaDireccion = direccionesSeguras[0];

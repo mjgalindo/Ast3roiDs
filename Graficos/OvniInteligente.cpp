@@ -19,9 +19,9 @@ void OvniInteligente::disparar(sf::Vector2f nave) {
         if (num_disparos < MAX_DISPAROS) {
             sf::Vector2f vectorDir = (nave - posicion);
             float direccionDisp = atan2f(vectorDir.y, vectorDir.x);
-            disparos[num_disparos] = Disparo(posicion, direccion, limites, color);
-            direccionDisp = direccionDisp + valorAleatorio(-error, error);
-            direccionDisp = redInteligente.run(entradaRed)[0];
+            disparos[num_disparos] = Disparo(posicion, (float) direccion, limites, color);
+            direccionDisp = direccionDisp + valorAleatorio(-error / 5, error / 5);
+            //direccionDisp = redInteligente.run(entradaRed)[0];
             disparos[num_disparos].setDireccion(direccionDisp);
             num_disparos++;
         }
@@ -88,9 +88,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
                            0.0,};
         }
         direccion = redInteligente.run(entradasRed)[0];
-        /*if (valorAleatorio() < 0.0055) {
-            direccion = anguloAleatorio();
-        }*/
+
         posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         if (posicion.x - 1 >= limites.x) {
             posicion.x -= limites.x;
@@ -115,8 +113,6 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
                 cambiarEstado(EXP1);
                 //Destruir asteroide, dividirlo o lo que sea....
                 v[i].gestionarDestruccion(v);
-                v.erase(v.begin() + i);
-                i--;
             }
         }
 
@@ -144,8 +140,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
                     i--;
                     //Destruir asteroide, dividirlo o lo que sea....
                     v[j].gestionarDestruccion(v);
-                    v.erase(v.begin() + j);
-                    j--;
+                    break;
                 }
             }
         }

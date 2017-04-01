@@ -516,7 +516,7 @@ Estado tratarJuego(Estado estado) {
         if (ovni->getEstado() == MUERTO && !ovniElegido) {
             ovniElegido = true;
             if (valorAleatorio() < probabilidadOvniInt) {
-                if(configuracionGlobal.color()== sf::Color::Red){
+                if (configuracionGlobal.color() == sf::Color::Red) {
                     NESI = true;
                     tiempo = clock();
                 }
@@ -569,19 +569,19 @@ Estado tratarJuego(Estado estado) {
 
             sf::Transform tPausa;
             if (seleccionSalir == SI) {
-                tPausa.translate({opcionSi.getPosition().x - ajustar_w(30),  opcionSi.getPosition().y + ajustar_h(20u)})
-                        .scale(ajustar_h(35u),ajustar_w(20u));
+                tPausa.translate({opcionSi.getPosition().x - ajustar_w(30), opcionSi.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
 
             } else {
-                tPausa.translate({opcionNo.getPosition().x - ajustar_w(30),  opcionNo.getPosition().y + ajustar_h(20u)})
-                        .scale(ajustar_h(35u),ajustar_w(20u));
+                tPausa.translate({opcionNo.getPosition().x - ajustar_w(30), opcionNo.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
             }
             ventana.draw(cuadroSalir1);
             ventana.draw(cuadroSalir2);
             ventana.draw(textoSalir);
             ventana.draw(opcionSi);
             ventana.draw(opcionNo);
-            ventana.draw(poligono,tPausa);
+            ventana.draw(poligono, tPausa);
             ventana.display();
         } else {
             if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_izquierda)) {
@@ -610,8 +610,8 @@ Estado tratarJuego(Estado estado) {
             ventana.draw(opcion1);
             ventana.draw(punt);
 
-            if(NESI){
-                if((clock() - tiempo) / (double) CLOCKS_PER_SEC > 4){
+            if (NESI) {
+                if ((clock() - tiempo) / (double) CLOCKS_PER_SEC > 4) {
                     NESI = false;
                 }
                 ventana.draw(tNESI);
@@ -671,8 +671,8 @@ Estado tratarGameOver(Estado estado) {
 
 
     sf::Transform t;
-    t.translate({opcion1.getPosition().x - ajustar_w(30),  opcion1.getPosition().y + ajustar_h(20u)})
-            .scale(ajustar_h(35u),ajustar_w(20u));
+    t.translate({opcion1.getPosition().x - ajustar_w(30), opcion1.getPosition().y + ajustar_h(20u)})
+            .scale(ajustar_h(35u), ajustar_w(20u));
 
 
     float altura = resolucion.y / 3.0f;
@@ -805,7 +805,7 @@ Estado tratarGameOver(Estado estado) {
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
-            ventana.draw(poligono,t);
+            ventana.draw(poligono, t);
             ventana.draw(Snombre);
             nombre.setString(nombre_introducido);
             ventana.draw(nombre);
@@ -863,8 +863,8 @@ Estado tratarPuntuaciones(Estado estado) {
                                      resolucion.y - opcion1.getLocalBounds().height - ajustar_h(20)));
 
     sf::Transform t;
-    t.translate({opcion1.getPosition().x - ajustar_w(30),  opcion1.getPosition().y + ajustar_h(20u)})
-            .scale(ajustar_h(35u),ajustar_w(20u));
+    t.translate({opcion1.getPosition().x - ajustar_w(30), opcion1.getPosition().y + ajustar_h(20u)})
+            .scale(ajustar_h(35u), ajustar_w(20u));
 
     while (true) {
         sf::Event event;
