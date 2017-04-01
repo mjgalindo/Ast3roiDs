@@ -503,7 +503,9 @@ Estado tratarJuego(Estado estado) {
 
         if (asteroides.size() == 0) {
             nivel++;
-            probabilidadOvniInt += 0.05;
+            if(probabilidadOvniInt < 0.9) {
+                probabilidadOvniInt += 0.05;
+            }
             ovniInteligente.disminuirError();
             numeroDeAsteroides += 2;
             if(numeroDeAsteroides>12){

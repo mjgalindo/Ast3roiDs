@@ -1,7 +1,5 @@
 #include "Ovni.hpp"
 
-//Red neural que se usara para esquivar asteroides
-//neural::Network redNormal(12, 1, {20, 20});
 
 Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
         Circular({0, 0}, 15 * ratio(limitesPantalla)), color(color), cs(cs) {
@@ -43,7 +41,6 @@ Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs)
     recienDestruida = true;
 
     direcciones = {PI * 3 / 4, PI, -PI * 3 / 4, PI / 2, PI / 4, 0, -PI / 4, -PI / 2};
-    // redNormal.read(fichero);
 
     ultimaDireccion = direcciones[enteroAleatorio(0, direcciones.size())];
 }
@@ -111,7 +108,7 @@ sf::Vector2f Ovni::getVelocidad() {
 }
 
 int Ovni::getPuntuacion() const {
-    return 300;
+    return 200;
 }
 
 void Ovni::disparar() {
@@ -190,7 +187,6 @@ double Ovni::network2Radianes(double salida) {
 void Ovni::mover(std::vector<Asteroide> &astds, Triangular &nave) {
     if (estado == VIVO) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
-        vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, astds);
         direccion = direccionSegura(sf::CircleShape(radio), posicion, astds);
         posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         posicion.x += VELOCIDAD * cos(direccion) * ratio(limites);
@@ -324,8 +320,8 @@ void Ovni::cambiarEstado(int nuevoEstado) {
 }
 
 double Ovni::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, std::vector<Asteroide> v) {
-    float vMax = 3.0f;
-    float radioPeligro = 250.0f;
+    float vMax = VELOCIDAD;
+    float radioPeligro = 60.0f;
     ovni.setRadius(radio);
     vector<double> direccionesSeguras;
     vector<sf::Vector2f> posiciones;
@@ -335,7 +331,7 @@ double Ovni::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, 
     for (unsigned long long i = 0; i < direcciones.size(); i++) {
         ovni.setPosition(posicionSegura);
         bool choque = false;
-        float distanciaRecorrida = 60.0f;
+        float distanciaRecorrida = 0.0f;
         while (distanciaRecorrida < radioPeligro && !choque) {
             //MOVER OVNI Y COMPROBAR QUE CHOCA
             ovni.move({vMax * (float) cos(direcciones.at(i)), vMax * (float) -sin(direcciones.at(i))});
@@ -364,7 +360,7 @@ double Ovni::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, 
                     break;
                 }
             }
-            distanciaRecorrida += VELOCIDAD;
+            distanciaRecorrida += vMax;
         }
         if (!choque) {
             if (direcciones[i] == ultimaDireccion) {
@@ -372,13 +368,14 @@ double Ovni::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, 
             }
             direccionesSeguras.push_back(direcciones[i]);
         }
-        for (int i = 0; i < posiciones.size(); i++) {
-            v[i].setPosicion(posiciones[i]);
+        for (int j = 0; j < posiciones.size(); j++) {
+            v[j].setPosicion(posiciones[j]);
         }
     }
     if (direccionesSeguras.size() == 0) {
         return ultimaDireccion;
     }
-    ultimaDireccion = direccionesSeguras[0];
-    return direccionesSeguras[0];
+    int elegido = enteroAleatorio(0,direccionesSeguras.size());
+    ultimaDireccion = direccionesSeguras[elegido];
+    return direccionesSeguras[elegido];
 }

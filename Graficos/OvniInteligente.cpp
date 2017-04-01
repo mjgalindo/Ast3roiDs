@@ -1,15 +1,12 @@
 #include <iostream>
 #include "OvniInteligente.hpp"
 
-//Red neural que se usara para esquivar asteroides
-neural::Network redInteligente(12, 1, {24});
 
 OvniInteligente::OvniInteligente(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
         Ovni(limitesPantalla, color, cs) {
     radio = radio * 3 / 4;
     SonidoPresencia = ControladorSonido::OVNI_PEQUENO;
     SonidoDestruccion = ControladorSonido::EXP_1;
-    redInteligente.read(fichero);
 }
 
 OvniInteligente::~OvniInteligente() {}
@@ -32,62 +29,7 @@ void OvniInteligente::disparar(sf::Vector2f nave) {
 void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
     if (estado == VIVO) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
-        vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, v);
-        vector<double> entradasRed;
-        if (asteroidePeligroso.size() == 3) {
-            entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[0]->getPosicion().y,
-                           asteroidePeligroso[0]->getVelocidad().x,
-                           asteroidePeligroso[0]->getVelocidad().y,
-                           asteroidePeligroso[1]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[1]->getPosicion().y,
-                           asteroidePeligroso[1]->getVelocidad().x,
-                           asteroidePeligroso[1]->getVelocidad().y,
-                           asteroidePeligroso[2]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[2]->getPosicion().y,
-                           asteroidePeligroso[2]->getVelocidad().x,
-                           asteroidePeligroso[2]->getVelocidad().y,};
-        } else if (asteroidePeligroso.size() == 2) {
-            entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[0]->getPosicion().y,
-                           asteroidePeligroso[0]->getVelocidad().x,
-                           asteroidePeligroso[0]->getVelocidad().y,
-                           asteroidePeligroso[1]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[1]->getPosicion().y,
-                           asteroidePeligroso[1]->getVelocidad().x,
-                           asteroidePeligroso[1]->getVelocidad().y,
-                           -99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,};
-        } else if (asteroidePeligroso.size() == 1) {
-            entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
-                           posicion.y - asteroidePeligroso[0]->getPosicion().y,
-                           asteroidePeligroso[0]->getVelocidad().x,
-                           asteroidePeligroso[0]->getVelocidad().y,
-                           -99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,
-                           -99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,};
-        } else {
-            entradasRed = {-99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,
-                           -99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,
-                           -99999.0,
-                           -99999.0,
-                           0.0,
-                           0.0,};
-        }
-        direccion = redInteligente.run(entradasRed)[0];
+        direccion = direccionSegura(sf::CircleShape(radio), posicion, v);;
 
         posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         if (posicion.x - 1 >= limites.x) {
@@ -176,7 +118,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
 
 void OvniInteligente::disminuirError() {
     if (error > 0.0) {
-        error = error - PI / 36;
+        error = (float)(error - PI / 36);
     } else {
         error = 0.0;
     }
