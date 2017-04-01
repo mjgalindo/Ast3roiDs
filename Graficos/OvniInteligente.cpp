@@ -2,7 +2,7 @@
 #include "OvniInteligente.hpp"
 
 //Red neural que se usara para esquivar asteroides
-neural::Network redInteligente(4, 1, {10});
+neural::Network redInteligente(12, 1, {24});
 
 OvniInteligente::OvniInteligente(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
         Ovni(limitesPantalla, color, cs) {
@@ -17,11 +17,10 @@ OvniInteligente::~OvniInteligente() {}
 void OvniInteligente::disparar(sf::Vector2f nave) {
     if (estado == VIVO) {
         if (num_disparos < MAX_DISPAROS) {
-            vector<double> entradaRed = {posicion.x,posicion.y,nave.x, nave.y};
             sf::Vector2f vectorDir = (nave - posicion);
             float direccionDisp = atan2f(vectorDir.y, vectorDir.x);
             disparos[num_disparos] = Disparo(posicion, direccion, limites, color);
-            //direccionDisp = direccionDisp + valorAleatorio(-error, error);
+            direccionDisp = direccionDisp + valorAleatorio(-error, error);
             direccionDisp = redInteligente.run(entradaRed)[0];
             disparos[num_disparos].setDireccion(direccionDisp);
             num_disparos++;
@@ -34,7 +33,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
     if (estado == VIVO) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
         vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, v);
-        /*vector<double> entradasRed;
+        vector<double> entradasRed;
         if (asteroidePeligroso.size() == 3) {
             entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
                            posicion.y - asteroidePeligroso[0]->getPosicion().y,
@@ -87,12 +86,11 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
                            -99999.0,
                            0.0,
                            0.0,};
-        }*/
-        //direccion = network2Radianes(redInteligente.run(entradasRed)[0]);
+        }
+        direccion = redInteligente.run(entradasRed)[0];
         /*if (valorAleatorio() < 0.0055) {
             direccion = anguloAleatorio();
         }*/
-        direccion = direccionSegura(sf::CircleShape(radio),posicion,v);
         posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         if (posicion.x - 1 >= limites.x) {
             posicion.x -= limites.x;

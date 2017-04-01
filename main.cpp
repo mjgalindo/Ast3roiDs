@@ -443,7 +443,39 @@ Estado tratarJuego(Estado estado) {
     unsigned int numeroDeAsteroides = 4;
     Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion, configuracionGlobal.color(),
                                           &csonido);
+    //// Menu flotante pausar juego
+    bool pausarJuego = false;
+    sf::RectangleShape cuadroSalir1({ajustar_w(420.0f), ajustar_h(220.0f)});
+    sf::RectangleShape cuadroSalir2({ajustar_w(400.0f), ajustar_h(200.0f)});
+    cuadroSalir1.setFillColor(configuracionGlobal.color());
+    cuadroSalir1.setPosition(configuracionGlobal.resolucion.x / 2.0f - cuadroSalir1.getSize().x / 2.0f,
+                             configuracionGlobal.resolucion.y / 2.0f - cuadroSalir1.getSize().y / 2.0f);
+    cuadroSalir2.setFillColor(sf::Color::Black);
+    cuadroSalir2.setPosition(configuracionGlobal.resolucion.x / 2.0f - cuadroSalir2.getSize().x / 2.0f,
+                             configuracionGlobal.resolucion.y / 2.0f - cuadroSalir2.getSize().y / 2.0f);
+    sf::Text textoSalir;
+    inicializaTexto(textoSalir, ajustar_h(30u));
+    textoSalir.setString("SALIR?");
+    textoSalir.setPosition(configuracionGlobal.resolucion.x / 2.0f - textoSalir.getLocalBounds().width / 2.0f,
+                           configuracionGlobal.resolucion.y / 2.0f - ajustar_h(60u));
 
+    sf::Text opcionSi;
+    inicializaTexto(opcionSi, ajustar_h(30u));
+    opcionSi.setString("SI");
+    opcionSi.setPosition(
+            configuracionGlobal.resolucion.x / 2.0f - ajustar_w(60u) - opcionSi.getLocalBounds().width / 2.0f,
+            configuracionGlobal.resolucion.y / 2.0f + ajustar_h(30u));
+    sf::Text opcionNo;
+    inicializaTexto(opcionNo, ajustar_h(30u));
+    opcionNo.setString("NO");
+    opcionNo.setPosition(
+            configuracionGlobal.resolucion.x / 2.0f + ajustar_w(60u) - opcionNo.getLocalBounds().width / 2.0f,
+            configuracionGlobal.resolucion.y / 2.0f + ajustar_h(30u));
+    enum OpcionSalir {
+        SI, NO
+    };
+    OpcionSalir seleccionSalir = NO;
+    //// Bucle principal
     while (true) {
         if (nave.getVidas() < 0) {
             *jugando = false;
@@ -488,68 +520,102 @@ Estado tratarJuego(Estado estado) {
                     nave.disparar();
                 } else if (event.key.code == sf::Keyboard::M) {
                     (*silencioMusica) = !*silencioMusica;
+                } else if (event.key.code == sf::Keyboard::Escape) {
+                    pausarJuego = !pausarJuego;
+                    *silencioMusica = pausarJuego;
+                    seleccionSalir = NO;
+                } else if (pausarJuego and event.key.code == sf::Keyboard::Return) {
+                    if (seleccionSalir == NO) {
+                        // Continuar jugando
+                        pausarJuego = false;
+                        *silencioMusica = false;
+                    } else {
+                        // Salir del juego
+                        *jugando = false;
+                        *silencioMusica = true;
+                        musica.join();
+                        return GAME_OVER;
+                    }
+                } else if (pausarJuego and event.key.code == sf::Keyboard::Left) {
+                    seleccionSalir = SI;
+                } else if (pausarJuego and event.key.code == sf::Keyboard::Right) {
+                    seleccionSalir = NO;
                 }
             default:
                 break;
         }
 
-        if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_izquierda)) {
-            nave.rotarIzda();
-        }
-        if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_derecha)) {
-            nave.rotarDcha();
-        }
-        if (sf::Keyboard::isKeyPressed(configuracionGlobal.acelerar)) {
-            nave.acelerar();
-        }
-        if (sf::Keyboard::isKeyPressed(configuracionGlobal.hiperespacio)) {
-            nave.hiperEspacio();
-        }
-        ovni->mover(asteroides, nave);
-        nave.mover(asteroides, *ovni);
-        nave.frenar();
-
-        comprobarMuerteAsteroides(asteroides);
-        punt.setString(std::to_string(puntuacion));
-        punt.setString(std::to_string(puntuacion));
-        vidas.setString(std::to_string(nave.getVidas()));
-
-        ventana.clear(sf::Color::Black);
-        ventana.draw(texto);
-        ventana.draw(opcion1);
-        ventana.draw(punt);
-
-        //dibujar vidas
-
-        for(int i=0; i<nave.getVidas(); i++){
-
-            sf::Transform t;
-            t.translate({ajustar_w(20.0f)*(i+1), ajustar_h(60.0f)})
-                    .scale(ajustar_h(10u), ajustar_w(6u)).rotate((float) (-PI / 2.0 * (180.0 / 3.14)));
-            ventana.draw(poligono,t);
-        }
-        ventana.draw(nave);
-        ventana.draw(*ovni);
-
-        bool reaparicion_ok = true;
-        for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
-            ast->mover();
-            if(distanciaEuclidea(ast->getPosicion(),nave.getPosicion())<ajustar_h(70)){
-                reaparicion_ok = false;
+        if (pausarJuego) {
+            if (seleccionSalir == SI) {
+                // selecciona el Si con una navecita
+            } else {
+                // selecciona el No con una navecita
             }
-            ventana.draw(*ast);
-        }
+            ventana.draw(cuadroSalir1);
+            ventana.draw(cuadroSalir2);
+            ventana.draw(textoSalir);
+            ventana.draw(opcionSi);
+            ventana.draw(opcionNo);
+            ventana.display();
+        } else {
+            if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_izquierda)) {
+                nave.rotarIzda();
+            }
+            if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_derecha)) {
+                nave.rotarDcha();
+            }
+            if (sf::Keyboard::isKeyPressed(configuracionGlobal.acelerar)) {
+                nave.acelerar();
+            }
+            if (sf::Keyboard::isKeyPressed(configuracionGlobal.hiperespacio)) {
+                nave.hiperEspacio();
+            }
+            ovni->mover(asteroides, nave);
+            nave.mover(asteroides, *ovni);
+            nave.frenar();
 
-        if(reaparicion_ok && nave.getEstado()==REAPARECIENDO){
-            nave.cambiarEstado(REPOSO);
-        }
+            comprobarMuerteAsteroides(asteroides);
+            punt.setString(std::to_string(puntuacion));
+            punt.setString(std::to_string(puntuacion));
+            vidas.setString(std::to_string(nave.getVidas()));
 
-        ventana.display();
-        reloj.restart();
-        nave.cambiarEstado(nave.getEstado());
-        ovni->cambiarEstado(ovni->getEstado());
-        if (ovni->getEstado() == VIVO) {
-            ovniElegido = false;
+            ventana.clear(sf::Color::Black);
+            ventana.draw(texto);
+            ventana.draw(opcion1);
+            ventana.draw(punt);
+
+            //dibujar vidas
+
+            for (int i = 0; i < nave.getVidas(); i++) {
+
+                sf::Transform t;
+                t.translate({ajustar_w(20.0f) * (i + 1), ajustar_h(60.0f)})
+                        .scale(ajustar_h(10u), ajustar_w(6u)).rotate((float) (-PI / 2.0 * (180.0 / 3.14)));
+                ventana.draw(poligono, t);
+            }
+            ventana.draw(nave);
+            ventana.draw(*ovni);
+
+            bool reaparicion_ok = true;
+            for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
+                ast->mover();
+                if (distanciaEuclidea(ast->getPosicion(), nave.getPosicion()) < ajustar_h(70)) {
+                    reaparicion_ok = false;
+                }
+                ventana.draw(*ast);
+            }
+
+            if (reaparicion_ok && nave.getEstado() == REAPARECIENDO) {
+                nave.cambiarEstado(REPOSO);
+            }
+
+            ventana.display();
+            reloj.restart();
+            nave.cambiarEstado(nave.getEstado());
+            ovni->cambiarEstado(ovni->getEstado());
+            if (ovni->getEstado() == VIVO) {
+                ovniElegido = false;
+            }
         }
     }
 }
