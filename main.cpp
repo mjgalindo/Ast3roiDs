@@ -382,7 +382,9 @@ void reproducirMusica(std::shared_ptr<bool> jugando, std::shared_ptr<bool> silen
     sonido2.loadFromFile("Recursos/Sonido/beat2.wav");
     sf::Sound reproductor1, reproductor2;
     reproductor1.setBuffer(sonido1);
+    reproductor1.setVolume(volumen);
     reproductor2.setBuffer(sonido2);
+    reproductor2.setVolume(volumen);
     int tiempoEntreSonidos = 1000;
     while (*jugando) {
         if (!*silencio) reproductor1.play();
@@ -510,10 +512,10 @@ Estado tratarJuego(Estado estado) {
         ventana.pollEvent(event);
         switch (event.type) {
             case sf::Event::Closed:
-                ventana.close();
-                *jugando = false;
                 *silencioMusica = true;
+                *jugando = false;
                 musica.join();
+                ventana.close();
                 return EXIT;
             case sf::Event::KeyPressed:
                 if (event.key.code == configuracionGlobal.disparar) {
@@ -531,8 +533,8 @@ Estado tratarJuego(Estado estado) {
                         *silencioMusica = false;
                     } else {
                         // Salir del juego
-                        *jugando = false;
                         *silencioMusica = true;
+                        *jugando = false;
                         musica.join();
                         return GAME_OVER;
                     }
