@@ -61,7 +61,6 @@ Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel,
             poligono[11].position = {-0.362205f, -0.88189f};
     }
     sf::Transform t;
-    std::cout << direccion * (float) (180.0 / PI) << std::endl;
     t.rotate(direccion * (float) (180.0 / PI));
     for (int i = 0; i < poligono.getVertexCount(); i++) {
         poligono[i].color = color;
