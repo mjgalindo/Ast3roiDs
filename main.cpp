@@ -801,7 +801,8 @@ Estado tratarGameOver(Estado estado) {
                                         nombre.getPosition().y + nombre.getLocalBounds().height + 4};
             seleccionada[1].position = {nombre.getPosition().x + (indice + 1) * nombre.getLocalBounds().width / 3.0f,
                                         nombre.getPosition().y + nombre.getLocalBounds().height + 4};
-
+            seleccionada[0].color = configuracionGlobal.color();
+            seleccionada[1].color = configuracionGlobal.color();
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
