@@ -44,7 +44,14 @@ protected:
     string fichero = "entrenando.nn";
 
     clock_t start;
+
+
+    std::vector<double> direcciones;
+
+    double ultimaDireccion;
+
 public:
+
     Ovni(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs);
 
     ~Ovni();
@@ -71,6 +78,10 @@ public:
     bool comprobarColision(Circular &c);
 
     virtual void cambiarEstado(int nuevoEstado);
+
+    double network2Radianes(double salida);
+
+    double direccionSegura(sf::CircleShape ovni,sf::Vector2f posicionSegura, std::vector<Asteroide> v);
 };
 
 

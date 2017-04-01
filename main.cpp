@@ -414,6 +414,7 @@ void comprobarMuerteAsteroides(std::vector<Asteroide> &asteroides) {
 }
 
 Estado tratarJuego(Estado estado) {
+
     puntuacion = 0;
 
     sf::Text texto;
@@ -476,9 +477,19 @@ Estado tratarJuego(Estado estado) {
     opcionNo.setPosition(
             configuracionGlobal.resolucion.x / 2.0f + ajustar_w(60u) - opcionNo.getLocalBounds().width / 2.0f,
             configuracionGlobal.resolucion.y / 2.0f + ajustar_h(30u));
+
     enum OpcionSalir {
         SI, NO
     };
+    //Easter egg
+    bool NESI = false;
+    clock_t tiempo;
+
+    sf::Text tNESI;
+    inicializaTexto(tNESI, ajustar_h(30u));
+    tNESI.setString("NOBODY EXPECTS THE SPANISH INQUISITION");
+    tNESI.setPosition(sf::Vector2f((resolucion.x - tNESI.getLocalBounds().width) / 2.0f,
+                                   resolucion.y - tNESI.getLocalBounds().height - ajustar_h(20)));
     OpcionSalir seleccionSalir = NO;
     //// Bucle principal
     while (true) {
@@ -505,6 +516,10 @@ Estado tratarJuego(Estado estado) {
         if (ovni->getEstado() == MUERTO && !ovniElegido) {
             ovniElegido = true;
             if (valorAleatorio() < probabilidadOvniInt) {
+                if(configuracionGlobal.color()== sf::Color::Red){
+                    NESI = true;
+                    tiempo = clock();
+                }
                 ovni = &ovniInteligente;
             } else {
                 ovni = &ovniNormal;
@@ -551,16 +566,22 @@ Estado tratarJuego(Estado estado) {
         }
 
         if (pausarJuego) {
+
+            sf::Transform tPausa;
             if (seleccionSalir == SI) {
-                // selecciona el Si con una navecita
+                tPausa.translate({opcionSi.getPosition().x - ajustar_w(30),  opcionSi.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u),ajustar_w(20u));
+
             } else {
-                // selecciona el No con una navecita
+                tPausa.translate({opcionNo.getPosition().x - ajustar_w(30),  opcionNo.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u),ajustar_w(20u));
             }
             ventana.draw(cuadroSalir1);
             ventana.draw(cuadroSalir2);
             ventana.draw(textoSalir);
             ventana.draw(opcionSi);
             ventana.draw(opcionNo);
+            ventana.draw(poligono,tPausa);
             ventana.display();
         } else {
             if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_izquierda)) {
@@ -589,6 +610,12 @@ Estado tratarJuego(Estado estado) {
             ventana.draw(opcion1);
             ventana.draw(punt);
 
+            if(NESI){
+                if((clock() - tiempo) / (double) CLOCKS_PER_SEC > 4){
+                    NESI = false;
+                }
+                ventana.draw(tNESI);
+            }
             //dibujar vidas
 
             for (int i = 0; i < nave.getVidas(); i++) {
@@ -640,11 +667,13 @@ Estado tratarGameOver(Estado estado) {
     inicializaTexto(opcion1, ajustar_h(30u));
     opcion1.setString("ACEPTAR");
     opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - ajustar_w(5),
-                                     resolucion.y - opcion1.getLocalBounds().height - ajustar_h(5)));
+                                     resolucion.y - opcion1.getLocalBounds().height - ajustar_h(20)));
 
-    sf::RectangleShape indicador({opcion1.getLocalBounds().height,opcion1.getLocalBounds().height});
-    indicador.setPosition({opcion1.getPosition().x - indicador.getLocalBounds().width - ajustar_w(10),
-                           opcion1.getPosition().y});
+
+    sf::Transform t;
+    t.translate({opcion1.getPosition().x - ajustar_w(30),  opcion1.getPosition().y + ajustar_h(20u)})
+            .scale(ajustar_h(35u),ajustar_w(20u));
+
 
     float altura = resolucion.y / 3.0f;
 
@@ -776,7 +805,7 @@ Estado tratarGameOver(Estado estado) {
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
-            ventana.draw(indicador);
+            ventana.draw(poligono,t);
             ventana.draw(Snombre);
             nombre.setString(nombre_introducido);
             ventana.draw(nombre);
@@ -831,11 +860,11 @@ Estado tratarPuntuaciones(Estado estado) {
     opcion1.setString("ACEPTAR");
     opcion1.setCharacterSize(ajustar_h(30u));
     opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - ajustar_w(5),
-                                     resolucion.y - opcion1.getLocalBounds().height - ajustar_h(5)));
+                                     resolucion.y - opcion1.getLocalBounds().height - ajustar_h(20)));
 
-    sf::RectangleShape indicador({opcion1.getLocalBounds().height,opcion1.getLocalBounds().height});
-    indicador.setPosition({opcion1.getPosition().x - indicador.getLocalBounds().width - ajustar_w(10),
-                           opcion1.getPosition().y});
+    sf::Transform t;
+    t.translate({opcion1.getPosition().x - ajustar_w(30),  opcion1.getPosition().y + ajustar_h(20u)})
+            .scale(ajustar_h(35u),ajustar_w(20u));
 
     while (true) {
         sf::Event event;
@@ -855,7 +884,7 @@ Estado tratarPuntuaciones(Estado estado) {
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
-            ventana.draw(indicador);
+            ventana.draw(poligono, t);
 
             for (unsigned int i = 0; i < punts.size(); i++) {
                 ventana.draw(punts[i]);
@@ -1019,6 +1048,9 @@ Estado tratarOpciones(Estado estado) {
     configuracionGlobal.resolucion = resoluciones[resId];
     escribeConfiguracion(configuracionGlobal);
     csonido.setVolumen(configuracionGlobal.volumen);
+    for (int i = 0; i < poligono.getVertexCount(); i++) {
+        poligono[i].color = configuracionGlobal.color();
+    }
     inicializaVentana();
     return MENU;
 }
@@ -1073,14 +1105,8 @@ Estado tratarControles(Estado estado){
     float offsetVertical = texto.getPosition().y + texto.getLocalBounds().height + ajustar_h(30u);
 
     for (unsigned int i = 0; i < OPCIONES; i++) {
-        get<0>(opciones[i]).setFont(fuente);
-        get<1>(opciones[i]).setFont(fuente);
-
-        get<0>(opciones[i]).setCharacterSize(ajustar_h(30u));
-        get<1>(opciones[i]).setCharacterSize(ajustar_h(30u));
-
-        get<0>(opciones[i]).setFillColor(configuracionGlobal.color());
-        get<1>(opciones[i]).setFillColor(configuracionGlobal.color());
+        inicializaTexto(get<0>(opciones[i]), ajustar_h(30u));
+        inicializaTexto(get<1>(opciones[i]), ajustar_h(30u));
 
         get<0>(opciones[i]).setString(get<0>(textos[i]));
         get<1>(opciones[i]).setString(get<1>(textos[i]));
