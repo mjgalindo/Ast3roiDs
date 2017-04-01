@@ -4,7 +4,7 @@
 neural::Network redNormal(12, 1, {24});
 
 Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
-        Circular({0, 0}, 15 * limitesPantalla.y / (float) RESOLUCION_BASE.y), color(color), cs(cs) {
+        Circular({0, 0}, 15 * ratio(limitesPantalla)), color(color), cs(cs) {
 
     estado = MUERTO;
 
@@ -36,8 +36,8 @@ Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs)
     punto.setPrimitiveType(sf::LineStrip);
     punto.resize(2);
     punto[0].position = {0.0f, 0.0f};
-    punto[1].position = {1.0f * limitesPantalla.y / (float) RESOLUCION_BASE.y,
-                         1.0f * limitesPantalla.y / (float) RESOLUCION_BASE.y};
+    punto[1].position = {1.0f * ratio(limitesPantalla),
+                         1.0f * ratio(limitesPantalla)};
     punto[0].color = color;
     punto[1].color = color;
     recienDestruida = true;
@@ -99,7 +99,7 @@ vector<Asteroide *> Ovni::asteroideMasCercano(sf::Vector2f posicion, vector<Aste
     return masCercanos;
 }
 
-float Ovni::getDireccion() {
+double Ovni::getDireccion() {
     return direccion;
 }
 
@@ -114,7 +114,7 @@ int Ovni::getPuntuacion() const {
 void Ovni::disparar() {
     if (estado == VIVO) {
         if (num_disparos < MAX_DISPAROS) {
-            disparos[num_disparos] = Disparo(posicion, direccion, limites, color);
+            disparos[num_disparos] = Disparo(posicion, (float) direccion, limites, color);
             disparos[num_disparos].setDireccion(anguloAleatorio());
             num_disparos++;
         }
@@ -129,14 +129,14 @@ void Ovni::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         target.draw(poligono, t);
     } else if (estado == EXP1) {
         sf::Transform t0, t1, t2, t3, t4, t5, t6, t7;
-        t0.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion0);
-        t1.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion1);
-        t2.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion2);
-        t3.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion3);
-        t4.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion4);
-        t5.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion5);
-        t6.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion6);
-        t7.rotate(direccion * (180.0f / 3.14f), posicion).translate(posicion7);
+        t0.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion0);
+        t1.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion1);
+        t2.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion2);
+        t3.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion3);
+        t4.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion4);
+        t5.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion5);
+        t6.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion6);
+        t7.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion7);
 
 
         target.draw(punto, t0);
@@ -154,10 +154,10 @@ void Ovni::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     }
 }
 
-void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
+void Ovni::mover(std::vector<Asteroide> &astds, Triangular &nave) {
     if (estado == VIVO) {
         std::uniform_real_distribution<float> distributionGirar(0, 1);
-        vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, v);
+        vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion, astds);
         vector<double> entradasRed;
         if (asteroidePeligroso.size() == 3) {
             entradasRed = {asteroidePeligroso[0]->getPosicion().x - posicion.x,
@@ -216,32 +216,30 @@ void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
         /*if (valorAleatorio() < 0.0055) {
             direccion = anguloAleatorio();
         }*/
-        posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
+        posicion.x += VELOCIDAD * cos(direccion) * ratio(limites);
         if (posicion.x - 1 >= limites.x) {
             posicion.x -= limites.x;
         } else if (posicion.x + 1 <= 0.0) {
             posicion.x += limites.x;
         }
 
-        posicion.y += VELOCIDAD * sin(direccion) * limites.y / (float) RESOLUCION_BASE.y;
+        posicion.y += VELOCIDAD * sin(direccion) * ratio(limites);
         if (posicion.y - 1 >= limites.y) {
             posicion.y -= limites.y;
         } else if (posicion.y + 1 <= 0.0) {
             posicion.y += limites.y;
         }
 
-        if (num_disparos<2 && enteroAleatorio(0, 100)==0) {
+        if (num_disparos < MAX_DISPAROS && enteroAleatorio(0, 100) == 0) {
             disparar();
         }
 
         //Colision del ovni con un asteroide
-        for (int i = 0; i < v.size(); i++) {
-            if (v[i].estado == MOVIMIENTO and comprobarColision(v[i])) {
+        for (int i = 0; i < astds.size(); i++) {
+            if (astds[i].estado == MOVIMIENTO and comprobarColision(astds[i])) {
                 cambiarEstado(EXP1);
                 //Destruir asteroide, dividirlo o lo que sea....
-                v[i].gestionarDestruccion(v);
-                v.erase(v.begin() + i);
-                i--;
+                astds[i].gestionarDestruccion(astds);
             }
         }
 
@@ -255,22 +253,21 @@ void Ovni::mover(std::vector<Asteroide> &v, Triangular &n) {
                 continue;
             }
 
-            //Se comprueba el impacto de los disparos
-            if ((n.getEstado() == REPOSO || n.getEstado() == ACELERANDO) && disparos[i].comprobarColision(n)) {
+            //Se comprueba el impacto de los disparos con la nave
+            if ((nave.getEstado() == REPOSO || nave.getEstado() == ACELERANDO) && disparos[i].comprobarColision(nave)) {
                 recuperarDisparo(i);
                 i--;
-                n.cambiarEstado(DESTRUIDA);
+                nave.cambiarEstado(DESTRUIDA);
                 continue;
             }
+            // Y con los asteroides
+            for (int j = 0; j < num_disparos; j++) {
+                if (disparos[j].comprobarColision(astds[i])) {
+                    recuperarDisparo(j);
 
-            for (int j = 0; j < v.size(); j--) {
-                if (disparos[i].comprobarColision(v[j])) {
-                    recuperarDisparo(i);
-                    i--;
                     //Destruir asteroide, dividirlo o lo que sea....
-                    v[j].gestionarDestruccion(v);
-                    v.erase(v.begin() + j);
-                    j--;
+                    astds[i].gestionarDestruccion(astds);
+                    break;
                 }
             }
         }
@@ -332,10 +329,10 @@ void Ovni::cambiarEstado(int nuevoEstado) {
             if (rand() % 200 == 0) {
                 estado = VIVO;
                 if (valorAleatorio() < 0.5) {
-                    posicion = {30.0f * (limites.x / (float) RESOLUCION_BASE.x), valorAleatorio(0, limites.y)};
+                    posicion = {30.0f * ratio(limites), valorAleatorio(0, limites.y)};
                 } else {
                     std::uniform_real_distribution<float> distributionX(0, limites.x);
-                    posicion = {valorAleatorio(0, limites.x), 30.0f * (limites.y / (float) RESOLUCION_BASE.y)};
+                    posicion = {valorAleatorio(0, limites.x), 30.0f * ratio(limites)};
                 }
                 direccion = anguloAleatorio();
                 num_disparos = 0;

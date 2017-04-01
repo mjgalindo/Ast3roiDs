@@ -16,4 +16,8 @@ static std::vector<sf::Vector2u> resolucionesValidas() {
     return validas;
 }
 
+static float ratio(sf::Vector2u resolucion1, sf::Vector2u resolucion2 = RESOLUCION_BASE) {
+    return resolucion1.y / (float) resolucion2.y;
+}
+
 #endif //AST3ROIDS_CONSTANTESGLOBALES_HPP

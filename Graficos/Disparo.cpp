@@ -55,7 +55,7 @@ void Disparo::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 
     sf::Transform t;
     t.rotate((float) (direccion * (180.0 / PI)), posicion).translate(posicion).scale(
-            {TAMANO * limites.x / (float) RESOLUCION_BASE.x, TAMANO * limites.y / (float) RESOLUCION_BASE.y});
+            {TAMANO * ratio(limites), TAMANO * ratio(limites)});
 
     target.draw(poligono, t);
 }
@@ -63,25 +63,25 @@ void Disparo::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 //Otros
 void Disparo::mover() {
     //Mover la nave
-    posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
+    posicion.x += VELOCIDAD * cos(direccion) * ratio(limites);
     if (posicion.x - 1 >= limites.x) {
         posicion.x -= limites.x;
     } else if (posicion.x + 1 <= 0.0) {
         posicion.x += limites.x;
     }
 
-    posicion.y += VELOCIDAD * sin(direccion) * limites.y / (float) RESOLUCION_BASE.y;
+    posicion.y += VELOCIDAD * sin(direccion) * ratio(limites);
     if (posicion.y - 1 >= limites.y) {
         posicion.y -= limites.y;
     } else if (posicion.y + 1 <= 0.0) {
         posicion.y += limites.y;
     }
 
-    distancia += VELOCIDAD;
+    distancia += VELOCIDAD * ratio(limites);
 }
 
 bool Disparo::comprobarAlcance() {
-    return distancia >= ALCANCE;
+    return distancia >= ALCANCE * ratio(limites);
 }
 
 bool Disparo::comprobarColision(Circular &c) {

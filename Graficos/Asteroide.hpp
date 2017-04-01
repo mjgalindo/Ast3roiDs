@@ -51,7 +51,7 @@ public:
     //Otros
     virtual void cambiarEstado(int nuevoEstado);
 
-    void gestionarDestruccion(std::vector<Asteroide> &v);
+    void gestionarDestruccion(std::vector<Asteroide> &astds);
 
     static void nuevosAsteroidesAleatorios(std::vector<Asteroide> &vectorAsteroides, unsigned int numAsteroides,
                                            sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) {

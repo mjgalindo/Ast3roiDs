@@ -190,7 +190,8 @@ void Asteroide::mover() {
             break;
     }
 }
-void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v) {
+
+void Asteroide::gestionarDestruccion(std::vector<Asteroide> &astds) {
     estado = EXPLOSION;
     recienDestruida = true;
     cs->reproducir(sonidoDestruccion, true);
@@ -198,20 +199,24 @@ void Asteroide::gestionarDestruccion(std::vector<Asteroide> &v) {
         case TAM_0:
             break;
         case TAM_1:
-            v.push_back(Asteroide(posicion, direccion,
-                                  {velocidad.x + valorAleatorio(0, (float)PI/2), velocidad.y + valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_0, limites, color, cs));
-            v.push_back(Asteroide(posicion, direccion,
-                                  {velocidad.x - valorAleatorio(0, (float)PI/2), velocidad.y - valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_0, limites, color, cs));
+            astds.push_back(Asteroide(posicion, direccion,
+                                      {velocidad.x + valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
+                                       velocidad.y + valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
+                                      TIPO_0, TAM_0, limites, color, cs));
+            astds.push_back(Asteroide(posicion, direccion,
+                                      {velocidad.x - valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
+                                       velocidad.y - valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
+                                      TIPO_0, TAM_0, limites, color, cs));
             break;
         case TAM_2:
-            v.push_back(Asteroide(posicion, direccion,
-                                  {velocidad.x + valorAleatorio(0, (float)PI/2), velocidad.y + valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_1, limites, color, cs));
-            v.push_back(Asteroide(posicion, direccion,
-                                  {velocidad.x - valorAleatorio(0, (float)PI/2), velocidad.y - valorAleatorio(0, (float)PI/2)},
-                                  TIPO_0, TAM_1, limites, color, cs));
+            astds.push_back(Asteroide(posicion, direccion,
+                                      {velocidad.x + valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
+                                       velocidad.y + valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
+                                      TIPO_0, TAM_1, limites, color, cs));
+            astds.push_back(Asteroide(posicion, direccion,
+                                      {velocidad.x - valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
+                                       velocidad.y - valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
+                                      TIPO_0, TAM_1, limites, color, cs));
             break;
     }
 }

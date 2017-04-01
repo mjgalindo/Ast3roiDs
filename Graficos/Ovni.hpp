@@ -16,8 +16,6 @@ protected:
     static constexpr float VELOCIDAD = 3.0;
     //Numero maximo de disparos activos
     static const int MAX_DISPAROS = 2;
-    //Tamaño del ovni
-    float radioOvni = 15.0;
     //Direccion en que se mueve el ovni
     double direccion;
 
@@ -56,7 +54,7 @@ public:
     vector<Asteroide *> asteroideMasCercano(sf::Vector2f posicion, vector<Asteroide> asteroides);
 
     //Getters
-    float getDireccion();
+    double getDireccion();
 
     sf::Vector2f getVelocidad();
 
@@ -66,7 +64,7 @@ public:
 
     void disparar();
 
-    virtual void mover(std::vector<Asteroide> &v, Triangular &n);
+    virtual void mover(std::vector<Asteroide> &astds, Triangular &nave);
 
     void recuperarDisparo(int d);
 

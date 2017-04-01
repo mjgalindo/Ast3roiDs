@@ -4,7 +4,7 @@
 //Constructor
 Nave::Nave(sf::Vector2f posicion_inicial, sf::Vector2u limitesPantalla, long int *p, sf::Color color,
            ControladorSonido *cs)
-        : Triangular(posicion_inicial, (float) -PI / 2.0f, 10 * (limitesPantalla.y / (float) RESOLUCION_BASE.y)),
+        : Triangular(posicion_inicial, (float) -PI / 2.0f, 10 * ratio(limitesPantalla)),
           color(color), cs(cs) {
 
     vs.setPrimitiveType(sf::LineStrip);
@@ -266,16 +266,15 @@ void Nave::mover(std::vector<Asteroide> &v, Circular &o) {
                     v[i].gestionarDestruccion(v);
                     continue;
                 }
-                bool detectada = false;
                 //Se comprueba el impacto de los disparos
-                for (int j = 0; j < num_disparos && !detectada; j++) {
+                for (int j = 0; j < num_disparos; j++) {
                     if (disparos[j].comprobarColision(v[i])) {
                         *puntuacion += v[i].getPuntuacion();
                         recuperarDisparo(j);
 
                         //Destruir asteroide, dividirlo o lo que sea....
                         v[i].gestionarDestruccion(v);
-                        detectada = true;
+                        break;
                     }
                 }
             }
@@ -307,9 +306,9 @@ void Nave::recuperarDisparo(int d) {
 
 void Nave::acelerar() {
     if (estado == REPOSO || estado == ACELERANDO) {
-        if (velocidad.x * velocidad.x + velocidad.y * velocidad.y < MAX_VELOCIDAD * MAX_VELOCIDAD) {
-            velocidad.x += ACELERACION * cos(direccion) * limites.x / (float) RESOLUCION_BASE.x;
-            velocidad.y += ACELERACION * sin(direccion) * limites.y / (float) RESOLUCION_BASE.y;
+        if (pow(velocidad.x, 2) + pow(velocidad.y, 2) < pow(MAX_VELOCIDAD * ratio(limites), 2)) {
+            velocidad.x += ACELERACION * cos(direccion) * ratio(limites);
+            velocidad.y += ACELERACION * sin(direccion) * ratio(limites);
         }
         cs->reproducir(SonidoAcelerar);
 
@@ -319,7 +318,7 @@ void Nave::acelerar() {
 }
 
 void Nave::frenar() {
-    if (velocidad.x * velocidad.x + velocidad.y * velocidad.y < UMBRAL * limites.x / (float) RESOLUCION_BASE.x) {
+    if (velocidad.x * velocidad.x + velocidad.y * velocidad.y < UMBRAL * ratio(limites)) {
         velocidad.x = 0;
         velocidad.y = 0;
     } else {
