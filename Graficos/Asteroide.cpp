@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Asteroide.hpp"
 
 static constexpr float tamanosReales[] = {7.25f, 12.5f, 25.0f};
