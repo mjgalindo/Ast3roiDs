@@ -1349,26 +1349,43 @@ Estado tratarCreditos(Estado estado){
     sf::Clock reloj;
     reloj.restart();
     while(opcion4.getPosition().y>0){
-        if(reloj.getElapsedTime().asMilliseconds()>150) {
-            if (opcion1.getCharacterSize()>=ajustar_h(14) && opcion1.getPosition().y + opcion1.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
-                opcion1.setCharacterSize(opcion1.getCharacterSize() - 1);
+        sf::Event event;
+        while (ventana.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    ventana.close();
+                    return EXIT;
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Escape) {
+                        return MENU;
+                    }
+                default:
+                    break;
             }
+            if (reloj.getElapsedTime().asMilliseconds() > 150) {
+                if (opcion1.getCharacterSize() >= ajustar_h(14) &&
+                    opcion1.getPosition().y + opcion1.getLocalBounds().height + resolucion.y / 6.0 < resolucion.y) {
+                    opcion1.setCharacterSize(opcion1.getCharacterSize() - 1);
+                }
 
-            if (opcion2.getCharacterSize()>=ajustar_h(14) && opcion2.getPosition().y + opcion2.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
-                opcion2.setCharacterSize(opcion2.getCharacterSize() - 1);
+                if (opcion2.getCharacterSize() >= ajustar_h(14) &&
+                    opcion2.getPosition().y + opcion2.getLocalBounds().height + resolucion.y / 6.0 < resolucion.y) {
+                    opcion2.setCharacterSize(opcion2.getCharacterSize() - 1);
+                }
+
+                if (opcion3.getCharacterSize() >= ajustar_h(14) &&
+                    opcion3.getPosition().y + opcion3.getLocalBounds().height + resolucion.y / 6.0 < resolucion.y) {
+                    opcion3.setCharacterSize(opcion3.getCharacterSize() - 1);
+                }
+
+                if (opcion4.getCharacterSize() >= ajustar_h(14) &&
+                    opcion4.getPosition().y + opcion4.getLocalBounds().height + resolucion.y / 6.0 < resolucion.y) {
+                    opcion4.setCharacterSize(opcion4.getCharacterSize() - 1);
+                }
+
+                reloj.restart();
             }
-
-            if (opcion3.getCharacterSize()>=ajustar_h(14) && opcion3.getPosition().y + opcion3.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
-                opcion3.setCharacterSize(opcion3.getCharacterSize() - 1);
-            }
-
-            if (opcion4.getCharacterSize()>=ajustar_h(14) && opcion4.getPosition().y + opcion4.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
-                opcion4.setCharacterSize(opcion4.getCharacterSize() - 1);
-            }
-
-            reloj.restart();
         }
-
         opcion1.setPosition((resolucion.x - opcion1.getLocalBounds().width) / 2,opcion1.getPosition().y-1);
         opcion2.setPosition((resolucion.x - opcion2.getLocalBounds().width) / 2,opcion2.getPosition().y-1);
         opcion3.setPosition((resolucion.x - opcion3.getLocalBounds().width) / 2,opcion3.getPosition().y-1);
