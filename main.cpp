@@ -88,6 +88,8 @@ string keyToString(sf::Keyboard::Key k);
 
 void escribeConfiguracion(Configuracion config);
 
+void comprobarMuerteAsteroides(std::vector<Asteroide> &asteroides);
+
 double ratio_alto = 1.0 / RESOLUCION_BASE.x;
 double ratio_ancho = 1.0 / RESOLUCION_BASE.y;
 
@@ -203,13 +205,13 @@ Estado tratarTitulo(Estado estado) {
     sf::Text titulo;
     sf::Text instrucciones;
 
-    inicializaTexto(titulo, ajustar_h(100u));
+    inicializaTexto(titulo, ajustar_h(100u), 2.5f);
     titulo.setString("AST3ROIDS");
     titulo.setPosition((resolucion.x - titulo.getLocalBounds().width) / 2, resolucion.y / 5);
 
     inicializaTexto(instrucciones, ajustar_h(30u));
     instrucciones.setString("<ENTER> PARA MENU");
-    instrucciones.setPosition((resolucion.x - instrucciones.getLocalBounds().width) / 2, ajustar_h(360));
+    instrucciones.setPosition((resolucion.x - instrucciones.getLocalBounds().width) / 2, ajustar_h(400));
 
     sf::Clock reloj;
     bool dibujaInstrucciones = true;
@@ -242,6 +244,7 @@ Estado tratarTitulo(Estado estado) {
             ast->mover();
             ventana.draw(*ast);
         }
+        comprobarMuerteAsteroides(asteroides);
         ovni.mover(asteroides,nave);
         ventana.draw(ovni);
         ventana.draw(titulo);
