@@ -1081,7 +1081,7 @@ bool controlValido(controles c, sf::Keyboard::Key k){
     if (HIPERESPACIO != c && configuracionGlobal.hiperespacio == k) {
         return false;
     }
-    return false;
+    return true;
 }
 
 Estado tratarControles(Estado estado){
