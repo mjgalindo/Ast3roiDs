@@ -1246,6 +1246,8 @@ Estado tratarControles(Estado estado){
             seleccionada[1].position = sf::Vector2f(
                     get<1>(opciones[seleccion]).getPosition().x +  get<1>(opciones[seleccion]).getLocalBounds().width / 3.0 + 25,
                     get<1>(opciones[seleccion]).getPosition().y +  get<1>(opciones[seleccion]).getLocalBounds().height + 4);
+            seleccionada[0].color = configuracionGlobal.color();
+            seleccionada[1].color = configuracionGlobal.color();
             ventana.draw(seleccionada);
         }
         ventana.draw(texto);
