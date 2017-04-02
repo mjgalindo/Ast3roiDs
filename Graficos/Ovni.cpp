@@ -211,6 +211,7 @@ void Ovni::mover(std::vector<Asteroide> &astds, Triangular &nave) {
                 cambiarEstado(EXP1);
                 //Destruir asteroide, dividirlo o lo que sea....
                 astds[i].gestionarDestruccion(astds);
+                break;
             }
         }
 
@@ -233,11 +234,11 @@ void Ovni::mover(std::vector<Asteroide> &astds, Triangular &nave) {
             }
             // Y con los asteroides
             for (int j = 0; j < num_disparos; j++) {
-                if (disparos[j].comprobarColision(astds[i])) {
+                if (astds[j].estado == MOVIMIENTO && disparos[i].comprobarColision(astds[j])) {
                     recuperarDisparo(j);
 
                     //Destruir asteroide, dividirlo o lo que sea....
-                    astds[i].gestionarDestruccion(astds);
+                    astds[j].gestionarDestruccion(astds);
                     break;
                 }
             }

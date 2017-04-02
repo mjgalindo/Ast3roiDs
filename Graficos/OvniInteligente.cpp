@@ -18,7 +18,6 @@ void OvniInteligente::disparar(sf::Vector2f nave) {
             float direccionDisp = atan2f(vectorDir.y, vectorDir.x);
             disparos[num_disparos] = Disparo(posicion, (float) direccion, limites, color);
             direccionDisp = direccionDisp + valorAleatorio(-error / 5, error / 5);
-            //direccionDisp = redInteligente.run(entradaRed)[0];
             disparos[num_disparos].setDireccion(direccionDisp);
             num_disparos++;
         }
@@ -26,10 +25,9 @@ void OvniInteligente::disparar(sf::Vector2f nave) {
     }
 }
 
-void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
+void OvniInteligente::mover(std::vector<Asteroide> &astds, Triangular &nave) {
     if (estado == VIVO) {
-        std::uniform_real_distribution<float> distributionGirar(0, 1);
-        direccion = direccionSegura(sf::CircleShape(radio), posicion, v);;
+        direccion = direccionSegura(sf::CircleShape(radio), posicion, astds);;
 
         posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         if (posicion.x - 1 >= limites.x) {
@@ -46,15 +44,15 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
         }
 
         if (num_disparos < 2 && enteroAleatorio(0, 100) == 0) {
-            disparar(n.posicion);
+            disparar(nave.posicion);
         }
 
         //Colision del ovni con un asteroide
-        for (int i = 0; i < v.size(); i++) {
-            if (comprobarColision(v[i])) {
+        for (int i = 0; i < astds.size(); i++) {
+            if (comprobarColision(astds[i])) {
                 cambiarEstado(EXP1);
                 //Destruir asteroide, dividirlo o lo que sea....
-                v[i].gestionarDestruccion(v);
+                astds[i].gestionarDestruccion(astds);
             }
         }
 
@@ -69,19 +67,19 @@ void OvniInteligente::mover(std::vector<Asteroide> &v, Triangular &n) {
             }
 
             //Se comprueba el impacto de los disparos
-            if ((n.getEstado() == REPOSO || n.getEstado() == ACELERANDO) && disparos[i].comprobarColision(n)) {
+            if ((nave.getEstado() == REPOSO || nave.getEstado() == ACELERANDO) && disparos[i].comprobarColision(nave)) {
                 recuperarDisparo(i);
                 i--;
-                n.cambiarEstado(DESTRUIDA);
+                nave.cambiarEstado(DESTRUIDA);
                 continue;
             }
 
-            for (int j = 0; j < v.size(); j--) {
-                if (disparos[i].comprobarColision(v[j])) {
+            for (int j = 0; j < astds.size(); j++) {
+                if (astds[j].estado == MOVIMIENTO && disparos[i].comprobarColision(astds[j])) {
                     recuperarDisparo(i);
                     i--;
                     //Destruir asteroide, dividirlo o lo que sea....
-                    v[j].gestionarDestruccion(v);
+                    astds[j].gestionarDestruccion(astds);
                     break;
                 }
             }

@@ -17,7 +17,7 @@ public:
 
     virtual int getPuntuacion() const;
 
-    void mover(std::vector<Asteroide> &v, Triangular &n);
+    void mover(std::vector<Asteroide> &astds, Triangular &nave);
 
     void disminuirError();
 };

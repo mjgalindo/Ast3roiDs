@@ -18,7 +18,7 @@
 class Nave : public sf::Drawable, public Triangular {
 private:
     //Velocidad de giro (radianes por u.t.)
-    static constexpr float V_ANGULAR = (float) (PI / 30);
+    static constexpr float V_ANGULAR = (float) (PI / 35);
     //Aceleracion (pixels por u.t.)
     static constexpr float ACELERACION = 0.3;
     //Deceleracion (porcentaje de velocidad que se conserva)
@@ -26,7 +26,7 @@ private:
     //Numero maximo de disparos activos
     static const int MAX_DISPAROS = 4;
     //Velocidad maxima
-    static const int MAX_VELOCIDAD = 8;
+    static const int MAX_VELOCIDAD = 4;
 
     //Posicion inicial
     sf::Vector2f pos_inicial;
