@@ -120,7 +120,8 @@ void inicializaVentana() {
         ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Fullscreen, settings);
         ventana.setMouseCursorVisible(false);
     } else {
-        ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
+        ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Titlebar | sf::Style::Close,
+                       settings);
         ventana.setMouseCursorVisible(true);
     }
     ventana.setFramerateLimit(60);
