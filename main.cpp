@@ -131,7 +131,7 @@ void inicializaVentana() {
     ventana.setVerticalSyncEnabled(true);
     ventana.requestFocus();
     sf::Image imagen;
-    imagen.loadFromFile("Recursos/Icono3.png");
+    imagen.loadFromFile("Recursos/Icono.png");
     ventana.setIcon(imagen.getSize().x, imagen.getSize().y, imagen.getPixelsPtr() );
 }
 
