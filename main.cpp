@@ -1197,31 +1197,31 @@ Estado tratarControles(Estado estado){
 
         }
 
-        if (configuracionGlobal.girar_izquierda>=0 && configuracionGlobal.girar_izquierda<25){
+        if (configuracionGlobal.girar_izquierda>=0 && configuracionGlobal.girar_izquierda<26){
             get<1>(textos[GIRAR_IZQUIERDA]) = configuracionGlobal.girar_izquierda - sf::Keyboard::A + 'A';
         }
         else{
             get<1>(textos[GIRAR_IZQUIERDA]) = keyToString(configuracionGlobal.girar_izquierda);
         }
-        if (configuracionGlobal.girar_derecha>=0 && configuracionGlobal.girar_derecha<25){
+        if (configuracionGlobal.girar_derecha>=0 && configuracionGlobal.girar_derecha<26){
             get<1>(textos[GIRAR_DERECHA]) = configuracionGlobal.girar_derecha - sf::Keyboard::A + 'A';
         }
         else{
             get<1>(textos[GIRAR_DERECHA]) = keyToString(configuracionGlobal.girar_derecha);
         }
-        if (configuracionGlobal.acelerar>=0 && configuracionGlobal.acelerar<25){
+        if (configuracionGlobal.acelerar>=0 && configuracionGlobal.acelerar<26){
             get<1>(textos[ACELERAR]) = configuracionGlobal.acelerar - sf::Keyboard::A + 'A';
         }
         else{
             get<1>(textos[ACELERAR]) = keyToString(configuracionGlobal.acelerar);
         }
-        if (configuracionGlobal.disparar>=0 && configuracionGlobal.disparar<25){
+        if (configuracionGlobal.disparar>=0 && configuracionGlobal.disparar<26){
             get<1>(textos[DISPARAR]) = configuracionGlobal.disparar - sf::Keyboard::A + 'A';
         }
         else{
             get<1>(textos[DISPARAR]) = keyToString(configuracionGlobal.disparar);
         }
-        if (configuracionGlobal.hiperespacio>=0 && configuracionGlobal.hiperespacio<25){
+        if (configuracionGlobal.hiperespacio>=0 && configuracionGlobal.hiperespacio<26){
             get<1>(textos[HIPERESPACIO]) = configuracionGlobal.hiperespacio - sf::Keyboard::A + 'A';
         }
         else{
@@ -1313,6 +1313,7 @@ string keyToString(sf::Keyboard::Key k) {
     }else if(k==sf::Keyboard::Down){
         return "Down";
     }
+    return  to_string(k);
 }
 
 Estado tratarCreditos(Estado estado){
