@@ -6,7 +6,7 @@
 
 #include "../Estados.hpp"
 #include "../Colisiones.hpp"
-#include "Circular.hpp"
+#include "Asteroide.hpp"
 #include "Disparo.hpp"
 #include "../neural/include/neural/Network.h"
 
