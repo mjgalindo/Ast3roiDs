@@ -24,7 +24,7 @@ struct Configuracion {
     unsigned int volumen;
     unsigned int antialiasing;
     int colorId;
-    array<sf::Color, 4u> COLORES = {sf::Color::White, sf::Color::Red, sf::Color::Green, sf::Color::Blue};
+    array<sf::Color, 4u> COLORES = {sf::Color::White, sf::Color::Red, sf::Color::Green, sf::Color::Cyan};
 
     sf::Keyboard::Key girar_izquierda = sf::Keyboard::Left;
     sf::Keyboard::Key girar_derecha = sf::Keyboard::Right;
