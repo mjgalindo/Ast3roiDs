@@ -647,6 +647,7 @@ Estado tratarJuego(Estado estado) {
             if(puntuacion-vidas_puntuacion>=10000){
                 vidas_puntuacion += 10000;
                 nave.setVidas(nave.getVidas()+1);
+                csonido.reproducir(ControladorSonido::VIDA_EXTRA);
             }
 
             ventana.display();
