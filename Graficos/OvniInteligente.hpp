@@ -20,6 +20,8 @@ public:
     void mover(std::vector<Asteroide> &astds, Triangular &nave);
 
     void disminuirError();
+
+    double direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, std::vector<Asteroide> v);
 };
 
 
