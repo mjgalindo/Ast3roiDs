@@ -232,8 +232,9 @@ void Ovni::mover(std::vector<Asteroide> &astds, Triangular &nave) {
                 nave.cambiarEstado(DESTRUIDA);
                 continue;
             }
+
             // Y con los asteroides
-            for (int j = 0; j < num_disparos; j++) {
+            for (int j = 0; j < astds.size(); j++) {
                 if (astds[j].estado == MOVIMIENTO && disparos[i].comprobarColision(astds[j])) {
                     recuperarDisparo(j);
 
