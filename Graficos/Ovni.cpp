@@ -333,7 +333,7 @@ double Ovni::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, 
         float distanciaRecorrida = 0.0f;
         while (distanciaRecorrida < radioPeligro && !choque) {
             //MOVER OVNI Y COMPROBAR QUE CHOCA
-            ovni.move({vMax * (float) cos(direcciones.at(i)), vMax * (float) sin(direcciones.at(i))});
+            ovni.move({vMax * (float) cos(direcciones.at(i))*ratio(limites), vMax * (float) sin(direcciones.at(i)*ratio(limites))});
             sf::Vector2f posicionOvni = ovni.getPosition();
             // Evita los limites del espacio
             if (posicionOvni.x+1 <= 0.0) {
