@@ -179,9 +179,11 @@ int main() {
                 break;
             case CONTROLES:
                 estado_actual = tratarControles(estado_actual);
+                ventana.setActive(true);
                 break;
             case OPCIONES:
                 estado_actual = tratarOpciones(estado_actual);
+                ventana.setActive(true);
                 break;
             case CREDITOS:
                 estado_actual = tratarCreditos(estado_actual);
@@ -266,7 +268,7 @@ Estado tratarMenu(Estado estado) {
     sf::Text opcion6;
 
 
-    inicializaTexto(texto, ajustar_h(80u));
+    inicializaTexto(texto, ajustar_h(80u), 1.5);
     texto.setString("MENU");
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 10.0f});
 
