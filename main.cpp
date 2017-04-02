@@ -430,13 +430,9 @@ Estado tratarJuego(Estado estado) {
     sf::Text texto;
     sf::Text opcion1;
     sf::Text punt;
-    sf::Text vidas;
 
     inicializaTexto(punt, ajustar_h(30u));
     punt.setPosition({ajustar_w(20.0f), ajustar_h(10.0f)});
-
-    inicializaTexto(vidas, ajustar_h(30u));
-    vidas.setPosition({ajustar_w(20.0f), ajustar_h(45.0f)});
 
     shared_ptr<bool> jugando(new bool(true));
     shared_ptr<bool> silencioMusica(new bool(false));
@@ -503,11 +499,10 @@ Estado tratarJuego(Estado estado) {
     OpcionSalir seleccionSalir = NO;
     //// Bucle principal
     while (true) {
-        if (nave.getVidas() < 0) {
+        if (*jugando and nave.getVidas() < 0) {
             *jugando = false;
             *silencioMusica = true;
             musica.join();
-            return GAME_OVER;
         }
 
         if (asteroides.size() == 0) {
@@ -548,30 +543,34 @@ Estado tratarJuego(Estado estado) {
                 ventana.close();
                 return EXIT;
             case sf::Event::KeyPressed:
-                if (event.key.code == configuracionGlobal.disparar) {
-                    nave.disparar();
-                } else if (event.key.code == sf::Keyboard::M) {
-                    (*silencioMusica) = !*silencioMusica;
-                } else if (event.key.code == sf::Keyboard::Escape) {
-                    pausarJuego = !pausarJuego;
-                    *silencioMusica = pausarJuego;
-                    seleccionSalir = NO;
-                } else if (pausarJuego and event.key.code == sf::Keyboard::Return) {
-                    if (seleccionSalir == NO) {
-                        // Continuar jugando
-                        pausarJuego = false;
-                        *silencioMusica = false;
-                    } else {
-                        // Salir del juego
-                        *silencioMusica = true;
-                        *jugando = false;
-                        musica.join();
-                        return GAME_OVER;
+                if (*jugando) {
+                    if (event.key.code == configuracionGlobal.disparar) {
+                        nave.disparar();
+                    } else if (event.key.code == sf::Keyboard::M) {
+                        (*silencioMusica) = !*silencioMusica;
+                    } else if (event.key.code == sf::Keyboard::Escape) {
+                        pausarJuego = !pausarJuego;
+                        *silencioMusica = pausarJuego;
+                        seleccionSalir = NO;
+                    } else if (pausarJuego and event.key.code == sf::Keyboard::Return) {
+                        if (seleccionSalir == NO) {
+                            // Continuar jugando
+                            pausarJuego = false;
+                            *silencioMusica = false;
+                        } else {
+                            // Salir del juego
+                            *silencioMusica = true;
+                            *jugando = false;
+                            musica.join();
+                            return GAME_OVER;
+                        }
+                    } else if (pausarJuego and event.key.code == sf::Keyboard::Left) {
+                        seleccionSalir = SI;
+                    } else if (pausarJuego and event.key.code == sf::Keyboard::Right) {
+                        seleccionSalir = NO;
                     }
-                } else if (pausarJuego and event.key.code == sf::Keyboard::Left) {
-                    seleccionSalir = SI;
-                } else if (pausarJuego and event.key.code == sf::Keyboard::Right) {
-                    seleccionSalir = NO;
+                } else {
+                    return GAME_OVER;
                 }
             default:
                 break;
@@ -596,18 +595,21 @@ Estado tratarJuego(Estado estado) {
             ventana.draw(poligono, tPausa);
             ventana.display();
         } else {
-            if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_izquierda)) {
-                nave.rotarIzda();
+            if (*jugando) {
+                if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_izquierda)) {
+                    nave.rotarIzda();
+                }
+                if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_derecha)) {
+                    nave.rotarDcha();
+                }
+                if (sf::Keyboard::isKeyPressed(configuracionGlobal.acelerar)) {
+                    nave.acelerar();
+                }
+                if (sf::Keyboard::isKeyPressed(configuracionGlobal.hiperespacio)) {
+                    nave.hiperEspacio();
+                }
             }
-            if (sf::Keyboard::isKeyPressed(configuracionGlobal.girar_derecha)) {
-                nave.rotarDcha();
-            }
-            if (sf::Keyboard::isKeyPressed(configuracionGlobal.acelerar)) {
-                nave.acelerar();
-            }
-            if (sf::Keyboard::isKeyPressed(configuracionGlobal.hiperespacio)) {
-                nave.hiperEspacio();
-            }
+
             ovni->mover(asteroides, nave);
             nave.mover(asteroides, *ovni);
             nave.frenar();
@@ -615,7 +617,6 @@ Estado tratarJuego(Estado estado) {
             comprobarMuerteAsteroides(asteroides);
             punt.setString(std::to_string(puntuacion));
             punt.setString(std::to_string(puntuacion));
-            vidas.setString(std::to_string(nave.getVidas()));
 
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
@@ -631,7 +632,6 @@ Estado tratarJuego(Estado estado) {
             //dibujar vidas
 
             for (int i = 0; i < nave.getVidas(); i++) {
-
                 sf::Transform t;
                 t.translate({ajustar_w(20.0f) * (i + 1), ajustar_h(60.0f)})
                         .scale(ajustar_h(10u), ajustar_w(6u)).rotate((float) (-PI / 2.0 * (180.0 / 3.14)));
@@ -649,7 +649,7 @@ Estado tratarJuego(Estado estado) {
                 ventana.draw(*ast);
             }
 
-            if (reaparicion_ok && nave.getEstado() == REAPARECIENDO) {
+            if (*jugando && reaparicion_ok && nave.getEstado() == REAPARECIENDO) {
                 nave.cambiarEstado(REPOSO);
             }
 
@@ -661,7 +661,7 @@ Estado tratarJuego(Estado estado) {
 
             ventana.display();
             reloj.restart();
-            nave.cambiarEstado(nave.getEstado());
+            if (*jugando) nave.cambiarEstado(nave.getEstado());
             ovni->cambiarEstado(ovni->getEstado());
             if (ovni->getEstado() == VIVO) {
                 ovniElegido = false;
