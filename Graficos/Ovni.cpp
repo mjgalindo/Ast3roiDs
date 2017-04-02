@@ -333,24 +333,21 @@ double Ovni::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, 
         float distanciaRecorrida = 0.0f;
         while (distanciaRecorrida < radioPeligro && !choque) {
             //MOVER OVNI Y COMPROBAR QUE CHOCA
-            ovni.move({vMax * (float) cos(direcciones.at(i)), vMax * (float) -sin(direcciones.at(i))});
+            ovni.move({vMax * (float) cos(direcciones.at(i)), vMax * (float) sin(direcciones.at(i))});
             sf::Vector2f posicionOvni = ovni.getPosition();
             // Evita los limites del espacio
-            if (posicionOvni.x < 0) {
-                posicionOvni.x = limites.x;
-                ovni.setPosition(posicionOvni);
-            } else if (posicionOvni.x > limites.x) {
-                posicionOvni.x = 0;
-                ovni.setPosition(posicionOvni);
+            if (posicionOvni.x+1 <= 0.0) {
+                posicionOvni.x += limites.x;
+            } else if (posicionOvni.x-1 >= limites.x) {
+                posicionOvni.x -= limites.x;
             }
 
-            if (posicionOvni.y < 0) {
-                posicionOvni.y = limites.y;
-                ovni.setPosition(posicionOvni);
-            } else if (posicionOvni.y > limites.y) {
-                posicionOvni.y = 0;
-                ovni.setPosition(posicionOvni);
+            if (posicionOvni.y+1 <= 0,0) {
+                posicionOvni.y += limites.y;
+            } else if (posicionOvni.y-1 >= limites.y) {
+                posicionOvni.y -= limites.y;
             }
+            ovni.setPosition(posicionOvni);
             for (auto ast = v.begin(); ast != v.end(); ++ast) {
                 ast->mover();
                 if (colisionCirculos(posicionOvni, ovni.getRadius(), ast->getPosicion(), ast->getRadio())) {
