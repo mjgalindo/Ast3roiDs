@@ -14,7 +14,7 @@ long int mejorDistancia = 0;
 vector<double> mejoresPesos;
 
 // Inicializa una red neuronal nueva
-neural::Network red(12, 1, {24});
+neural::Network red(12, 1, {9,3});
 vector<double*> pesos = red.getWeights();
 
 
@@ -37,11 +37,14 @@ vector<Asteroide *> asteroideMasCercano(sf::Vector2f posicion) {
     double distanciaMenor1 = 99999999.0;
     double distanciaMenor2 = 99999999.0;
     double distanciaMenor3 = 99999999.0;
-    Asteroide *masCercano1 = 0, *masCercano2 = 0, *masCercano3 = 0;
+    double distanciaMenor4 = 99999999.0;
+    Asteroide *masCercano1 = 0, *masCercano2 = 0, *masCercano3 = 0, *masCercano4 = 0;;
     vector<Asteroide *> masCercanos;
     for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
         double distanciatmp = distancia(ast->getPosicion(), posicion);
         if (distanciatmp < distanciaMenor1) {
+            distanciaMenor4 = distanciaMenor3;
+            masCercano4 = masCercano3;
             distanciaMenor3 = distanciaMenor2;
             masCercano3 = masCercano2;
             distanciaMenor2 = distanciaMenor1;
@@ -49,18 +52,26 @@ vector<Asteroide *> asteroideMasCercano(sf::Vector2f posicion) {
             distanciaMenor1 = distanciatmp;
             masCercano1 = ast.base();
         } else if(distanciatmp < distanciaMenor2) {
+            distanciaMenor4 = distanciaMenor3;
+            masCercano4 = masCercano3;
             distanciaMenor3 = distanciaMenor2;
             masCercano3 = masCercano2;
             distanciaMenor2 = distanciatmp;
             masCercano2 = ast.base();
         } else if(distanciatmp < distanciaMenor3) {
+            distanciaMenor4 = distanciaMenor3;
+            masCercano4 = masCercano3;
             distanciaMenor3 = distanciatmp;
             masCercano3 = ast.base();
+        } else if(distanciatmp < distanciaMenor4) {
+            distanciaMenor4 = distanciatmp;
+            masCercano4 = ast.base();
         }
     }
     masCercanos.push_back(masCercano1);
     masCercanos.push_back(masCercano2);
     masCercanos.push_back(masCercano3);
+    masCercanos.push_back(masCercano4);
     return masCercanos;
 }
 
@@ -100,7 +111,7 @@ vector<vector<double>> completar(vector<vector<double>> aux) {
     while (aux.size() < 8) {
         vector<double> p1;
         for (unsigned int j = 0; j < pesos.size(); j++) {
-            p1.push_back(valorAleatorio(-1.0f, 1.0f));
+            p1.push_back(valorAleatorio(-5.0f, 5.0f));
         }
         aux.push_back(p1);
     }
@@ -130,11 +141,21 @@ void sigGeneracion(long int distancia[8]) {
                 mayoresIndice[2] = k;
             }
         }
+
         for(int k = 0; k < 3; k++) {
             aux.push_back(poblacion[mayoresIndice[k]]);
             cout << mayorDistancia[k] << " ";
         }
         cout << mayoresIndice[0] << endl;
+
+        ofstream f_hist_out("history.dat", fstream::app);
+        if (f_hist_out.good()) {
+            for(int k = 0; k < 3; k++) {
+                f_hist_out << mayorDistancia[k] << " ";
+            }
+            f_hist_out << mayoresIndice[0] << endl;
+        }
+        f_hist_out.close();
 
         if(mayorDistancia[0] > mejorDistancia) {
             mejorDistancia = mayorDistancia[0];
@@ -186,7 +207,7 @@ int main() {
     else{
         for(unsigned int i = 0; i < 8; i++) {
             for(unsigned int j = 0; j < pesos.size(); j++) {
-                poblacion[i].push_back(valorAleatorio(-1.0f,1.0f));
+                poblacion[i].push_back(valorAleatorio(-5.0f,5.0f));
             }
         }
     }
@@ -210,7 +231,7 @@ int main() {
     // (descomentando las dos lineas siguientes y poniendo el nombre correcto)
     //string inputRed = "entrenado.nn";
     //red = red.read(inputRed);
-    unsigned int numAsteroides = 12;
+    unsigned int numAsteroides = 10;
     Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White,NULL);
     int reinicios = 1;
     unsigned int iteraciones = 0;
