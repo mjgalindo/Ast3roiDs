@@ -186,9 +186,7 @@ double Ovni::network2Radianes(double salida) {
 
 void Ovni::mover(std::vector<Asteroide> &astds, Triangular &nave) {
     if (estado == VIVO) {
-        std::uniform_real_distribution<float> distributionGirar(0, 1);
         direccion = direccionSegura(sf::CircleShape(radio), posicion, astds);
-        posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         posicion.x += VELOCIDAD * cos(direccion) * ratio(limites);
         if (posicion.x - 1 >= limites.x) {
             posicion.x -= limites.x;
