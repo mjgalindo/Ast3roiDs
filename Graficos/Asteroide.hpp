@@ -72,7 +72,8 @@ public:
 
             vectorAsteroides.emplace_back(
                     sf::Vector2f((float) posX, (float) posY),
-                    direccion, sf::Vector2f(velocidad * (float) cos(direccion), velocidad * (float) sin(direccion)),
+                    anguloAleatorio(),
+                    sf::Vector2f(velocidad * (float) cos(direccion), velocidad * (float) sin(direccion)),
                     (Tipo) enteroAleatorio(0, 2), TAM_2, limitesPantalla, color, cs);
         }
 
