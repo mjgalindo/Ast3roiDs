@@ -1257,7 +1257,6 @@ Estado tratarControles(Estado estado){
         ventana.display();
     }
     escribeConfiguracion(configuracionGlobal);
-    inicializaVentana();
     return MENU;
 }
 Configuracion leeConfiguracion() {
