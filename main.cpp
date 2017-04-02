@@ -127,6 +127,9 @@ void inicializaVentana() {
     ventana.setKeyRepeatEnabled(false);
     ventana.setVerticalSyncEnabled(true);
     ventana.requestFocus();
+    sf::Image imagen;
+    imagen.loadFromFile("Recursos/Icono.png");
+    ventana.setIcon(imagen.getSize().x, imagen.getSize().y, imagen.getPixelsPtr() );
 }
 
 sf::Font fuenteAsteroids;
