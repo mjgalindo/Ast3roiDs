@@ -1330,7 +1330,7 @@ Estado tratarCreditos(Estado estado){
     inicializaTexto(opcion4, ajustar_h(30u), 1.5);
 
     string creditos1 = "JORGE ANDRES GALINDO (679155)";
-    string creditos2 = "MIGUEL JORGE GALINDO (679954)";
+    string creditos2 = "MIGUEL J. GALINDO RAMOS (679954)";
     string creditos3 = "ALEJANDRO FERNANDEZ POZA (679890)";
     string creditos4 = "ADRIAN ALEJANDRE ESCRICHE (682237)";
 
