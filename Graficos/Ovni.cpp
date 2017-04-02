@@ -186,7 +186,10 @@ double Ovni::network2Radianes(double salida) {
 
 void Ovni::mover(std::vector<Asteroide> &astds, Triangular &nave) {
     if (estado == VIVO) {
-        direccion = direccionSegura(sf::CircleShape(radio), posicion, astds);
+        float prob = valorAleatorio(0,1);
+        if(prob < 0.01) {
+            direccion = direccionSegura(sf::CircleShape(radio), posicion, astds);
+        }
         posicion.x += VELOCIDAD * cos(direccion) * ratio(limites);
         if (posicion.x - 1 >= limites.x) {
             posicion.x -= limites.x;
@@ -321,13 +324,8 @@ void Ovni::cambiarEstado(int nuevoEstado) {
 
 double Ovni::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, std::vector<Asteroide> v) {
     float vMax = VELOCIDAD;
-    float radioPeligro = 60.0f;
+    float radioPeligro = 6.0f;
     ovni.setRadius(radio);
-    vector<double> direccionesSeguras;
-    vector<sf::Vector2f> posiciones;
-    for (auto ast = v.begin(); ast != v.end(); ++ast) {
-        posiciones.push_back(ast->getPosicion());
-    }
     for (unsigned long long i = 0; i < direcciones.size(); i++) {
         ovni.setPosition(posicionSegura);
         bool choque = false;
@@ -350,7 +348,6 @@ double Ovni::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, 
             }
             ovni.setPosition(posicionOvni);
             for (auto ast = v.begin(); ast != v.end(); ++ast) {
-                ast->mover();
                 if (colisionCirculos(posicionOvni, ovni.getRadius(), ast->getPosicion(), ast->getRadio())) {
                     // Hay colision, se informa a la red y se reinicia la escena aleatoriamente
                     choque = true;
@@ -360,19 +357,9 @@ double Ovni::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, 
             distanciaRecorrida += vMax;
         }
         if (!choque) {
-            if (direcciones[i] == ultimaDireccion) {
-                return ultimaDireccion;
-            }
-            direccionesSeguras.push_back(direcciones[i]);
-        }
-        for (int j = 0; j < posiciones.size(); j++) {
-            v[j].setPosicion(posiciones[j]);
+            ultimaDireccion = direcciones[i] + valorAleatorio(-PI, PI);
+            return ultimaDireccion;
         }
     }
-    if (direccionesSeguras.size() == 0) {
-        return ultimaDireccion;
-    }
-    int elegido = enteroAleatorio(0,direccionesSeguras.size());
-    ultimaDireccion = direccionesSeguras[elegido];
-    return direccionesSeguras[elegido];
+    return ultimaDireccion;
 }

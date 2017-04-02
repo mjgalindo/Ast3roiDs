@@ -10,7 +10,8 @@ static std::vector<sf::Vector2u> resolucionesValidas() {
     std::vector<sf::VideoMode> resolucionesAceptadas = sf::VideoMode::getFullscreenModes();
     std::vector<sf::Vector2u> validas;
     for (auto resIt = resolucionesAceptadas.end() - 1; resIt >= resolucionesAceptadas.begin(); --resIt) {
-        if (resIt->height / (float) resIt->width == RESOLUCION_BASE.y / (float) RESOLUCION_BASE.x)
+        if (resIt->height >= 600 and
+            resIt->height / (float) resIt->width == RESOLUCION_BASE.y / (float) RESOLUCION_BASE.x)
             validas.push_back({resIt->width, resIt->height});
     }
     return validas;

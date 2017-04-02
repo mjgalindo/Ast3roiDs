@@ -27,7 +27,7 @@ void OvniInteligente::disparar(sf::Vector2f nave) {
 
 void OvniInteligente::mover(std::vector<Asteroide> &astds, Triangular &nave) {
     if (estado == VIVO) {
-        direccion = direccionSegura(sf::CircleShape(radio), posicion, astds);;
+        direccion = direccionSegura(sf::CircleShape(radio), posicion, astds);
 
         posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         if (posicion.x - 1 >= limites.x) {
@@ -124,4 +124,62 @@ void OvniInteligente::disminuirError() {
 
 int OvniInteligente::getPuntuacion() const {
     return 1000;
+}
+
+double OvniInteligente::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, std::vector<Asteroide> v) {
+    float vMax = VELOCIDAD;
+    float radioPeligro = 60.0f;
+    ovni.setRadius(radio);
+    vector<double> direccionesSeguras;
+    vector<sf::Vector2f> posiciones;
+    for (auto ast = v.begin(); ast != v.end(); ++ast) {
+        posiciones.push_back(ast->getPosicion());
+    }
+    for (unsigned long long i = 0; i < direcciones.size(); i++) {
+        ovni.setPosition(posicionSegura);
+        bool choque = false;
+        float distanciaRecorrida = 0.0f;
+        while (distanciaRecorrida < radioPeligro && !choque) {
+            //MOVER OVNI Y COMPROBAR QUE CHOCA
+            ovni.move({vMax * (float) cos(direcciones.at(i))*ratio(limites), vMax * (float) sin(direcciones.at(i)*ratio(limites))});
+            sf::Vector2f posicionOvni = ovni.getPosition();
+            // Evita los limites del espacio
+            if (posicionOvni.x+1 <= 0.0) {
+                posicionOvni.x += limites.x;
+            } else if (posicionOvni.x-1 >= limites.x) {
+                posicionOvni.x -= limites.x;
+            }
+
+            if (posicionOvni.y+1 <= 0,0) {
+                posicionOvni.y += limites.y;
+            } else if (posicionOvni.y-1 >= limites.y) {
+                posicionOvni.y -= limites.y;
+            }
+            ovni.setPosition(posicionOvni);
+            for (auto ast = v.begin(); ast != v.end(); ++ast) {
+                ast->mover();
+                if (colisionCirculos(posicionOvni, ovni.getRadius(), ast->getPosicion(), ast->getRadio())) {
+                    // Hay colision, se informa a la red y se reinicia la escena aleatoriamente
+                    choque = true;
+                    break;
+                }
+            }
+            distanciaRecorrida += vMax;
+        }
+        if (!choque) {
+            if (direcciones[i] == ultimaDireccion) {
+                return ultimaDireccion;
+            }
+            direccionesSeguras.push_back(direcciones[i]);
+        }
+        for (int j = 0; j < posiciones.size(); j++) {
+            v[j].setPosicion(posiciones[j]);
+        }
+    }
+    if (direccionesSeguras.size() == 0) {
+        return ultimaDireccion;
+    }
+    int elegido = enteroAleatorio(0,direccionesSeguras.size());
+    ultimaDireccion = direccionesSeguras[elegido];
+    return direccionesSeguras[elegido];
 }
