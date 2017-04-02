@@ -180,7 +180,7 @@ int main() {
         Disparo disparo(sustitutoOvni.getPosition(), salida, resolucion, sf::Color::White);
         disparo.setDireccion((float) salida);
         bool acertado = false;
-        while (!acertado && disparo.comprobarAlcance()) {
+        while (!acertado && !disparo.comprobarAlcance()) {
             disparo.mover();
             if (disparo.comprobarColision(nave)) {
                 acertado = true;
