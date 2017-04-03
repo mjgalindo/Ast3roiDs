@@ -302,7 +302,7 @@ void Ovni::cambiarEstado(int nuevoEstado) {
             }
             break;
         case MUERTO:
-            if (rand() % 200 == 0) {
+            if (rand() % 700 == 0) {
                 estado = VIVO;
                 if (valorAleatorio() < 0.5) {
                     posicion = {30.0f * ratio(limites), valorAleatorio(0, limites.y)};
