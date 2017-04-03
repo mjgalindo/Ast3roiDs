@@ -364,15 +364,6 @@ void Nave::cambiarEstado(int nuevoEstado) {
                 ciclos++;
             }
             break;
-        case REAPARECIENDO:
-            if (ciclos >= 50) {
-                estado = REPOSO;
-                cooldown = clock();
-                ciclos = 0;
-            } else {
-                ciclos++;
-            }
-            break;
         default:
             break;
     }

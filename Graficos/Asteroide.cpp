@@ -74,7 +74,7 @@ Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel,
     punto[0].color = color;
     punto[1].color = color;
     estado = MOVIMIENTO;
-    if (cs != nullptr) {
+    if (cs != NULL) {
         switch (tam) {
             case TAM_0:
                 sonidoDestruccion = ControladorSonido::EXP_0;
@@ -196,7 +196,9 @@ void Asteroide::mover() {
 void Asteroide::gestionarDestruccion(std::vector<Asteroide> &astds) {
     estado = EXPLOSION;
     recienDestruida = true;
-    cs->reproducir(sonidoDestruccion, true);
+    if (sonidoDestruccion == EXP1 || sonidoDestruccion == EXP2 || sonidoDestruccion == EXP3) {
+        cs->reproducir(sonidoDestruccion, true);
+    }
     switch (tipoTamano) {
         case TAM_0:
             break;
