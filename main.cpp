@@ -695,7 +695,7 @@ Estado tratarGameOver(Estado estado) {
     sf::Text Spuntuacion;
     sf::Text punt;
 
-    inicializaTexto(texto, ajustar_h(75u));
+    inicializaTexto(texto, ajustar_h(75u),1.5);
     texto.setString("GAME OVER");
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
 
@@ -1121,7 +1121,7 @@ Estado tratarControles(Estado estado){
     csonido = ControladorSonido(configuracionGlobal.volumen);
 
     inicializaTexto(texto, ajustar_h(75u), 1.5);
-    texto.setString("OPCIONES");
+    texto.setString("CONTROLES");
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
 
     static constexpr int OPCIONES = 6;
