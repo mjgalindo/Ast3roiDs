@@ -1358,61 +1358,42 @@ Estado tratarCreditos(Estado estado){
     inicializaTexto(opcion4, ajustar_h(30u), 1.5);
 
     string creditos1 = "JORGE ANDRES GALINDO (679155)";
-    string creditos2 = "MIGUEL J. GALINDO RAMOS (679954)";
+    string creditos2 = "MIGUEL JORGE GALINDO (679954)";
     string creditos3 = "ALEJANDRO FERNANDEZ POZA (679890)";
     string creditos4 = "ADRIAN ALEJANDRE ESCRICHE (682237)";
-
     texto.setString("CREDITOS");
+
     opcion1.setString(creditos1);
     opcion2.setString(creditos2);
     opcion3.setString(creditos3);
     opcion4.setString(creditos4);
 
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});;
-    opcion1.setPosition({(resolucion.x - opcion1.getLocalBounds().width) / 2, (float) resolucion.y});
+    opcion1.setPosition({(resolucion.x - opcion1.getLocalBounds().width) / 2, resolucion.y});
     opcion2.setPosition({(resolucion.x - opcion2.getLocalBounds().width) / 2, opcion1.getPosition().y+opcion1.getLocalBounds().height+ajustar_h(25u)});
     opcion3.setPosition({(resolucion.x - opcion3.getLocalBounds().width) / 2, opcion2.getPosition().y+opcion2.getLocalBounds().height+ajustar_h(25u)});
     opcion4.setPosition({(resolucion.x - opcion4.getLocalBounds().width) / 2, opcion3.getPosition().y+opcion3.getLocalBounds().height+ajustar_h(25u)});
 
     sf::Clock reloj;
     reloj.restart();
-    while(opcion4.getPosition().y>0){
-        sf::Event event;
-        while (ventana.pollEvent(event)) {
-            switch (event.type) {
-                case sf::Event::Closed:
-                    ventana.close();
-                    return EXIT;
-                case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Escape) {
-                        return MENU;
-                    }
-                default:
-                    break;
+    while(opcion4.getPosition().y+opcion4.getLocalBounds().height>0){
+        if(reloj.getElapsedTime().asMilliseconds()>150) {
+            if (opcion1.getCharacterSize()>=ajustar_h(20) && opcion1.getPosition().y + opcion1.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
+                opcion1.setCharacterSize(opcion1.getCharacterSize() - 1);
             }
-            if (reloj.getElapsedTime().asMilliseconds() > 150) {
-                if (opcion1.getCharacterSize() >= ajustar_h(14) &&
-                    opcion1.getPosition().y + opcion1.getLocalBounds().height + resolucion.y / 6.0 < resolucion.y) {
-                    opcion1.setCharacterSize(opcion1.getCharacterSize() - 1);
-                }
 
-                if (opcion2.getCharacterSize() >= ajustar_h(14) &&
-                    opcion2.getPosition().y + opcion2.getLocalBounds().height + resolucion.y / 6.0 < resolucion.y) {
-                    opcion2.setCharacterSize(opcion2.getCharacterSize() - 1);
-                }
-
-                if (opcion3.getCharacterSize() >= ajustar_h(14) &&
-                    opcion3.getPosition().y + opcion3.getLocalBounds().height + resolucion.y / 6.0 < resolucion.y) {
-                    opcion3.setCharacterSize(opcion3.getCharacterSize() - 1);
-                }
-
-                if (opcion4.getCharacterSize() >= ajustar_h(14) &&
-                    opcion4.getPosition().y + opcion4.getLocalBounds().height + resolucion.y / 6.0 < resolucion.y) {
-                    opcion4.setCharacterSize(opcion4.getCharacterSize() - 1);
-                }
-
-                reloj.restart();
+            if (opcion2.getCharacterSize()>=ajustar_h(20) && opcion2.getPosition().y + opcion2.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
+                opcion2.setCharacterSize(opcion2.getCharacterSize() - 1);
             }
+
+            if (opcion3.getCharacterSize()>=ajustar_h(20) && opcion3.getPosition().y + opcion3.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
+                opcion3.setCharacterSize(opcion3.getCharacterSize() - 1);
+            }
+
+            if (opcion4.getCharacterSize()>=ajustar_h(20) && opcion4.getPosition().y + opcion4.getLocalBounds().height + resolucion.y/6.0 < resolucion.y) {
+                opcion4.setCharacterSize(opcion4.getCharacterSize() - 1);
+            }
+            reloj.restart();
         }
         opcion1.setPosition((resolucion.x - opcion1.getLocalBounds().width) / 2,opcion1.getPosition().y-1);
         opcion2.setPosition((resolucion.x - opcion2.getLocalBounds().width) / 2,opcion2.getPosition().y-1);
@@ -1420,6 +1401,7 @@ Estado tratarCreditos(Estado estado){
         opcion4.setPosition((resolucion.x - opcion4.getLocalBounds().width) / 2,opcion4.getPosition().y-1);
 
         ventana.clear(sf::Color::Black);
+
         ventana.draw(texto);
         ventana.draw(opcion1);
         ventana.draw(opcion2);
@@ -1427,6 +1409,5 @@ Estado tratarCreditos(Estado estado){
         ventana.draw(opcion4);
         ventana.display();
     }
-
     return MENU;
 }
