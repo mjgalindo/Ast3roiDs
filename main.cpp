@@ -450,6 +450,7 @@ Estado tratarJuego(Estado estado) {
     ovni = &ovniNormal;
     bool ovniElegido = false;
     float probabilidadOvniInt = 0.1;
+    float probabilidadOvniTon = 0.5;
 
     vector<Asteroide> asteroides;
     unsigned int numeroDeAsteroides = 4;
@@ -507,8 +508,11 @@ Estado tratarJuego(Estado estado) {
 
         if (asteroides.size() == 0) {
             nivel++;
-            if(probabilidadOvniInt < 0.9) {
+            if(probabilidadOvniInt < 0.5) {
                 probabilidadOvniInt += 0.05;
+            }
+            if(probabilidadOvniTon > 0.1) {
+                probabilidadOvniTon -= 0.05;
             }
             ovniInteligente.disminuirError();
             numeroDeAsteroides += 2;
@@ -522,13 +526,14 @@ Estado tratarJuego(Estado estado) {
 
         if (ovni->getEstado() == MUERTO && !ovniElegido) {
             ovniElegido = true;
-            if (valorAleatorio() < probabilidadOvniInt) {
+            float va = valorAleatorio(0.0,1.0);
+            if (va < probabilidadOvniInt) {
                 if (configuracionGlobal.color() == sf::Color::Red) {
                     NESI = true;
                     tiempo = clock();
                 }
                 ovni = &ovniInteligente;
-            } else {
+            } else if (va < probabilidadOvniInt+probabilidadOvniTon){
                 ovni = &ovniNormal;
             }
         }
@@ -637,6 +642,16 @@ Estado tratarJuego(Estado estado) {
                         .scale(ajustar_h(10u), ajustar_w(6u)).rotate((float) (-PI / 2.0 * (180.0 / 3.14)));
                 ventana.draw(poligono, t);
             }
+
+            if(!(*jugando)){
+                sf::Text gameover;
+                inicializaTexto(gameover,ajustar_h(30u));
+                gameover.setString("GAME OVER");
+                sf::Transform t;
+                t.translate({ajustar_w(20.0f), ajustar_h(60.0f)});
+                ventana.draw(gameover,t);
+            }
+
             ventana.draw(nave);
             ventana.draw(*ovni);
 
