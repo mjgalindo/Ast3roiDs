@@ -542,9 +542,11 @@ Estado tratarJuego(Estado estado) {
         ventana.pollEvent(event);
         switch (event.type) {
             case sf::Event::Closed:
-                *silencioMusica = true;
-                *jugando = false;
-                musica.join();
+                if (*jugando){
+                    *silencioMusica = true;
+                    *jugando = false;
+                    musica.join();
+                }
                 ventana.close();
                 return EXIT;
             case sf::Event::KeyPressed:
