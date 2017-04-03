@@ -75,6 +75,7 @@ void sigGeneracion(long int distancia[8]) {
             *pesos[j] = mejoresPesos[j];
         }
 
+        string fich = "entrenaDisparo.nn";
         string nombreFichero = "entrenando.nn";
         red.write(nombreFichero);
 
@@ -118,6 +119,8 @@ int main() {
     }
     f_pesos.close();*/
 
+    string fich = "entrenaDisparo.nn";
+    red = red.read(fich);
 
     srand((unsigned long) time(NULL));
     //sf::ContextSettings settings;
@@ -143,7 +146,7 @@ int main() {
     int disparos = 1;
     int aciertos = 0;
     reloj.restart();
-    while (continua) {
+    for(int i =0; i< 2000000; i++) {
         /*distancia_aux[0] = distancia_aux[1] = distancia_aux[2] = distancia_aux[3] = distancia_aux[4] = distancia_aux[5] = distancia_aux[6] = distancia_aux[7] = 0;
 
         reloj.restart();
@@ -200,6 +203,7 @@ int main() {
         nave.setPosicion({rand() % resolucion.x * 1.0f, rand() % resolucion.y * 1.0f});
         disparos++;
     }
+    red.write(fich);
 
     cout << "Reinicios: " << aciertos << " tiempo: " << reloj.getElapsedTime().asSeconds() << endl;
 }
