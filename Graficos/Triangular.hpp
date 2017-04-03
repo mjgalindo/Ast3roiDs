@@ -5,38 +5,47 @@
 
 class Triangular {
 
-    public:
+public:
 
-        sf::VertexArray vs;
-        sf::Vector2f posicion;
-        float direccion;
-        float tamano;
+    sf::VertexArray vs;
+    sf::Vector2f posicion;
+    float direccion;
+    float tamano;
 
-        int estado;
+    int estado;
 
-        //Constructores
-        Triangular();
-        Triangular(sf::Vector2f p, float d, float t);
+    //Constructores
+    Triangular();
 
-        //Destructor
-        ~Triangular();
+    Triangular(sf::Vector2f p, float d, float t);
 
-        //Setters
-        void setPosicion(sf::Vector2f p);
-        void setDireccion(float d);
-        void setTamano(float t);
-        void setVertices(sf::VertexArray t);
+    //Destructor
+    ~Triangular();
 
-        //Getters
-        sf::Vector2f getPosicion();
-        float getDireccion();
-        float getTamano();
-        int getEstado();
-        sf::VertexArray getVertices();
-        sf::VertexArray getTriangulo();
+    //Setters
+    void setPosicion(sf::Vector2f p);
 
-        //Otros
-        virtual void cambiarEstado(int nuevoEstado)=0;
+    void setDireccion(float d);
+
+    void setTamano(float t);
+
+    void setVertices(sf::VertexArray t);
+
+    //Getters
+    sf::Vector2f getPosicion();
+
+    float getDireccion();
+
+    float getTamano();
+
+    int getEstado();
+
+    sf::VertexArray getVertices();
+
+    sf::VertexArray getTriangulo();
+
+    //Otros
+    virtual void cambiarEstado(int nuevoEstado)=0;
 };
 
 #endif //AST3ROIDS_TRIANGULAR_HPP

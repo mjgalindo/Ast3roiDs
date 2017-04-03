@@ -3,7 +3,7 @@
 //Constructores
 Triangular::Triangular() {}
 
-Triangular::Triangular(sf::Vector2f p, float d, float t){
+Triangular::Triangular(sf::Vector2f p, float d, float t) {
     posicion = p;
     direccion = d;
     tamano = t;
@@ -13,50 +13,50 @@ Triangular::Triangular(sf::Vector2f p, float d, float t){
 Triangular::~Triangular() {}
 
 //Setters
-void Triangular::setPosicion(sf::Vector2f p){
+void Triangular::setPosicion(sf::Vector2f p) {
     posicion = p;
 }
 
-void Triangular::setDireccion(float d){
+void Triangular::setDireccion(float d) {
     direccion = d;
 }
 
-void Triangular::setTamano(float t){
+void Triangular::setTamano(float t) {
     tamano = t;
 }
 
-void Triangular::setVertices(sf::VertexArray v){
+void Triangular::setVertices(sf::VertexArray v) {
     vs = v;
 }
 
 //Getters
-sf::Vector2f Triangular::getPosicion(){
+sf::Vector2f Triangular::getPosicion() {
     return posicion;
 }
 
-float Triangular::getDireccion(){
+float Triangular::getDireccion() {
     return direccion;
 }
 
-float Triangular::getTamano(){
+float Triangular::getTamano() {
     return tamano;
 }
 
-int Triangular::getEstado(){
+int Triangular::getEstado() {
     return estado;
 }
 
-sf::VertexArray Triangular::getVertices(){
+sf::VertexArray Triangular::getVertices() {
     return vs;
 }
 
-sf::VertexArray Triangular::getTriangulo(){
+sf::VertexArray Triangular::getTriangulo() {
     sf::Transform t;
-    t.rotate(direccion* (180.0/3.14), posicion).translate(posicion).scale({tamano, tamano});
+    t.rotate(direccion * (180.0 / 3.14), posicion).translate(posicion).scale({tamano, tamano});
 
     sf::VertexArray triangulo;
     triangulo.resize(vs.getVertexCount());
-    for(int i=0 ; i<vs.getVertexCount() ; i++){
+    for (int i = 0; i < vs.getVertexCount(); i++) {
         triangulo[i].position = t.transformPoint(vs[i].position);
     }
 

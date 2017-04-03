@@ -198,13 +198,14 @@ void Nave::rotarDcha() {
         }
     }
 }
+
 void Nave::hiperEspacio() {
     double tiempo = (clock() - cooldown) / (double) CLOCKS_PER_SEC;
-    if ((estado == REPOSO || estado == ACELERANDO) && tiempo>2) {
+    if ((estado == REPOSO || estado == ACELERANDO) && tiempo > 2) {
         cooldown = clock();
         posicion = {valorAleatorio(0, limites.x), valorAleatorio(0, limites.y)};
 
-        if(valorAleatorio()<0.4){
+        if (valorAleatorio() < 0.4) {
             cambiarEstado(DESTRUIDA);
         }
 

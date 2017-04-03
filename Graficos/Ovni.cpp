@@ -1,5 +1,6 @@
 #include "Ovni.hpp"
 
+using namespace std;
 
 Ovni::Ovni(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
         Circular({0, 0}, 15 * ratio(limitesPantalla)), color(color), cs(cs) {
@@ -186,8 +187,8 @@ double Ovni::network2Radianes(double salida) {
 
 void Ovni::mover(std::vector<Asteroide> &astds, Triangular &nave) {
     if (estado == VIVO) {
-        float prob = valorAleatorio(0,1);
-        if(prob < 0.01) {
+        float prob = valorAleatorio(0, 1);
+        if (prob < 0.01) {
             direccion = direccionSegura(sf::CircleShape(radio), posicion, astds);
         }
         posicion.x += VELOCIDAD * cos(direccion) * ratio(limites);
@@ -332,18 +333,19 @@ double Ovni::direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, 
         float distanciaRecorrida = 0.0f;
         while (distanciaRecorrida < radioPeligro && !choque) {
             //MOVER OVNI Y COMPROBAR QUE CHOCA
-            ovni.move({vMax * (float) cos(direcciones.at(i))*ratio(limites), vMax * (float) sin(direcciones.at(i)*ratio(limites))});
+            ovni.move({vMax * (float) cos(direcciones.at(i)) * ratio(limites),
+                       vMax * (float) sin(direcciones.at(i) * ratio(limites))});
             sf::Vector2f posicionOvni = ovni.getPosition();
             // Evita los limites del espacio
-            if (posicionOvni.x+1 <= 0.0) {
+            if (posicionOvni.x + 1 <= 0.0) {
                 posicionOvni.x += limites.x;
-            } else if (posicionOvni.x-1 >= limites.x) {
+            } else if (posicionOvni.x - 1 >= limites.x) {
                 posicionOvni.x -= limites.x;
             }
 
-            if (posicionOvni.y+1 <= 0,0) {
+            if (posicionOvni.y + 1 <= 0, 0) {
                 posicionOvni.y += limites.y;
-            } else if (posicionOvni.y-1 >= limites.y) {
+            } else if (posicionOvni.y - 1 >= limites.y) {
                 posicionOvni.y -= limites.y;
             }
             ovni.setPosition(posicionOvni);

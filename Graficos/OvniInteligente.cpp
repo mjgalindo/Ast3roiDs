@@ -1,6 +1,7 @@
 #include <iostream>
 #include "OvniInteligente.hpp"
 
+using namespace std;
 
 OvniInteligente::OvniInteligente(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
         Ovni(limitesPantalla, color, cs) {
@@ -116,7 +117,7 @@ void OvniInteligente::mover(std::vector<Asteroide> &astds, Triangular &nave) {
 
 void OvniInteligente::disminuirError() {
     if (error > 0.0) {
-        error = (float)(error - PI / 36);
+        error = (float) (error - PI / 36);
     } else {
         error = 0.0;
     }
@@ -141,18 +142,19 @@ double OvniInteligente::direccionSegura(sf::CircleShape ovni, sf::Vector2f posic
         float distanciaRecorrida = 0.0f;
         while (distanciaRecorrida < radioPeligro && !choque) {
             //MOVER OVNI Y COMPROBAR QUE CHOCA
-            ovni.move({vMax * (float) cos(direcciones.at(i))*ratio(limites), vMax * (float) sin(direcciones.at(i)*ratio(limites))});
+            ovni.move({vMax * (float) cos(direcciones.at(i)) * ratio(limites),
+                       vMax * (float) sin(direcciones.at(i) * ratio(limites))});
             sf::Vector2f posicionOvni = ovni.getPosition();
             // Evita los limites del espacio
-            if (posicionOvni.x+1 <= 0.0) {
+            if (posicionOvni.x + 1 <= 0.0) {
                 posicionOvni.x += limites.x;
-            } else if (posicionOvni.x-1 >= limites.x) {
+            } else if (posicionOvni.x - 1 >= limites.x) {
                 posicionOvni.x -= limites.x;
             }
 
-            if (posicionOvni.y+1 <= 0,0) {
+            if (posicionOvni.y + 1 <= 0, 0) {
                 posicionOvni.y += limites.y;
-            } else if (posicionOvni.y-1 >= limites.y) {
+            } else if (posicionOvni.y - 1 >= limites.y) {
                 posicionOvni.y -= limites.y;
             }
             ovni.setPosition(posicionOvni);
@@ -179,7 +181,7 @@ double OvniInteligente::direccionSegura(sf::CircleShape ovni, sf::Vector2f posic
     if (direccionesSeguras.size() == 0) {
         return ultimaDireccion;
     }
-    int elegido = enteroAleatorio(0,direccionesSeguras.size());
+    int elegido = enteroAleatorio(0, direccionesSeguras.size());
     ultimaDireccion = direccionesSeguras[elegido];
     return direccionesSeguras[elegido];
 }

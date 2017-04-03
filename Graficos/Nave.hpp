@@ -64,6 +64,7 @@ private:
             SonidoDestruccion = ControladorSonido::EXP_0;
 
     clock_t cooldown;
+
     void reiniciar();
 
 public:

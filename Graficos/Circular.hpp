@@ -5,31 +5,36 @@
 
 class Circular {
 
-    public:
+public:
 
-        sf::Vector2f posicion;
-        float radio;
-        int estado;
+    sf::Vector2f posicion;
+    float radio;
+    int estado;
 
-        //Constructores
-        Circular();
-        Circular(sf::Vector2f p, float r);
+    //Constructores
+    Circular();
 
-        //Destructor
-        ~Circular();
+    Circular(sf::Vector2f p, float r);
 
-        //Setters
-        void setPosicion(sf::Vector2f p);
-        void setRadio(float r);
+    //Destructor
+    ~Circular();
 
-        //Getters
-        sf::Vector2f getPosicion();
-        float getRadio();
-        int getEstado();
-        virtual int getPuntuacion() const=0;
+    //Setters
+    void setPosicion(sf::Vector2f p);
 
-        //Otros
-        virtual void cambiarEstado(int nuevoEstado)=0;
+    void setRadio(float r);
+
+    //Getters
+    sf::Vector2f getPosicion();
+
+    float getRadio();
+
+    int getEstado();
+
+    virtual int getPuntuacion() const =0;
+
+    //Otros
+    virtual void cambiarEstado(int nuevoEstado)=0;
 };
 
 #endif //AST3ROIDS_CIRCULAR_HPP

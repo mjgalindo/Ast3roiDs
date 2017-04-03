@@ -3,7 +3,7 @@
 //Constructores
 Circular::Circular() {}
 
-Circular::Circular(sf::Vector2f p, float r){
+Circular::Circular(sf::Vector2f p, float r) {
     posicion = p;
     radio = r;
 }
@@ -12,23 +12,23 @@ Circular::Circular(sf::Vector2f p, float r){
 Circular::~Circular() {}
 
 //Setters
-void Circular::setPosicion(sf::Vector2f p){
+void Circular::setPosicion(sf::Vector2f p) {
     posicion = p;
 }
 
-void Circular::setRadio(float r){
+void Circular::setRadio(float r) {
     radio = r;
 }
 
 //Getters
-sf::Vector2f Circular::getPosicion(){
+sf::Vector2f Circular::getPosicion() {
     return posicion;
 }
 
-int Circular::getEstado(){
+int Circular::getEstado() {
     return estado;
 }
 
-float Circular::getRadio(){
+float Circular::getRadio() {
     return radio;
 }

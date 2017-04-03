@@ -4,8 +4,11 @@
 #include <SFML/Graphics.hpp>
 
 bool colisionCirculos(sf::Vector2f c1, float r1, sf::Vector2f c2, float r2);
+
 bool colisionVerticesCirculo(sf::VertexArray vs, sf::Vector2f c, float r);
+
 bool colisionTrianguloCirculo(sf::VertexArray vs, sf::Vector2f c, float r);
+
 bool colisionVerticesTriangulo(sf::VertexArray vs, sf::VertexArray triangulo);
 
 //Funciones auxiliares

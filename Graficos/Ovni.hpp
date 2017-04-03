@@ -8,7 +8,6 @@
 #include "../Colisiones.hpp"
 #include "Asteroide.hpp"
 #include "Disparo.hpp"
-#include "../neural/include/neural/Network.h"
 
 class Ovni : public sf::Drawable, public Circular {
 
@@ -40,9 +39,6 @@ protected:
 
     ControladorSonido::Sonido SonidoPresencia, SonidoDestruccion;
 
-    //Fichero con los pesos de la red
-    string fichero = "entrenando.nn";
-
     clock_t start;
 
 
@@ -58,7 +54,7 @@ public:
 
     double distancia(sf::Vector2f a, sf::Vector2f b);
 
-    vector<Asteroide *> asteroideMasCercano(sf::Vector2f posicion, vector<Asteroide> asteroides);
+    std::vector<Asteroide *> asteroideMasCercano(sf::Vector2f posicion, std::vector<Asteroide> asteroides);
 
     //Getters
     double getDireccion();
