@@ -1,6 +1,7 @@
 #include "Asteroide.hpp"
 
 static constexpr float tamanosReales[] = {7.25f, 12.5f, 25.0f};
+int Asteroide::nivel = 1;
 
 Asteroide::Asteroide(sf::Vector2f posicion_inicial, float dir, sf::Vector2f vel, Tipo tipo, Tamano tam,
                      sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
@@ -195,28 +196,120 @@ void Asteroide::gestionarDestruccion(std::vector<Asteroide> &astds) {
     estado = EXPLOSION;
     recienDestruida = true;
     cs->reproducir(sonidoDestruccion, true);
+
+    int aleatorio = enteroAleatorio(0,20);
     switch (tipoTamano) {
         case TAM_0:
             break;
         case TAM_1:
-            astds.push_back(Asteroide(posicion, anguloAleatorio(),
-                                      {velocidad.x + valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
-                                       velocidad.y + valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
-                                      (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
-            astds.push_back(Asteroide(posicion, anguloAleatorio(),
-                                      {velocidad.x - valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
-                                       velocidad.y - valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
-                                      (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+            if(aleatorio<2){
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+            }
+
+            else if(aleatorio<14){
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+            }
+            else if(aleatorio<18){
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) *(1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) *(1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) *(1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f) , ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+            }
+            else{
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_0, limites, color, cs));
+            }
             break;
         case TAM_2:
-            astds.push_back(Asteroide(posicion, anguloAleatorio(),
-                                      {velocidad.x + valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
-                                       velocidad.y + valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
-                                      (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
-            astds.push_back(Asteroide(posicion, anguloAleatorio(),
-                                      {velocidad.x - valorAleatorio(0, ((float) PI / 2) * ratio(limites)),
-                                       velocidad.y - valorAleatorio(0, (float) (PI / 2) * ratio(limites))},
-                                      (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+            if(aleatorio<2){
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+            }
+
+            else if(aleatorio<14){
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+            }
+            else if(aleatorio<18){
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+            }
+            else{
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+
+                astds.push_back(Asteroide(posicion, anguloAleatorio(),
+                                          {velocidad.x + valorAleatorio(-((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), ((float) PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f)),
+                                           velocidad.y + valorAleatorio(-(float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f), (float) (PI / 2) * ratio(limites) * (1.0+(float)nivel/20.0f))},
+                                          (Tipo) enteroAleatorio((int) TIPO_0, (int) TIPO_2), TAM_1, limites, color, cs));
+            }
             break;
     }
 }

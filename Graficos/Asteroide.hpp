@@ -13,6 +13,8 @@
 class Asteroide : public sf::Drawable, public Circular {
 
 private:
+    static int nivel;
+
     float direccion;
     Tipo version;
     sf::VertexArray poligono;
@@ -77,6 +79,14 @@ public:
                     (Tipo) enteroAleatorio(0, 2), TAM_2, limitesPantalla, color, cs);
         }
 
+    }
+
+    static void reiniciarNivel(){
+        nivel = 1;
+    }
+
+    static void aumentarNivel(){
+        nivel++;
     }
 };
 

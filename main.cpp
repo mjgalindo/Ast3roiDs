@@ -426,6 +426,7 @@ Estado tratarJuego(Estado estado) {
 
     puntuacion = 0;
     int vidas_puntuacion = 0;
+    Asteroide::reiniciarNivel();
 
     sf::Text texto;
     sf::Text opcion1;
@@ -519,6 +520,7 @@ Estado tratarJuego(Estado estado) {
             if(numeroDeAsteroides>12){
                 numeroDeAsteroides = 12;
             }
+            Asteroide::aumentarNivel();
             Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion,
                                                   configuracionGlobal.color(), &csonido);
             *reiniciarMusica = true;
