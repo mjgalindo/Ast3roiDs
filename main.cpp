@@ -1368,7 +1368,7 @@ Estado tratarCreditos(Estado estado) {
     opcion4.setString(creditos4);
 
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});;
-    opcion1.setPosition({(resolucion.x - opcion1.getLocalBounds().width) / 2, resolucion.y});
+    opcion1.setPosition({(resolucion.x - opcion1.getLocalBounds().width) / 2, (float) resolucion.y});
     opcion2.setPosition({(resolucion.x - opcion2.getLocalBounds().width) / 2,
                          opcion1.getPosition().y + opcion1.getLocalBounds().height + ajustar_h(25u)});
     opcion3.setPosition({(resolucion.x - opcion3.getLocalBounds().width) / 2,
