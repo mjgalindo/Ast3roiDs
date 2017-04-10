@@ -41,7 +41,7 @@ set(SOURCE_FILES
 		Graficos3D/Malla.cpp
 		Graficos3D/Malla.hpp
 		Graficos3D/Asteroide3D.cpp
-		Graficos3D/Asteroide3D.hpp)
+		Graficos3D/Asteroide3D.hpp Graficos3D/Ventana3D.cpp Graficos3D/Ventana3D.hpp)
 
 set(PRUEBA3D prueba3D)
 set(FUENTES_PRUEBA3D
@@ -51,7 +51,7 @@ set(FUENTES_PRUEBA3D
 		Graficos3D/Asteroide3D.hpp
 		Graficos3D/Asteroide3D.cpp
 		Graficos3D/Nave3D.hpp
-		Graficos3D/Nave3D.cpp)
+		Graficos3D/Nave3D.cpp Graficos3D/Ventana3D.cpp Graficos3D/Ventana3D.hpp)
 
 set(SFML_ROOT "C:/Program Files (x86)/SFML")
 

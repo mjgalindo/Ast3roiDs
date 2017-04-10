@@ -10,9 +10,18 @@ void Malla::cargaMalla() {
 }
 
 void Malla::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glPushMatrix();
+
+    glScalef(escala.x, escala.y, escala.z);
+    glTranslatef(posicion.x, posicion.y, posicion.z);
+    glRotatef(1, rotacion.x, rotacion.y, rotacion.z);
+
     glBegin(GL_TRIANGLES);
 
     glColor3f(color.x, color.y, color.z);
+    // TODO: Usar vertex array objects?
     for (size_t s = 0; s < figuras.size(); s++) {
         size_t index_offset = 0;
 
@@ -26,11 +35,12 @@ void Malla::draw(sf::RenderTarget &target, sf::RenderStates states) const {
                 float vx = atrib.vertices[3 * idx.vertex_index + 0];
                 float vy = atrib.vertices[3 * idx.vertex_index + 1];
                 float vz = atrib.vertices[3 * idx.vertex_index + 2];
-                //float nx = attrib.normals[3 * idx.normal_index + 0];
-                //float ny = attrib.normals[3 * idx.normal_index + 1];
-                //float nz = attrib.normals[3 * idx.normal_index + 2];
-                //glNormal3f(nx, ny, nz);
+                float nx = atrib.normals[3 * idx.normal_index + 0];
+                float ny = atrib.normals[3 * idx.normal_index + 1];
+                float nz = atrib.normals[3 * idx.normal_index + 2];
+                glNormal3f(nx, ny, nz);
                 glVertex3f(vx, vy, vz);
+                // TODO: Añadir texturas
             }
             index_offset += fv;
 
@@ -38,10 +48,12 @@ void Malla::draw(sf::RenderTarget &target, sf::RenderStates states) const {
             figuras[s].mesh.material_ids[f];
         }
     }
-
     glEnd();
+    glPopMatrix();
+
     // TODO: ESTO NO FUNCIONA, HAY QUE APLICARLO A LA "MATRIZ DEL MODELO"
-    glScalef(escala.x, escala.y, escala.z);
-    glTranslatef(posicion.x, posicion.y, posicion.z);
-    glRotatef(1, rotacion.x, rotacion.y, rotacion.z);
+    //glScalef(escala.x, escala.y, escala.z);
+    //glTranslatef(posicion.x, posicion.y, posicion.z);
+    //glRotatef(1, rotacion.x, rotacion.y, rotacion.z);
+    //glPushMatrix();
 }
