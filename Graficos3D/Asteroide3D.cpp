@@ -9,8 +9,8 @@ Asteroide3D::Asteroide3D() {
             valorAleatorio(0.0f, VELOCIDAD_MAX),
             valorAleatorio(0.0f, VELOCIDAD_MAX)
     };
-    posicion = {0, 0, 0};
-    escala = {0.1f, 0.1f, 0.1f};
+    posicion = {0, 0, -5};
+    escala = {0.15f, 0.15f, 0.15f};
     color = {0.f, 1.f, 1.f};
 }
 
