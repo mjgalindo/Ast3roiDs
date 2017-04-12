@@ -2,19 +2,19 @@
 #define AST3ROIDS_NAVE3D_HPP
 
 #include <SFML/Graphics/Drawable.hpp>
-#include "Malla.hpp"
+#include "Elemento3D.hpp"
 
-class Nave3D : public Malla {
+class Nave3D : public Elemento3D {
 public:
-    Nave3D();
+    Nave3D(vj::Shader* shader, vj::Textura* textura);
 
     void mover();
 
 private:
 
-    const float VELOCIDAD_MAX = 0.6f;
+    const float VELOCIDAD_MAX = 0.1f;
 
-    sf::Vector3f velocidad;
+    glm::vec3 velocidad;
 };
 
 

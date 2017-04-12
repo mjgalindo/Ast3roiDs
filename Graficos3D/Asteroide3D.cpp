@@ -1,7 +1,7 @@
 #include "Asteroide3D.hpp"
 #include "../matematicas.hpp"
 
-Asteroide3D::Asteroide3D() {
+Asteroide3D::Asteroide3D(vj::Shader* shader, vj::Textura* textura) : Elemento3D(shader, textura) {
     fich_obj = "Recursos/Modelos/asteroide.obj";
     cargaMalla();
     velocidad = {
@@ -9,11 +9,11 @@ Asteroide3D::Asteroide3D() {
             valorAleatorio(0.0f, VELOCIDAD_MAX),
             valorAleatorio(0.0f, VELOCIDAD_MAX)
     };
-    posicion = {0, 0, -5};
-    escala = {0.15f, 0.15f, 0.15f};
-    color = {0.f, 1.f, 1.f};
+    pos.posicion = {0.0f, 0.0f, 0.0f};
+    pos.escala = {2.0f, 2.0f, 2.0f};
+    pos.rotacion = {0.0f, 0.0f, 0.0f};
 }
 
 void Asteroide3D::mover() {
-    posicion += velocidad * (1 / 60.f);
+    pos.posicion = pos.posicion * velocidad * (1 / 60.f);
 }

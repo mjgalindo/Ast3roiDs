@@ -1,18 +1,17 @@
 #ifndef AST3ROIDS_ASTEROIDE3D_HPP
 #define AST3ROIDS_ASTEROIDE3D_HPP
 
-#include "Malla.hpp"
+#include "Elemento3D.hpp"
 
-class Asteroide3D : public Malla {
+class Asteroide3D : public Elemento3D {
 public:
-    Asteroide3D();
-
+    Asteroide3D(vj::Shader* shader, vj::Textura* textura);
     void mover();
 
 private:
-    const float VELOCIDAD_MAX = 0.2f;
+    const float VELOCIDAD_MAX = 0.1f;
 
-    sf::Vector3f velocidad;
+    glm::vec3 velocidad;
 };
 
 

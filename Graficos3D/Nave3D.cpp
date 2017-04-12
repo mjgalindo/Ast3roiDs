@@ -5,7 +5,7 @@
 using namespace std;
 using namespace sf;
 
-Nave3D::Nave3D() {
+Nave3D::Nave3D(vj::Shader *shader, vj::Textura *textura) : Elemento3D(shader, textura) {
     fich_obj = "Recursos/Modelos/nave.obj";
     cargaMalla();
     velocidad = {
@@ -13,12 +13,12 @@ Nave3D::Nave3D() {
             valorAleatorio(0.0f, VELOCIDAD_MAX),
             valorAleatorio(0.0f, VELOCIDAD_MAX)
     };
-    posicion = {0, 0, -5};
-    escala = {0.1f, 0.1f, 0.1f};
-    rotacion = {1.0f, 0.0f, 0.0f};
-    color = {0.8f, 0.8f, 0.9f};
+    pos.posicion = {0.0f, 0.0f, 0.0f};
+    pos.escala = {0.5f, 0.5f, 0.5f};
+    pos.rotacion = {0.0f, 0.0f, 0.0f};
 }
 
 void Nave3D::mover() {
-    posicion += velocidad * (1.0f / 60.0f);
+    // TODO: Implementar de verdad
+    pos.posicion += velocidad * (1.0f / 60.0f);
 }
