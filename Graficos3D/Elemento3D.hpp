@@ -8,7 +8,7 @@
 #include "../Util3D/Transformacion.hpp"
 #include "../Util3D/Shader.hpp"
 #include "../Util3D/Textura.hpp"
-#define TINYOBJLOADER_IMPLEMENTATION
+
 class Elemento3D : public sf::Drawable {
 public:
     Elemento3D& predibujado(Camara& camara);
