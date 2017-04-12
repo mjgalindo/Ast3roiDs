@@ -61,9 +61,7 @@ set(FUENTES_PRUEBA3D
 		Util3D/Transformacion.hpp
 		Util3D/Camara.hpp
 		Util3D/Textura.cpp
-		Util3D/Textura.hpp
-		Util3D/obj_loader.h
-		Util3D/obj_loader.cpp)
+		Util3D/Textura.hpp)
 
 set(SFML_ROOT "C:/Program Files (x86)/SFML")
 
