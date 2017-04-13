@@ -1,5 +1,6 @@
 #include <tiny_obj_loader.h>
 #include "Elemento3D.hpp"
+#include <iostream>
 
 using namespace std;
 
@@ -7,28 +8,25 @@ using namespace std;
  * Replica las normales definidas en atrib para que haya el mismo numero de normales que de
  * vertices y que se puedan indexar con los mismos valores.
  */
-void replicaNormales(const tinyobj::attrib_t &atrib, const tinyobj::shape_t &figuras, vector<float> &normales,
+void replicaNormales(const tinyobj::attrib_t &atrib, const tinyobj::shape_t &figura, vector<float> &normales,
                      vector<int> &indices) {
     normales.resize(atrib.vertices.size());
-    indices.resize(atrib.vertices.size());
-    for (int i = 0; i < figuras.mesh.indices.size(); i++) {
-        normales[figuras.mesh.indices[i].vertex_index * 3] = atrib.normals[figuras.mesh.indices[i].normal_index * 3];
-        normales[figuras.mesh.indices[i].vertex_index * 3 + 1] = atrib.normals[
-                figuras.mesh.indices[i].normal_index * 3 + 1];
-        normales[figuras.mesh.indices[i].vertex_index * 3 + 2] = atrib.normals[
-                figuras.mesh.indices[i].normal_index * 3 + 2];
-        indices[i] = figuras.mesh.indices[i].vertex_index;
+    indices.resize(figura.mesh.indices.size());
+    for (unsigned int i = 0; i < figura.mesh.indices.size(); i++) {
+        normales[figura.mesh.indices.at(i).vertex_index * 3] = atrib.normals[figura.mesh.indices.at(i).normal_index * 3];
+        normales[figura.mesh.indices.at(i).vertex_index * 3 + 1] = atrib.normals[
+                figura.mesh.indices.at(i).normal_index * 3 + 1];
+        normales[figura.mesh.indices.at(i).vertex_index * 3 + 2] = atrib.normals[
+                figura.mesh.indices.at(i).normal_index * 3 + 2];
+        indices.at(i) = figura.mesh.indices.at(i).vertex_index;
     }
 }
 
-// TODO: Descubrir porqué hacer estas variables locales de cargaMalla ocurren problemas al destruir indices o atrib
-tinyobj::attrib_t atrib;
-std::vector<tinyobj::shape_t> figuras;
-std::vector<tinyobj::material_t> materiales;
-vector<float> normales;
-vector<int> indices;
-
 void Elemento3D::cargaMalla() {
+    tinyobj::attrib_t atrib;
+    std::vector<tinyobj::shape_t> figuras;
+    std::vector<tinyobj::material_t> materiales;
+
     std::string err;
     // Carga el fichero .obj de la malla elegida
     bool ret = tinyobj::LoadObj(&atrib, &figuras, &materiales, &err, fich_obj.c_str(), ruta_obj.c_str(), true);
@@ -38,6 +36,8 @@ void Elemento3D::cargaMalla() {
     if (figuras.size() > 1)
         throw invalid_argument("Hay mas de una figura en el fichero.obj y no es posible saber cual cargar.");
 
+    vector<float> normales;
+    vector<int> indices;
 
     replicaNormales(atrib, figuras[0], normales, indices);
 
@@ -70,8 +70,6 @@ void Elemento3D::cargaMalla() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), &indices[0], GL_STATIC_DRAW);
 
     glBindVertexArray(0);
-    normales.clear();
-    indices.clear();
 }
 
 Elemento3D::~Elemento3D() {
@@ -80,7 +78,7 @@ Elemento3D::~Elemento3D() {
 }
 
 void Elemento3D::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Muestra sollo la malla sin rellenar triangulos
     glBindVertexArray(vertexArrayObject);
     glDrawElements(GL_TRIANGLES, numTriangulos, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

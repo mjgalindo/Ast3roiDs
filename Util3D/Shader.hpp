@@ -26,7 +26,7 @@ namespace vj {
         static const unsigned int NUM_SHADERS = 2;
         static const unsigned int NUM_UNIFORMS = 3;
 
-        void operator=(const Shader &shader) {}
+        void operator=(const Shader &shader) = delete;
 
         std::string cargaFichero(const std::string &nomFichero);
 

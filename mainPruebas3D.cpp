@@ -22,12 +22,12 @@ int main() {
     // Inicializa shaders y texturas.
     vj::Shader shaderPrincipal(string("Recursos/Shaders/shaderBasico"));
     vj::Textura texturaBlanco(string("Recursos/Texturas/blanco.png"));
-
+    glEnable(GL_TEXTURE);
     // Carga un solo asteroide
     Asteroide3D testAsteroide(&shaderPrincipal, &texturaBlanco);
     Nave3D testNave(&shaderPrincipal, &texturaBlanco);
 
-    Camara camara({0, 0, -1.0f}, 60, (float) ventana.getSize().x / (float) ventana.getSize().y,
+    Camara camara({0, 0, -0.6f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
     bool running = true;
 
@@ -45,13 +45,13 @@ int main() {
             }
         }
         // Mueve todos los elementos
-        //testNave.mover();
-        //testAsteroide.mover();
+        testNave.mover();
+        testAsteroide.mover();
         // Limpia la ventana (no en negro para detectar posibles formas 3D sin color)
         ventana.clear({0.2f, 0.2f, 0.2f});
         // Dibuja todos los elementos
         ventana.draw(testAsteroide.predibujado(camara));
-        //ventana.draw(testNave.predibujado(camara));
+        ventana.draw(testNave.predibujado(camara));
 
         ventana.display();
     }

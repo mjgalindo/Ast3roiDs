@@ -10,7 +10,7 @@ Asteroide3D::Asteroide3D(vj::Shader* shader, vj::Textura* textura) : Elemento3D(
             valorAleatorio(0.0f, VELOCIDAD_MAX)
     };
     pos.posicion = {0.0f, 0.0f, 0.0f};
-    pos.escala = {2.0f, 2.0f, 2.0f};
+    pos.escala = {0.5f, 0.5f, 0.5f};
     pos.rotacion = {0.0f, 0.0f, 0.0f};
 }
 

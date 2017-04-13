@@ -12,7 +12,7 @@ public:
 
 private:
 
-    const float VELOCIDAD_MAX = 0.1f;
+    const float VELOCIDAD_MAX = 0.5f;
 
     glm::vec3 velocidad;
 };

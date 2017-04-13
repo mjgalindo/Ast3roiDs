@@ -11,11 +11,11 @@ Nave3D::Nave3D(vj::Shader *shader, vj::Textura *textura) : Elemento3D(shader, te
     velocidad = {
             valorAleatorio(0.0f, VELOCIDAD_MAX),
             valorAleatorio(0.0f, VELOCIDAD_MAX),
-            valorAleatorio(0.0f, VELOCIDAD_MAX)
+            0.0f
     };
     pos.posicion = {0.0f, 0.0f, 0.0f};
     pos.escala = {0.5f, 0.5f, 0.5f};
-    pos.rotacion = {0.0f, 0.0f, 0.0f};
+    pos.rotacion = {1.0f, 0.0f, 0.0f};
 }
 
 void Nave3D::mover() {
