@@ -41,6 +41,7 @@ namespace neural {
     bool write(string &filename) const;
     bool write(ostream &s) const;
       std::vector<double*> getWeights();
+      shared_ptr<Layer> getFirstLayer();
   private:
     Network(int input, shared_ptr<Layer> hidden, shared_ptr<Layer> output);
     int layerCount;

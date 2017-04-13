@@ -185,12 +185,16 @@ namespace neural {
     return true;
   }
 
+    shared_ptr<Layer> Network::getFirstLayer() {
+        return firstHidden;
+    }
+
     std::vector<double*> Network::getWeights() {
       shared_ptr<Layer> layer = firstHidden;
         std::vector<double*> pesosNetwork;
         while(layer != outputLayer->nextLayer()) {
             std::vector<double*> pesosLayer = layer->getWeights();
-            pesosNetwork.insert(pesosNetwork.begin(),pesosLayer.begin(),pesosLayer.end());
+            pesosNetwork.insert(pesosNetwork.end(),pesosLayer.begin(),pesosLayer.end());
             /*for(unsigned int i = 0; i < pesosLayer.size(); i++) {
                 pesosNetwork.push_back(pesosLayer[i]);
             }*/

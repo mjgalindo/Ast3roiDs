@@ -10,15 +10,22 @@ bool continua = true;
 //sf::RenderWindow ventana;
 sf::Vector2u resolucion = {800, 600};
 vector<vector<double>> poblacion(8);
-long int mejorDistancia = 0;
+double mejorTiempo = 0;
 vector<double> mejoresPesos;
 
 // Inicializa una red neuronal nueva
-neural::Network red(12, 1, {9,3});
+neural::Network red(12, 3, {9,3});
 vector<double*> pesos = red.getWeights();
 
 
 vector<Asteroide> asteroides;
+
+double radioTonto = 15;     //Radio del ovni tonto
+double radioInteligente = 3*radioTonto/4;       //Radio del ovni inteligente
+
+//PARAMETROS QUE USARA LA RED
+double radio = radioInteligente;        //Radio que empleara la red
+int iteraciones = 10;
 
 double distancia(sf::Vector2f a, sf::Vector2f b) {
     double distanciaX = (a.x - b.x);
@@ -32,6 +39,54 @@ double distancia(sf::Vector2f a, sf::Vector2f b) {
     return sqrt(distanciaX * distanciaX + (distanciaY * distanciaY));
 }
 
+double output2Radians(vector<double> output) {
+    vector<int> salidaEntero;
+    for(int i = 0; i < output.size(); i++) {
+        if(output.at(i) >= 0) {
+            salidaEntero.push_back(1);
+        } else {
+            salidaEntero.push_back(0);
+        }
+    }
+    switch(salidaEntero.at(0)) {
+        case 0:
+            switch(salidaEntero.at(1)) {
+                case 0:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            return 0.0;
+                        case 1:
+                            return -PI/4;
+                    }
+
+                case 1:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            return -PI/2;
+                        case 1:
+                            return -3*PI/4;
+                    }
+            }
+        case 1:
+            switch(salidaEntero.at(1)) {
+                case 0:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            return PI;
+                        case 1:
+                            return PI/4;
+                    }
+
+                case 1:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            return PI/2;
+                        case 1:
+                            return 3*PI/4;
+                    }
+            }
+    }
+}
 
 vector<Asteroide *> asteroideMasCercano(sf::Vector2f posicion) {
     double distanciaMenor1 = 99999999.0;
@@ -118,59 +173,59 @@ vector<vector<double>> completar(vector<vector<double>> aux) {
     return aux;
 }
 
-void sigGeneracion(long int distancia[8]) {
+void sigGeneracion(double tiempo[8]) {
     vector<vector<double>> aux(0);
-    int mayorDistancia[3] = {0, 0, 0};
+    double mayorTiempo[3] = {0.0, 0.0, 0.0};
     int mayoresIndice[3] = {0, 0, 0};
     for(int k = 0; k < 8; k++) {
-        if(distancia[k] > mayorDistancia[0]) {
-            mayorDistancia[2] = mayorDistancia[1];
+        if(tiempo[k] > mayorTiempo[0]) {
+            mayorTiempo[2] = mayorTiempo[1];
             mayoresIndice[2] = mayoresIndice[1];
-            mayorDistancia[1] = mayorDistancia[0];
+            mayorTiempo[1] = mayorTiempo[0];
             mayoresIndice[1] = mayoresIndice[0];
-            mayorDistancia[0] = distancia[k];
+            mayorTiempo[0] = tiempo[k];
             mayoresIndice[0] = k;
 
-        } else if(distancia[k] > mayorDistancia[1]) {
-            mayorDistancia[2] = mayorDistancia[1];
+        } else if(tiempo[k] > mayorTiempo[1]) {
+            mayorTiempo[2] = mayorTiempo[1];
             mayoresIndice[2] = mayoresIndice[1];
-            mayorDistancia[1] = distancia[k];
+            mayorTiempo[1] = tiempo[k];
             mayoresIndice[1] = k;
-        } else if(distancia[k] > mayorDistancia[2]) {
-            mayorDistancia[2] = distancia[k];
+        } else if(tiempo[k] > mayorTiempo[2]) {
+            mayorTiempo[2] = tiempo[k];
             mayoresIndice[2] = k;
         }
     }
 
     for(int k = 0; k < 3; k++) {
         aux.push_back(poblacion[mayoresIndice[k]]);
-        cout << mayorDistancia[k] << " ";
+        cout << mayorTiempo[k]/iteraciones << " ";
     }
     cout << mayoresIndice[0] << endl;
 
     ofstream f_hist_out("history.dat", fstream::app);
     if (f_hist_out.good()) {
         for(int k = 0; k < 3; k++) {
-            f_hist_out << mayorDistancia[k] << " ";
+            f_hist_out << mayorTiempo[k] << " ";
         }
         f_hist_out << mayoresIndice[0] << endl;
     }
     f_hist_out.close();
 
-    if(mayorDistancia[0] > mejorDistancia) {
-        mejorDistancia = mayorDistancia[0];
+    if(mayorTiempo[0] > mejorTiempo) {
+        mejorTiempo = mayorTiempo[0];
         mejoresPesos = aux[0];
 
         for (unsigned int j = 0; j < mejoresPesos.size(); j++) {
             *pesos[j] = mejoresPesos[j];
         }
 
-        string nombreFichero = "entrenando.nn";
+        string nombreFichero = "geneticos.nn";
         red.write(nombreFichero);
 
         ofstream f_pesos_out("savedpoint.dat");
         if (f_pesos_out.good()) {
-            f_pesos_out << mejorDistancia << " ";
+            f_pesos_out << mejorTiempo << " ";
             for(int o=0 ; o<poblacion.size() ; o++) {
                 for (int p = 0; p < pesos.size(); p++) {
                     f_pesos_out << poblacion[o][p] << " ";
@@ -179,7 +234,7 @@ void sigGeneracion(long int distancia[8]) {
         }
         f_pesos_out.close();
 
-        if(mejorDistancia>250000){
+        if(mejorTiempo>250){
             continua = false;
         }
     }
@@ -194,7 +249,7 @@ int main() {
     if(f_pesos.good()){
         cout << "Leido desde fichero" << endl;
 
-        f_pesos >> mejorDistancia;
+        f_pesos >> mejorTiempo;
 
         for(int o=0 ; o<poblacion.size() ; o++) {
             for (int p = 0; p < pesos.size(); p++) {
@@ -222,7 +277,7 @@ int main() {
     sf::Vector2f posicionAnterior;
     //ventana.setFramerateLimit(60);
     sf::Clock reloj;
-    sf::CircleShape sustitutoOvni(15);
+    sf::CircleShape sustitutoOvni(radio);
     sustitutoOvni.setFillColor({200, 10, 10});
     sustitutoOvni.setOrigin(sustitutoOvni.getRadius(), sustitutoOvni.getRadius());
     sustitutoOvni.setPosition({rand() % resolucion.x * 1.0f, rand() % resolucion.y * 1.0f});
@@ -234,19 +289,18 @@ int main() {
     unsigned int numAsteroides = 10;
     Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion, sf::Color::White,NULL);
     int reinicios = 1;
-    unsigned int iteraciones = 0;
     int choque = 0;
     reloj.restart();
-    long int distancia_aux[8];
+    double tiempo_aux[8];
     while (continua) {
-        distancia_aux[0] = distancia_aux[1] = distancia_aux[2] = distancia_aux[3] = distancia_aux[4] = distancia_aux[5] = distancia_aux[6] = distancia_aux[7] = 0;
+        tiempo_aux[0] = tiempo_aux[1] = tiempo_aux[2] = tiempo_aux[3] = tiempo_aux[4] = tiempo_aux[5] = tiempo_aux[6] = tiempo_aux[7] = 0;
         for(unsigned int i = 0; i < poblacion.size(); i++) {
             for (unsigned int j = 0; j < pesos.size(); j++) {
                 *pesos[j] = poblacion[i][j];
             }
             reloj.restart();
             choque = 0;
-            while (choque < 10) {
+            while (choque < iteraciones) {
                 /*sf::Event event;
                 if (ventana.pollEvent(event)) {
                     switch (event.type) {
@@ -286,40 +340,15 @@ int main() {
                                            asteroidePeligroso[2]->getVelocidad().x,
                                            asteroidePeligroso[2]->getVelocidad().y};
 
-                double salida = red.run(entradasRed)[0];
-                double angulo = 0;
-                if (salida < -3 * (2.0 / 8.0)) {
-                    angulo = PI * 3 / 4;
-                    //cout << "UL ";
-                } else if (salida < -2 * (2.0 / 8.0)) {
-                    angulo = PI;
-                    //cout << "L ";
-                } else if (salida < -1 * (2.0 / 8.0)) {
-                    angulo = -PI * 3 / 4;
-                    //cout << "DL ";
-                } else if (salida < 0 * (2.0 / 8.0)) {
-                    angulo = PI / 2;
-                    //cout << "U ";
-                } else if (salida < 1 * (2.0 / 8.0)) {
-                    angulo = PI / 4;
-                    //cout << "UR ";
-                } else if (salida < 2 * (2.0 / 8.0)) {
-                    angulo = 0;
-                    //cout << "R ";
-                } else if (salida < 3 * (2.0 / 8.0)) {
-                    angulo = -PI / 4;
-                    //cout << "DR ";
-                } else if (salida < 4 * (2.0 / 8.0)) {
-                    angulo = -PI / 2;
-                    //cout << "D ";
-                }
+                vector<double> salida = red.run(entradasRed);
+                double angulo = output2Radians(salida);
                 float vMax = 3.0f;
                 // Niega el eje Y porque está invertido (valores de Y mayores dan posiciones mas abajo)
                 sustitutoOvni.move({vMax * (float) cos(angulo), vMax * (float) -sin(angulo)});
                 posicionAnterior = posicionOvni;
                 posicionOvni = sustitutoOvni.getPosition();
 
-                distancia_aux[i] += distancia(posicionAnterior,posicionOvni);
+                tiempo_aux[i] += 1.0/60.0;
 
                 // Evita los limites del espacio
                 if (posicionOvni.x < 0) {
@@ -360,8 +389,6 @@ int main() {
             }
         }
 
-        sigGeneracion(distancia_aux);
+        sigGeneracion(tiempo_aux);
     }
-
-    cout << "Reinicios: " << reinicios << " tiempo: " << reloj.getElapsedTime().asSeconds() << endl;
 }

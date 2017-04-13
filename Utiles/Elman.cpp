@@ -3,6 +3,7 @@
 #include "../Graficos/Nave.hpp"
 #include "../neural/include/neural/Network.h"
 #include "../matematicas.hpp"
+#include <memory>
 
 using namespace std;
 
@@ -21,10 +22,13 @@ double radio = radioInteligente;        //Radio que empleara la red
 double ratioAprendizaje = 0.3;      //Ratio de aprendizaje de la red
 
 // Inicializa una red neuronal nueva
-neural::Network red(12, 3, {18,6});
+int entradas = 12; //Entradas de la red
+int ocultas = 24;  //Neuronas ocultas (tambien es el numero de neuronas de contexto
+int salidas = 3;    //Salidas de la red
+neural::Network red(entradas+ocultas, salidas, {ocultas});
 
-bool leer = true;           //Inicializar red del un fichero
-string fichero = "perceptron.nnet";     //Fichero a leer/escribir.
+bool leer = false;           //Inicializar red del un fichero
+string fichero = "Elman.nnet";     //Fichero a leer/escribir.
 
 double direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, std::vector<Asteroide> v) {
     float vMax = 3.0;
@@ -203,6 +207,8 @@ int main() {
         red = red.read(fichero);
     }
 
+    shared_ptr<neural::Layer> capaOculta = red.getFirstLayer();     //Capa oculta de la red
+
     ultimaDireccion = 0.0;
     bool continua = true;
 
@@ -211,6 +217,10 @@ int main() {
     double tiempo = 0.0;
     int reinicios = 1;
     unsigned int iteraciones = 0;
+    vector<double> contexto;
+    for(int i = 0; i < ocultas; i++) {
+        contexto.push_back(0);
+    }
     while (continua) {
         iteraciones++;
         sf::Event event;
@@ -252,8 +262,10 @@ int main() {
                                    asteroidePeligroso[2]->getPosicion().y - posicionOvni.y,
                                    asteroidePeligroso[2]->getVelocidad().x,
                                    asteroidePeligroso[2]->getVelocidad().y};
-
+        //Se añadevalor de neuronas de contexto a la entrada
+        entradasRed.insert(entradasRed.end(),contexto.begin(),contexto.end());
         vector<double> salida = red.run(entradasRed);
+        contexto = capaOculta->Output();    //Se actualiza el valor de neuronas de contexto
         double salidaSegura = direccionSegura(sustitutoOvni,posicionAnterior,asteroides);
         double angulo = output2Radians(salida);
         float vMax = 3.0f;
@@ -283,7 +295,7 @@ int main() {
         bool choque = false;
         for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
             ast->mover();
-          //  ventana.draw(*ast);
+            //  ventana.draw(*ast);
             if (distanciaEuclidea(ast->getPosicion(), posicionOvni) < ast->getRadio() + sustitutoOvni.getRadius()) {
                 // Hay colision, se informa a la red y se reinicia la escena aleatoriamente
                 choque = true;
@@ -292,17 +304,22 @@ int main() {
         }
         if (choque) {
             red.trainSingle(entradasRed, radians2Output(salidaSegura), ratioAprendizaje);
+
             Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion,sf::Color::White,NULL);
             sustitutoOvni.setPosition({valorAleatorio(0, resolucion.x), valorAleatorio(0, resolucion.y)});
+            //cout << "La salida era: " << salidaPre << " y ahora es: " << red.run(entradasRed)[0] << '\n';
             cout << reinicios << " " << tiempo << '\n';
             reinicios++;
+            // if (iteraciones / 60.0f > 10) numAsteroides++;
             iteraciones = 0;
             tiempo = 0.0;
         } else {
             tiempo = tiempo + 1.0/60.0;
         }
-       /* ventana.draw(sustitutoOvni);
-        ventana.display();*/
+        /* ventana.draw(sustitutoOvni);
+         ventana.display();*/
     }
+
+    //cout << "Reinicios: " << reinicios << " tiempo: " << reloj.getElapsedTime().asSeconds() << endl;
 }
 
