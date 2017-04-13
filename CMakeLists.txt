@@ -9,8 +9,13 @@ endif()
 # Copia el directorio de recursos al directorio de los binarios
 file(COPY ${PROJECT_SRC_DIR}Recursos DESTINATION .)
 
-# Usa el estándar c++17
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -static -mwindows -pthread ")
+set(BUILD_DEBUG true)
+
+if(BUILD_DEBUG)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread ")
+else()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -O3 -g -static -mwindows -pthread ")
+endif()
 
 project(Ast3roiDs)
 set(EXECUTABLE_NAME Ast3roiDs)
