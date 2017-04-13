@@ -79,6 +79,9 @@ find_package(glew)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 find_package(SFML 2 REQUIRED system window graphics network audio)
 add_subdirectory(tinyobjloader)
+add_subdirectory(neural)
+include_directories(neural/include/)
+
 
 if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
@@ -86,3 +89,6 @@ if(SFML_FOUND)
 	target_link_libraries(${PRUEBA3D} ${SFML_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} tinyobjloader)
 
 endif()
+# Linkea la libreria de redes neuronales
+target_link_libraries(${EXECUTABLE_NAME} neural)
+add_subdirectory(Utiles)
