@@ -167,23 +167,23 @@ double output2Radians(vector<double> output) {
 
 vector<double> radians2Output(double dir) {
     if(dir == 0.0) {
-        return {0, 0, 0};
+        return {-1, -1, -1};
     } else if(dir == -PI/4) {
-        return {0, 0, 1};
+        return {-1, -1, 1};
     } else if(dir == -PI/2) {
-        return {0, 1, 0};
+        return {-1, 1, -1};
     } else if(dir == -3*PI/4) {
-        return {0, 1, 1};
+        return {-1, 1, 1};
     } else if(dir == PI) {
-        return {1, 0, 0};
+        return {1, -1, -1};
     } else if(dir == PI/4) {
-        return {1, 0, 1};
+        return {1, -1, 1};
     } else if(dir == PI/2) {
-        return {1, 1, 0};
+        return {1, 1, -1};
     } else if(dir == 3*PI/4) {
         return {1, 1, 1};
     } else {
-        return {0, 0, 0};
+        return {-1, -1, -1};
     }
 }
 
