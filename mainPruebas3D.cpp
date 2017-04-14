@@ -31,8 +31,7 @@ int main() {
     // Carga un solo asteroide
     Asteroide3D testAsteroide(&shaderPrincipal, &texturaNave);
     Nave3D testNave(&shaderPrincipal, &texturaBlanco);
-
-    Camara camara({0, 0, -3.8f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
+    Camara camara({0, 0, -6.f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
 
     bool running = true;
@@ -57,12 +56,12 @@ int main() {
         }
 
         // Mueve todos los elementos
-        // testNave.mover();
-        // testAsteroide.mover();
+        testAsteroide.mover();
+        testNave.mover();
         // Limpia la ventana (no en negro para detectar posibles formas 3D sin color)
         ventana.clear({0.2f, 0.2f, 0.2f});
         // Dibuja todos los elementos
-        //ventana.draw(testAsteroide.predibujado(camara));
+        ventana.draw(testAsteroide.predibujado(camara));
         ventana.draw(testNave.predibujado(camara));
 
         ventana.display();

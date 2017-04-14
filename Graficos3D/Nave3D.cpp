@@ -15,10 +15,11 @@ Nave3D::Nave3D(vj::Shader *shader, vj::Textura *textura) : Elemento3D(shader, te
     };
     pos.posicion = {0.0f, 0.0f, 0.0f};
     pos.escala = {0.5f, 0.5f, 0.5f};
-    pos.rotacion = {PI/2, PI, PI/2};
+    pos.rotacion = {PI/2, PI/2, PI};
 }
 
 void Nave3D::mover() {
     // TODO: Implementar de verdad
-    pos.posicion += velocidad * (1.0f / 60.0f);
+    //pos.posicion += velocidad * (1.0f / 60.0f);
+    pos.rotacion = {pos.rotacion.x + 0.001f, pos.rotacion.y + 0.001f, pos.rotacion.z + 0.001f};
 }

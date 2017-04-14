@@ -5,20 +5,24 @@
 using namespace std;
 
 /**
- * Replica las normales definidas en atrib para que haya el mismo numero de normales que de
+ * Replica las normales y coordenadas uv definidas en atrib para que haya el mismo numero de normales que de
  * vertices y que se puedan indexar con los mismos valores.
  */
-void replicaNormales(const tinyobj::attrib_t &atrib, const tinyobj::shape_t &figura, vector<float> &normales,
-                     vector<int> &indices) {
+void replica(const tinyobj::attrib_t &atrib, const tinyobj::shape_t &figura, vector<float> &normales,
+             vector<float> &ctextura, vector<int> &indices) {
     normales.resize(atrib.vertices.size());
+    ctextura.resize(atrib.vertices.size());
     indices.resize(figura.mesh.indices.size());
     for (unsigned int i = 0; i < figura.mesh.indices.size(); i++) {
-        normales[figura.mesh.indices.at(i).vertex_index * 3] = atrib.normals[figura.mesh.indices.at(i).normal_index * 3];
-        normales[figura.mesh.indices.at(i).vertex_index * 3 + 1] = atrib.normals[
-                figura.mesh.indices.at(i).normal_index * 3 + 1];
-        normales[figura.mesh.indices.at(i).vertex_index * 3 + 2] = atrib.normals[
-                figura.mesh.indices.at(i).normal_index * 3 + 2];
-        indices.at(i) = figura.mesh.indices.at(i).vertex_index;
+        normales[figura.mesh.indices[i].vertex_index * 3] = atrib.normals[figura.mesh.indices[i].normal_index * 3];
+        normales[figura.mesh.indices[i].vertex_index * 3 + 1] = atrib.normals[figura.mesh.indices[i].normal_index * 3 + 1];
+        normales[figura.mesh.indices[i].vertex_index * 3 + 2] = atrib.normals[figura.mesh.indices[i].normal_index * 3 + 2];
+        if (figura.mesh.indices[i].texcoord_index != -1){
+            ctextura[figura.mesh.indices[i].vertex_index * 2] = atrib.texcoords[figura.mesh.indices[i].texcoord_index * 2];
+            ctextura[figura.mesh.indices[i].vertex_index * 2 + 1] = atrib.texcoords[figura.mesh.indices[i].texcoord_index * 2 + 1];
+        }
+
+        indices[i] = figura.mesh.indices[i].vertex_index;
     }
 }
 
@@ -37,9 +41,10 @@ void Elemento3D::cargaMalla() {
         throw invalid_argument("Hay mas de una figura en el fichero.obj y no es posible saber cual cargar.");
 
     vector<float> normales;
+    vector<float> ctextura;
     vector<int> indices;
 
-    replicaNormales(atrib, figuras[0], normales, indices);
+    replica(atrib, figuras[0], normales, ctextura, indices);
 
     numTriangulos = (unsigned int) figuras[0].mesh.indices.size();
 
@@ -56,7 +61,7 @@ void Elemento3D::cargaMalla() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffers[TEXCOORD_VB]);
-    glBufferData(GL_ARRAY_BUFFER, atrib.vertices.size() * sizeof(atrib.texcoords[0]), &atrib.texcoords[0],
+    glBufferData(GL_ARRAY_BUFFER, ctextura.size() * sizeof(ctextura[0]), &ctextura[0],
                  GL_STATIC_DRAW);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);

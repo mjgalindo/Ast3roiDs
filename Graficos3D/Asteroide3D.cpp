@@ -5,9 +5,9 @@ Asteroide3D::Asteroide3D(vj::Shader* shader, vj::Textura* textura) : Elemento3D(
     fich_obj = "Recursos/Modelos/asteroide.obj";
     cargaMalla();
     velocidad = {
-            valorAleatorio(0.0f, VELOCIDAD_MAX),
-            valorAleatorio(0.0f, VELOCIDAD_MAX),
-            valorAleatorio(0.0f, VELOCIDAD_MAX)
+            valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX),
+            valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX),
+            valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX)
     };
     pos.posicion = {0.0f, 0.0f, 0.0f};
     pos.escala = {0.5f, 0.5f, 0.5f};
@@ -15,5 +15,5 @@ Asteroide3D::Asteroide3D(vj::Shader* shader, vj::Textura* textura) : Elemento3D(
 }
 
 void Asteroide3D::mover() {
-    pos.posicion = pos.posicion * velocidad * (1 / 60.f);
+    pos.posicion += velocidad * (1 / 60.f);
 }
