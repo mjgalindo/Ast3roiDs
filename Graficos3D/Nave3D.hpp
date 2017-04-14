@@ -10,6 +10,14 @@ public:
 
     void mover();
 
+    glm::vec3 rotacion() {
+        return pos.rotacion;
+    }
+    void setRot(glm::vec3 rot)
+    {
+        pos.rotacion = rot;
+    }
+
 private:
 
     const float VELOCIDAD_MAX = 0.5f;

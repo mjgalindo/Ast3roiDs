@@ -11,7 +11,7 @@ Asteroide3D::Asteroide3D(vj::Shader* shader, vj::Textura* textura) : Elemento3D(
     };
     pos.posicion = {0.0f, 0.0f, 0.0f};
     pos.escala = {0.5f, 0.5f, 0.5f};
-    pos.rotacion = {0.0f, 0.0f, 0.0f};
+    pos.rotacion = {PI, 0.0f, 0.0f};
 }
 
 void Asteroide3D::mover() {

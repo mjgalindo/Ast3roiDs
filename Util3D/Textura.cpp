@@ -27,6 +27,7 @@ namespace vj {
     }
 
     void Textura::bind() {
+        glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, m_texture);
     }
 }

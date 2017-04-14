@@ -6,7 +6,7 @@ using namespace std;
 using namespace sf;
 
 Nave3D::Nave3D(vj::Shader *shader, vj::Textura *textura) : Elemento3D(shader, textura) {
-    fich_obj = "Recursos/Modelos/nave.obj";
+    fich_obj = "Recursos/Modelos/nave2.obj";
     cargaMalla();
     velocidad = {
             valorAleatorio(0.0f, VELOCIDAD_MAX),
@@ -15,7 +15,7 @@ Nave3D::Nave3D(vj::Shader *shader, vj::Textura *textura) : Elemento3D(shader, te
     };
     pos.posicion = {0.0f, 0.0f, 0.0f};
     pos.escala = {0.5f, 0.5f, 0.5f};
-    pos.rotacion = {1.0f, 0.0f, 0.0f};
+    pos.rotacion = {PI/2, PI, PI/2};
 }
 
 void Nave3D::mover() {
