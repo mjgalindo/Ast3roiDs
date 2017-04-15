@@ -1,7 +1,9 @@
 #include "Asteroide3D.hpp"
 #include "../matematicas.hpp"
+#include "../Util3D/ControladorTexturas.hpp"
 
-Asteroide3D::Asteroide3D(vj::Shader* shader, vj::Textura* textura) : Elemento3D(shader, textura) {
+Asteroide3D::Asteroide3D(vj::Shader* shader) :
+        Elemento3D(shader, ControladorTexturas::getTextura(ControladorTexturas::BLANCO)) {
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ASTEROIDE);
     velocidad = {
             valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX),

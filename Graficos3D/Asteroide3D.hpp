@@ -5,7 +5,7 @@
 
 class Asteroide3D : public Elemento3D {
 public:
-    Asteroide3D(vj::Shader* shader, vj::Textura* textura);
+    Asteroide3D(vj::Shader* shader);
     void mover();
 
 private:

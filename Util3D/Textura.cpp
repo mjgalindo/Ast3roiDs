@@ -2,6 +2,7 @@
 #include <iostream>
 
 using namespace std;
+
 namespace vj {
     Textura::Textura(const std::string &fileName) {
         int width, height;
@@ -27,7 +28,6 @@ namespace vj {
     }
 
     void Textura::bind() {
-        glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, m_texture);
     }
 }

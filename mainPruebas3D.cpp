@@ -2,6 +2,7 @@
 #include "Graficos3D/Asteroide3D.hpp"
 #include "Graficos3D/Nave3D.hpp"
 #include "Util3D/Ventana3D.hpp"
+#include "Util3D/ControladorTexturas.hpp"
 
 using namespace std;
 using namespace sf;
@@ -23,18 +24,19 @@ int main() {
     Ventana3D ventana(sf::VideoMode(WIDTH, HEIGHT), "OpenGL", sf::Style::Close | sf::Style::Titlebar, configuracion,
                       60);
 
-    // Inicializa los modelos 3D. Este objeto solo existe para controlar la creacion y destrucción de los modelos 3D.
-    ControladorModelos controladorModelos;
+    // Inicializa los modelos 3D y las texturas. Esto objetos solo existe para controlar
+    // la creacion y destrucción de recursos.
+    ControladorModelos __controladorModelos;
+    ControladorTexturas __controladorTexturas;
 
     // Inicializa shaders y texturas.
     vj::Shader shaderPrincipal(string("Recursos/Shaders/shaderBasico"));
-    vj::Textura texturaBlanco(string("Recursos/Texturas/blanco.png"));
-    vj::Textura texturaNave(string("Recursos/Texturas/naveUV_color_V2.png"));
 
     // Carga un solo asteroide
-    Asteroide3D testAsteroide(&shaderPrincipal, &texturaNave);
-    Nave3D testNave(&shaderPrincipal, &texturaBlanco);
-    Camara camara({0, 0, -6.f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
+    Asteroide3D testAsteroide(&shaderPrincipal);
+    Nave3D testNave(&shaderPrincipal);
+
+    Camara camara({0, 0, -7.f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
 
     bool running = true;
@@ -59,12 +61,12 @@ int main() {
         }
 
         // Mueve todos los elementos
-        //testAsteroide.mover();
+        testAsteroide.mover();
         testNave.mover();
         // Limpia la ventana (no en negro para detectar posibles formas 3D sin color)
         ventana.clear({0.2f, 0.2f, 0.2f});
         // Dibuja todos los elementos
-        //ventana.draw(testAsteroide.predibujado(camara));
+        ventana.draw(testAsteroide.predibujado(camara));
         ventana.draw(testNave.predibujado(camara));
         ventana.display();
     }

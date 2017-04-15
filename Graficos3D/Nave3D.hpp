@@ -6,7 +6,7 @@
 
 class Nave3D : public Elemento3D {
 public:
-    Nave3D(vj::Shader* shader, vj::Textura* textura);
+    Nave3D(vj::Shader* shader);
 
     void mover();
 

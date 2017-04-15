@@ -1,11 +1,14 @@
 #include <string>
 #include "Nave3D.hpp"
 #include "../matematicas.hpp"
+#include "../Util3D/ControladorTexturas.hpp"
 
 using namespace std;
 using namespace sf;
 
-Nave3D::Nave3D(vj::Shader *shader, vj::Textura *textura) : Elemento3D(shader, textura) {
+Nave3D::Nave3D(vj::Shader *shader) :
+        Elemento3D(shader, ControladorTexturas::getTextura(ControladorTexturas::NAVE)) {
+
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::NAVE);
     velocidad = {
             valorAleatorio(0.0f, VELOCIDAD_MAX),
