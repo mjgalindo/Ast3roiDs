@@ -6,23 +6,18 @@
 
 class Nave3D : public Elemento3D {
 public:
-    Nave3D(vj::Shader* shader);
+    Nave3D(vj::Shader *shader);
 
-    void mover();
+    void actualizar();
 
-    glm::vec3 rotacion() {
-        return pos.rotacion;
-    }
-    void setRot(glm::vec3 rot)
-    {
-        pos.rotacion = rot;
-    }
+    void posiciones(glm::vec3 &posicion, glm::vec3 &rotacion);
 
 private:
 
     const float VELOCIDAD_MAX = 0.5f;
 
     glm::vec3 velocidad;
+    glm::vec4 direccion = {1.0f, 0.0f, 0.0f, 0.0f};
 };
 
 

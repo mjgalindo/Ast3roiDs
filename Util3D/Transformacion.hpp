@@ -5,6 +5,12 @@
 #include <glm/gtx/transform.hpp>
 #include "Camara.hpp"
 
+inline glm::mat4 matrizRotacion(glm::vec3 rotXYZ){
+    return glm::rotate(rotXYZ.x, glm::vec3(1.0, 0.0, 0.0)) *
+           glm::rotate(rotXYZ.y, glm::vec3(0.0, 1.0, 0.0)) *
+           glm::rotate(rotXYZ.z, glm::vec3(0.0, 0.0, 1.0));
+}
+
 struct Transformacion {
     Transformacion(const glm::vec3 &pos = glm::vec3(), const glm::vec3 &rot = glm::vec3(),
                    const glm::vec3 &escala = glm::vec3(1.0f, 1.0f, 1.0f))
@@ -13,10 +19,7 @@ struct Transformacion {
     inline glm::mat4 matrizModelo() const {
         glm::mat4 posMat = glm::translate(posicion);
         glm::mat4 scaleMat = glm::scale(escala);
-        glm::mat4 rotX = glm::rotate(rotacion.x, glm::vec3(1.0, 0.0, 0.0));
-        glm::mat4 rotY = glm::rotate(rotacion.y, glm::vec3(0.0, 1.0, 0.0));
-        glm::mat4 rotZ = glm::rotate(rotacion.z, glm::vec3(0.0, 0.0, 1.0));
-        glm::mat4 rotMat = rotX * rotY * rotZ;
+        glm::mat4 rotMat = matrizRotacion(rotacion);
 
         return posMat * rotMat * scaleMat;
     }

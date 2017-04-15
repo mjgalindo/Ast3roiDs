@@ -45,13 +45,7 @@ int main() {
         while (ventana.pollEvent(event)) {
             switch (event.type) {
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Add) {
-                        camara.pos = {camara.pos.x, camara.pos.y, camara.pos.z + 0.05f};
-                        break;
-                    } else if (event.key.code == sf::Keyboard::Subtract) {
-                        camara.pos = {camara.pos.x, camara.pos.y, camara.pos.z - 0.05f};
-                        break;
-                    } else if (event.key.code != sf::Keyboard::Escape) { break; }
+                    if (event.key.code != sf::Keyboard::Escape) { break; }
                 case sf::Event::Closed:
                     running = false;
                     break;
@@ -62,12 +56,22 @@ int main() {
 
         // Mueve todos los elementos
         testAsteroide.mover();
-        testNave.mover();
+        testNave.actualizar();
+
+        // Actualiza la cámara con respecto a la posicion de la nave.
+        // TODO: Controlar giros de la nave: la cámara también debe girar
+        glm::vec3 posNave, rotNave;
+        testNave.posiciones(posNave, rotNave);
+        camara.pos = {posNave.x, posNave.y + 1.0f, posNave.z - 8.0f};
+
         // Limpia la ventana (no en negro para detectar posibles formas 3D sin color)
         ventana.clear({0.2f, 0.2f, 0.2f});
+
         // Dibuja todos los elementos
         ventana.draw(testAsteroide.predibujado(camara));
         ventana.draw(testNave.predibujado(camara));
+
+        // Muestra el fotograma
         ventana.display();
     }
 
