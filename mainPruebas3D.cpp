@@ -23,6 +23,9 @@ int main() {
     Ventana3D ventana(sf::VideoMode(WIDTH, HEIGHT), "OpenGL", sf::Style::Close | sf::Style::Titlebar, configuracion,
                       60);
 
+    // Inicializa los modelos 3D. Este objeto solo existe para controlar la creacion y destrucción de los modelos 3D.
+    ControladorModelos controladorModelos;
+
     // Inicializa shaders y texturas.
     vj::Shader shaderPrincipal(string("Recursos/Shaders/shaderBasico"));
     vj::Textura texturaBlanco(string("Recursos/Texturas/blanco.png"));
@@ -56,14 +59,13 @@ int main() {
         }
 
         // Mueve todos los elementos
-        testAsteroide.mover();
+        //testAsteroide.mover();
         testNave.mover();
         // Limpia la ventana (no en negro para detectar posibles formas 3D sin color)
         ventana.clear({0.2f, 0.2f, 0.2f});
         // Dibuja todos los elementos
-        ventana.draw(testAsteroide.predibujado(camara));
+        //ventana.draw(testAsteroide.predibujado(camara));
         ventana.draw(testNave.predibujado(camara));
-
         ventana.display();
     }
 

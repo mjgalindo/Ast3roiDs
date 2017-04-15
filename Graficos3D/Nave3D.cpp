@@ -6,8 +6,7 @@ using namespace std;
 using namespace sf;
 
 Nave3D::Nave3D(vj::Shader *shader, vj::Textura *textura) : Elemento3D(shader, textura) {
-    fich_obj = "Recursos/Modelos/nave2.obj";
-    cargaMalla();
+    modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::NAVE);
     velocidad = {
             valorAleatorio(0.0f, VELOCIDAD_MAX),
             valorAleatorio(0.0f, VELOCIDAD_MAX),

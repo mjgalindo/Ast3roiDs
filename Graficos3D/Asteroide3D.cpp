@@ -2,8 +2,7 @@
 #include "../matematicas.hpp"
 
 Asteroide3D::Asteroide3D(vj::Shader* shader, vj::Textura* textura) : Elemento3D(shader, textura) {
-    fich_obj = "Recursos/Modelos/asteroide.obj";
-    cargaMalla();
+    modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ASTEROIDE);
     velocidad = {
             valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX),
             valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX),
