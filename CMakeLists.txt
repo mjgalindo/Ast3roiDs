@@ -19,11 +19,14 @@ endif()
 
 project(Ast3roiDs)
 set(EXECUTABLE_NAME Ast3roiDs)
-set(SOURCE_FILES
-		main.cpp
+
+set(FUENTES_ASTEROIDS
+		matematicas.hpp
 		Estados.hpp
 		Colisiones.hpp
-		Colisiones.cpp
+		Colisiones.cpp)
+
+set(FUENTES_2D
 		Graficos/Triangular.hpp
 		Graficos/Triangular.cpp
 		Graficos/Circular.hpp
@@ -36,23 +39,13 @@ set(SOURCE_FILES
 		Graficos/Asteroide.hpp
 		Graficos/Ovni.cpp
 		Graficos/Ovni.hpp
-		matematicas.hpp
 		constantesGlobales.hpp
 		ControladorSonido.cpp
 		ControladorSonido.hpp
-		Graficos/OvniInteligente.cpp
-		Graficos3D/Nave3D.cpp
-		Graficos3D/Nave3D.hpp
-        Graficos3D/Elemento3D.cpp
-        Graficos3D/Elemento3D.hpp
-		Graficos3D/Asteroide3D.cpp
-		Graficos3D/Asteroide3D.hpp
-        Util3D/Ventana3D.cpp
-        Util3D/Ventana3D.hpp)
+		Graficos/OvniInteligente.cpp)
 
 set(PRUEBA3D prueba3D)
-set(FUENTES_PRUEBA3D
-		mainPruebas3D.cpp
+set(FUENTES_3D
         Graficos3D/Elemento3D.hpp
         Graficos3D/Elemento3D.cpp
 		Graficos3D/Asteroide3D.hpp
@@ -74,8 +67,8 @@ set(FUENTES_PRUEBA3D
 
 set(SFML_ROOT "C:/Program Files (x86)/SFML")
 
-add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
-add_executable(${PRUEBA3D} ${FUENTES_PRUEBA3D})
+add_executable(${EXECUTABLE_NAME} main.cpp ${FUENTES_ASTEROIDS} ${FUENTES_2D})
+add_executable(${PRUEBA3D} mainPruebas3D.cpp ${FUENTES_3D})
 
 find_package(OpenGL)
 find_package(glew)
