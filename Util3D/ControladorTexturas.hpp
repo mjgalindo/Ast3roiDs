@@ -14,9 +14,6 @@ public:
 
     static vj::Textura* getTextura(TipoTextura tipo);
 
-private:
-    static void cargaTextura(TipoTextura tipo);
-
 };
 
 #endif //AST3ROIDS_CONTROLADORTEXTURAS_HPP
