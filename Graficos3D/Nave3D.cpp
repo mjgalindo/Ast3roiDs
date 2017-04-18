@@ -14,6 +14,7 @@ Nave3D::Nave3D(vj::Shader *shader) :
     pos.posicion = {0.0f, 0.0f, 0.0f};
     pos.escala = {0.5f, 0.5f, 0.5f};
     pos.rotacion = {0.0f, -PI / 2, 0.0f};
+    direccion = glm::vec3(DIRECCION_INICIAL);
 }
 
 void Nave3D::actualizar() {
@@ -23,7 +24,7 @@ void Nave3D::actualizar() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         pos.rotacion.y -= 0.01f;
 
-    direccion = matrizRotacion(pos.rotacion) * glm::vec4(1.0, 0.0f, 0.0f, 0.0f);
+    direccion = matrizRotacion(pos.rotacion) * DIRECCION_INICIAL;
     direccion = glm::normalize(direccion);
 
     // Acelera

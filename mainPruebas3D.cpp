@@ -69,7 +69,7 @@ int main() {
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = testNave.pos.matrizModelo();
         glm::vec4 posCamara = modeloNave * glm::vec4(-16.0f, 1.0f, 0.0f, 1.0f);
-        glm::vec4 dirCamara = modeloNave * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+        glm::vec4 dirCamara = modeloNave * testNave.DIRECCION_INICIAL;
         camara.pos = glm::vec3(posCamara);
         camara.forward = glm::vec3(dirCamara);
 

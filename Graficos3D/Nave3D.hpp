@@ -13,7 +13,9 @@ public:
     const float VELOCIDAD_MAX = 0.5f;
 
     glm::vec3 velocidad;
-    glm::vec3 direccion = {1.0f, 0.0f, 0.0f};
+    glm::vec3 direccion;
+
+    const glm::vec4 DIRECCION_INICIAL{1.0f, 0.0f, 0.0f, 0.0f};
 };
 
 
