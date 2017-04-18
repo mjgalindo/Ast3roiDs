@@ -44,7 +44,6 @@ namespace vj {
 
         glUniformMatrix4fv(m_uniforms[0], 1, GL_FALSE, &MVP[0][0]);
         glUniformMatrix4fv(m_uniforms[1], 1, GL_FALSE, &Normal[0][0]);
-        glUniform3f(m_uniforms[2], 0.0f, 0.5f, 0.5f);
     }
 
     std::string Shader::cargaFichero(const std::string &nomFichero) {
@@ -101,5 +100,9 @@ namespace vj {
         compruebaErrores(shader, GL_COMPILE_STATUS, false, "Error al compilar el shader!");
 
         return shader;
+    }
+
+    void Shader::setDireccionLuz(glm::vec3 direccion) {
+        glUniform3f(m_uniforms[2], direccion.x, direccion.y, direccion.z);
     }
 }

@@ -31,6 +31,8 @@ int main() {
 
     // Inicializa shaders y texturas.
     vj::Shader shaderPrincipal(string("Recursos/Shaders/shaderBasico"));
+    shaderPrincipal.bind();
+    shaderPrincipal.setDireccionLuz({0.0f, -0.75f, 0.25f});
 
     // Carga un solo asteroide
     Asteroide3D testAsteroide(&shaderPrincipal);

@@ -12,16 +12,18 @@ namespace vj {
     public:
         Shader(const std::string &fileName);
 
+        virtual ~Shader();
+
         void bind();
 
         void actualizar(const Transformacion &transformacion, const Camara &camara);
 
-        virtual ~Shader();
+        void setDireccionLuz(glm::vec3 direccion);
 
     protected:
     private:
         // Una copia sería problemática porque llama al destructor invalidando el shader
-        Shader(const Shader& copia) = delete;
+        Shader(const Shader &copia) = delete;
 
         static const unsigned int NUM_SHADERS = 2;
         static const unsigned int NUM_UNIFORMS = 4;
