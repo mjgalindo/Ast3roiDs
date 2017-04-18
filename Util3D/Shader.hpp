@@ -3,7 +3,7 @@
 
 #include <string>
 #include <GL/glew.h>
-#include "Transformacion.hpp"
+#include "Posicionamiento.hpp"
 #include <array>
 
 namespace vj {
@@ -16,7 +16,7 @@ namespace vj {
 
         void bind();
 
-        void actualizar(const Transformacion &transformacion, const Camara &camara);
+        void actualizar(const Posicionamiento &transformacion, const Camara &camara);
 
         void setDireccionLuz(glm::vec3 direccion);
 

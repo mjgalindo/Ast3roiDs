@@ -56,7 +56,7 @@ set(FUENTES_3D
 		Util3D/Ventana3D.hpp
 		Util3D/Shader.hpp
 		Util3D/Shader.cpp
-		Util3D/Transformacion.hpp
+		Util3D/Posicionamiento.hpp
 		Util3D/Camara.hpp
 		Util3D/Textura.cpp
 		Util3D/Textura.hpp

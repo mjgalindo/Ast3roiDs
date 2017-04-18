@@ -11,8 +11,8 @@ inline glm::mat4 matrizRotacion(glm::vec3 rotXYZ){
            glm::rotate(rotXYZ.z, glm::vec3(0.0, 0.0, 1.0));
 }
 
-struct Transformacion {
-    Transformacion(const glm::vec3 &pos = glm::vec3(), const glm::vec3 &rot = glm::vec3(),
+struct Posicionamiento {
+    Posicionamiento(const glm::vec3 &pos = glm::vec3(), const glm::vec3 &rot = glm::vec3(),
                    const glm::vec3 &escala = glm::vec3(1.0f, 1.0f, 1.0f))
             : posicion(pos), rotacion(rot), escala(escala) {}
 

@@ -10,14 +10,10 @@ public:
 
     void actualizar();
 
-    void posiciones(glm::vec3 &posicion, glm::vec3 &rotacion);
-
-private:
-
     const float VELOCIDAD_MAX = 0.5f;
 
     glm::vec3 velocidad;
-    glm::vec4 direccion = {1.0f, 0.0f, 0.0f, 0.0f};
+    glm::vec3 direccion = {1.0f, 0.0f, 0.0f};
 };
 
 

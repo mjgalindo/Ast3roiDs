@@ -23,17 +23,13 @@ void Nave3D::actualizar() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         pos.rotacion.y -= 0.01f;
 
-    glm::vec3 delanteActualizado = matrizRotacion(pos.rotacion) * direccion;
+    direccion = matrizRotacion(pos.rotacion) * glm::vec4(1.0, 0.0f, 0.0f, 0.0f);
+    direccion = glm::normalize(direccion);
 
     // Acelera
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-        velocidad += delanteActualizado / 60.0f;
+        velocidad += direccion / 60.0f;
     else velocidad = velocidad * 0.98f;
 
     pos.posicion += velocidad * (1 / 60.f);
-}
-
-void Nave3D::posiciones(glm::vec3 &posicion, glm::vec3 &rotacion) {
-    posicion = pos.posicion;
-    rotacion = pos.rotacion;
 }

@@ -38,7 +38,7 @@ namespace vj {
         glUseProgram(programa);
     }
 
-    void Shader::actualizar(const Transformacion &transformacion, const Camara &camara) {
+    void Shader::actualizar(const Posicionamiento &transformacion, const Camara &camara) {
         glm::mat4 MVP = transformacion.modeloVistaProyeccion(camara);
         glm::mat4 Normal = transformacion.matrizModelo();
 

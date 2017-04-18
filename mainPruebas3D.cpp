@@ -7,8 +7,8 @@
 using namespace std;
 using namespace sf;
 
-#define WIDTH 800
-#define HEIGHT 600
+#define WIDTH 1700
+#define HEIGHT 1100
 
 int main() {
     // Configura la ventana
@@ -34,14 +34,18 @@ int main() {
     shaderPrincipal.bind();
     shaderPrincipal.setDireccionLuz({0.0f, -0.75f, 0.25f});
 
-    // Carga un solo asteroide
-    Asteroide3D testAsteroide(&shaderPrincipal);
+    // Carga asteroides para ver como se mueve la nave
+    vector<Asteroide3D> asteroides;
+    for (int i = 0; i < 100; i++)
+        asteroides.emplace_back(&shaderPrincipal);
+
     Nave3D testNave(&shaderPrincipal);
 
-    Camara camara({0, 0, -7.f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
+    Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
 
     bool running = true;
+
     while (running) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
@@ -57,20 +61,25 @@ int main() {
         }
 
         // Mueve todos los elementos
-        testAsteroide.mover();
+        for (auto asteroide : asteroides)
+            asteroide.mover();
+
         testNave.actualizar();
 
-        // Actualiza la cámara con respecto a la posicion de la nave.
-        // TODO: Controlar giros de la nave: la cámara también debe girar
-        glm::vec3 posNave, rotNave;
-        testNave.posiciones(posNave, rotNave);
-        camara.pos = {posNave.x, posNave.y + 1.0f, posNave.z - 8.0f};
+        // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
+        glm::mat4 modeloNave = testNave.pos.matrizModelo();
+        glm::vec4 posCamara = modeloNave * glm::vec4(-16.0f, 1.0f, 0.0f, 1.0f);
+        glm::vec4 dirCamara = modeloNave * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+        camara.pos = glm::vec3(posCamara);
+        camara.forward = glm::vec3(dirCamara);
 
         // Limpia la ventana (no en negro para detectar posibles formas 3D sin color)
-        ventana.clear({0.2f, 0.2f, 0.2f});
+        ventana.clear({0.1f, 0.1f, 0.1f});
 
         // Dibuja todos los elementos
-        ventana.draw(testAsteroide.predibujado(camara));
+        for (auto asteroide : asteroides)
+            ventana.draw(asteroide.predibujado(camara));
+
         ventana.draw(testNave.predibujado(camara));
 
         // Muestra el fotograma

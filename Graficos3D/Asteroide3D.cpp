@@ -2,16 +2,17 @@
 #include "../matematicas.hpp"
 #include "../Util3D/ControladorTexturas.hpp"
 
-Asteroide3D::Asteroide3D(vj::Shader* shader) :
+Asteroide3D::Asteroide3D(vj::Shader *shader) :
         Elemento3D(shader, ControladorTexturas::getTextura(ControladorTexturas::BLANCO)) {
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ASTEROIDE);
-    velocidad = {
-            valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX),
-            valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX),
-            valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX)
+    velocidad = {0.0f, 0.0f, 0.0f};
+    pos.posicion = {
+            valorAleatorio(-80, 80),
+            valorAleatorio(-80, 80),
+            valorAleatorio(-80, 80),
     };
-    pos.posicion = {0.0f, 0.0f, 0.0f};
-    pos.escala = {0.5f, 0.5f, 0.5f};
+    float escala = valorAleatorio(0.5f, 2.0f);
+    pos.escala = {escala, escala, escala};
     pos.rotacion = {PI, 0.0f, 0.0f};
 }
 
