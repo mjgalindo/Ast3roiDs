@@ -16,6 +16,9 @@ public:
     glm::vec3 direccion;
 
     const glm::vec4 DIRECCION_INICIAL{1.0f, 0.0f, 0.0f, 0.0f};
+
+private:
+    sf::Vector2i ultimaPosicionRaton;
 };
 
 

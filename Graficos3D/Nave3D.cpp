@@ -15,21 +15,29 @@ Nave3D::Nave3D(vj::Shader *shader) :
     pos.escala = {0.5f, 0.5f, 0.5f};
     pos.rotacion = {0.0f, -PI / 2, 0.0f};
     direccion = glm::vec3(DIRECCION_INICIAL);
+    ultimaPosicionRaton = sf::Mouse::getPosition();
 }
 
 void Nave3D::actualizar() {
     // Gira la nave
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        pos.rotacion.y += 0.01f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        pos.rotacion.y -= 0.01f;
+    sf::Vector2i ratonActual = sf::Mouse::getPosition();
+    sf::Vector2i desplazamientoRaton = ratonActual - ultimaPosicionRaton;
+    ultimaPosicionRaton = ratonActual;
+
+    // Aplicar el movimiento del ratón a una rotación.
+    // X es el eje horizontal, alrededor del cual se inclina la nave (arriba-abajo).
+    // Y es el eje vertical, alrededor del cual gira la nave (izquierda-derecha).
+    glm::vec3 rotacion = {-desplazamientoRaton.y * 0.005f, desplazamientoRaton.x * 0.005f, 0.0f};
+
+    // Transformar la rotación al espacio local de la nave y aplicarla (actualizando pos.rotacion).
+    // TODO: ^
 
     direccion = matrizRotacion(pos.rotacion) * DIRECCION_INICIAL;
     direccion = glm::normalize(direccion);
 
     // Acelera
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-        velocidad += direccion / 60.0f;
+        velocidad += direccion * 0.1f;
     else velocidad = velocidad * 0.98f;
 
     pos.posicion += velocidad * (1 / 60.f);
