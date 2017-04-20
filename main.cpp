@@ -336,49 +336,49 @@ Estado tratarMenu(Estado estado) {
                 default:
                     break;
             }
-
-            //Indicador con forma de nave
-            sf::Transform t;
-            switch (seleccion) {
-                case 0:
-                    t.translate({opcion1.getPosition().x - resolucion.x / 10, opcion1.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                case 1:
-                    t.translate({opcion2.getPosition().x - resolucion.x / 10, opcion2.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                case 2:
-                    t.translate({opcion3.getPosition().x - resolucion.x / 10, opcion3.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                case 3:
-                    t.translate({opcion4.getPosition().x - resolucion.x / 10, opcion4.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                case 4:
-                    t.translate({opcion5.getPosition().x - resolucion.x / 10, opcion5.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                case 5:
-                    t.translate({opcion6.getPosition().x - resolucion.x / 10, opcion6.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                default:
-                    break;
-            }
-
-            ventana.clear(sf::Color::Black);
-            ventana.draw(poligono, t);
-            ventana.draw(texto);
-            ventana.draw(opcion1);
-            ventana.draw(opcion2);
-            ventana.draw(opcion3);
-            ventana.draw(opcion4);
-            ventana.draw(opcion5);
-            ventana.draw(opcion6);
-            ventana.display();
         }
+
+        //Indicador con forma de nave
+        sf::Transform t;
+        switch (seleccion) {
+            case 0:
+                t.translate({opcion1.getPosition().x - resolucion.x / 10, opcion1.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            case 1:
+                t.translate({opcion2.getPosition().x - resolucion.x / 10, opcion2.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            case 2:
+                t.translate({opcion3.getPosition().x - resolucion.x / 10, opcion3.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            case 3:
+                t.translate({opcion4.getPosition().x - resolucion.x / 10, opcion4.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            case 4:
+                t.translate({opcion5.getPosition().x - resolucion.x / 10, opcion5.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            case 5:
+                t.translate({opcion6.getPosition().x - resolucion.x / 10, opcion6.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            default:
+                break;
+        }
+
+        ventana.clear(sf::Color::Black);
+        ventana.draw(poligono, t);
+        ventana.draw(texto);
+        ventana.draw(opcion1);
+        ventana.draw(opcion2);
+        ventana.draw(opcion3);
+        ventana.draw(opcion4);
+        ventana.draw(opcion5);
+        ventana.draw(opcion6);
+        ventana.display();
     }
 }
 
@@ -1380,7 +1380,22 @@ Estado tratarCreditos(Estado estado) {
 
     sf::Clock reloj;
     reloj.restart();
-    while (opcion4.getPosition().y + opcion4.getLocalBounds().height > 0) {
+    bool salir = false;
+    while (true) {
+        sf::Event event;
+        if(ventana.pollEvent(event)){
+            switch (event.type) {
+                case sf::Event::Closed:
+                    ventana.close();
+                    return EXIT;
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Escape) {
+                        return MENU;
+                    }
+                    break;
+            }
+        }
+
         if (reloj.getElapsedTime().asMilliseconds() > 150) {
             if (opcion1.getCharacterSize() >= ajustar_h(20) &&
                 opcion1.getPosition().y + opcion1.getLocalBounds().height + resolucion.y / 6.0 < resolucion.y) {
@@ -1403,6 +1418,11 @@ Estado tratarCreditos(Estado estado) {
             }
             reloj.restart();
         }
+
+        if(opcion4.getPosition().y + opcion4.getLocalBounds().height < 0){
+            return MENU;
+        }
+
         opcion1.setPosition((resolucion.x - opcion1.getLocalBounds().width) / 2, opcion1.getPosition().y - 1);
         opcion2.setPosition((resolucion.x - opcion2.getLocalBounds().width) / 2, opcion2.getPosition().y - 1);
         opcion3.setPosition((resolucion.x - opcion3.getLocalBounds().width) / 2, opcion3.getPosition().y - 1);
@@ -1417,5 +1437,6 @@ Estado tratarCreditos(Estado estado) {
         ventana.draw(opcion4);
         ventana.display();
     }
+
     return MENU;
 }
