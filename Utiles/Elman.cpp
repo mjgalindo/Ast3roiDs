@@ -19,7 +19,7 @@ double radioInteligente = 3*radioTonto/4;       //Radio del ovni inteligente
 
 //PARAMETROS QUE USARA LA RED
 double radio = radioInteligente;        //Radio que empleara la red
-double ratioAprendizaje = 0.3;      //Ratio de aprendizaje de la red
+double ratioAprendizaje = 0.4;      //Ratio de aprendizaje de la red
 
 // Inicializa una red neuronal nueva
 int entradas = 12; //Entradas de la red
@@ -27,7 +27,7 @@ int ocultas = 24;  //Neuronas ocultas (tambien es el numero de neuronas de conte
 int salidas = 3;    //Salidas de la red
 neural::Network red(entradas+ocultas, salidas, {ocultas});
 
-bool leer = false;           //Inicializar red del un fichero
+bool leer = true;           //Inicializar red del un fichero
 string fichero = "Elman.nnet";     //Fichero a leer/escribir.
 
 double direccionSegura(sf::CircleShape ovni, sf::Vector2f posicionSegura, std::vector<Asteroide> v) {
@@ -303,7 +303,9 @@ int main() {
             }
         }
         if (choque) {
-            red.trainSingle(entradasRed, radians2Output(salidaSegura), ratioAprendizaje);
+            if(tiempo < 10) {
+                red.trainSingle(entradasRed, radians2Output(salidaSegura), ratioAprendizaje);
+            }
 
             Asteroide::nuevosAsteroidesAleatorios(asteroides, numAsteroides, resolucion,sf::Color::White,NULL);
             sustitutoOvni.setPosition({valorAleatorio(0, resolucion.x), valorAleatorio(0, resolucion.y)});

@@ -220,7 +220,7 @@ void sigGeneracion(double tiempo[8]) {
             *pesos[j] = mejoresPesos[j];
         }
 
-        string nombreFichero = "geneticos.nn";
+        string nombreFichero = "geneticos.nnet";
         red.write(nombreFichero);
 
         ofstream f_pesos_out("savedpoint.dat");

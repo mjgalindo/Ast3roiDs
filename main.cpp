@@ -450,7 +450,7 @@ Estado tratarJuego(Estado estado) {
     OvniInteligente ovniInteligente(resolucion, configuracionGlobal.color(), &csonido);
     ovni = &ovniNormal;
     bool ovniElegido = false;
-    float probabilidadOvniInt = 0.1;
+    float probabilidadOvniInt = 1;
     float probabilidadOvniTon = 0.5;
 
     vector<Asteroide> asteroides;

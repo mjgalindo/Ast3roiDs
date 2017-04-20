@@ -5,13 +5,25 @@
 
 using namespace std;
 
+double radioTonto = 15;     //Radio del ovni tonto
+double radioInteligente = 3*radioTonto/4;       //Radio del ovni inteligente
+
+//PARAMETROS QUE USARA LA RED
+double radio = radioInteligente;        //Radio que empleara la red
+
+double ratioAprendizaje = 0.6;      //Ratio de aprendizaje de la red
+
+string fichero = "disparo.nnet";
+bool leer = true;
+
 bool continua = true;
 
-//sf::RenderWindow ventana;
+sf::RenderWindow ventana;
 sf::Vector2u resolucion = {800, 600};
 
 // Inicializa una red neuronal nueva
-neural::Network red(2, 1, {4});
+neural::Network red(2, 4, {12});
+
 
 
 struct Configuracion {
@@ -96,90 +108,199 @@ void sigGeneracion(long int distancia[8]) {
     }
 }*/
 
-int main() {
-    /*ifstream f_pesos("savedpoint.dat");
-    if (f_pesos.good()) {
-        cout << "Leido desde fichero" << endl;
-
-        f_pesos >> mejorDistancia;
-
-        for (int o = 0; o < poblacion.size(); o++) {
-            for (int p = 0; p < pesos.size(); p++) {
-                double peso;
-                f_pesos >> peso;
-                poblacion[o].push_back(peso);
-            }
-        }
-    } else {
-        for (unsigned int i = 0; i < 8; i++) {
-            for (unsigned int j = 0; j < pesos.size(); j++) {
-                poblacion[i].push_back(valorAleatorio(-1.0f, 1.0f));
-            }
+double output2Radians(vector<double> output) {
+    vector<int> salidaEntero;
+    for(int i = 0; i < output.size(); i++) {
+        if(output.at(i) >= 0) {
+            salidaEntero.push_back(1);
+        } else {
+            salidaEntero.push_back(0);
         }
     }
-    f_pesos.close();*/
+    switch(salidaEntero.at(0)) {
+        case 0:
+            switch(salidaEntero.at(1)) {
+                case 0:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return 0.0;
 
-    string fich = "entrenaDisparo.nn";
-    //red = red.read(fich);
+                                case 1:
+                                    return -PI/8;
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return -PI/4;
+                                case 1:
+                                    return -3*PI/8;
+                            }
+                    }
+
+                case 1:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return -PI/2;
+
+                                case 1:
+                                    return -5*PI/8;
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return -3*PI/4;
+
+                                case 1:
+                                    return -7*PI/8;
+                            }
+                    }
+            }
+        case 1:
+            switch(salidaEntero.at(1)) {
+                case 0:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return PI;
+
+                                case 1:
+                                    return PI/8;
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return PI/4;
+                                case 1:
+                                    return 3*PI/8;
+                            }
+                    }
+
+                case 1:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return PI/2;
+
+                                case 1:
+                                    return 5*PI/8;
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return 3*PI/4;
+
+                                case 1:
+                                    return 7*PI/8;
+                            }
+                    }
+            }
+    }
+}
+
+vector<double> radians2Output(double dir) {
+    if(dir <= 0.0 && dir > -PI/8 ) {
+        return {-1,-1, -1, -1};
+    } else if(dir <= -PI/8 && dir > -PI/4) {
+        return {-1,-1, -1, 1};
+    } else if(dir <= -PI/4 && dir > -3*PI/8) {
+        return {-1,-1, 1, -1};
+    } else if(dir <= -3*PI/8 && dir > -PI/2) {
+        return {-1,-1, 1, 1};
+    } else if(dir <= -PI/2 && dir > -5*PI/8) {
+        return {-1,1,-1, -1};
+    } else if(dir <= -5*PI/8 && dir > -3*PI/4) {
+        return {-1,1, -1, 1};
+    } else if(dir <= -3*PI/4 && dir > -7*PI/8) {
+        return {-1,1, 1, -1};
+    } else if(dir <= -7*PI/8 && dir > -PI) {
+        return {-1,1, 1, 1};
+    } else if(dir <= PI && dir > 7*PI/8 ) {
+        return {1,-1, -1, -1};
+    } else if(dir >= PI/8 && dir < PI/4) {
+        return {1,-1, -1, 1};
+    } else if(dir >= PI/4 && dir < 3*PI/8) {
+        return {1,-1, 1, -1};
+    } else if(dir >= 3*PI/8 && dir < PI/2) {
+        return {1,-1, 1, 1};
+    } else if(dir >= PI/2 && dir < 5*PI/8) {
+        return {1,1,-1, -1};
+    } else if(dir >= 5*PI/8 && dir < 3*PI/4) {
+        return {1,1, -1, 1};
+    } else if(dir >= 3*PI/4 && dir < 7*PI/8) {
+        return {1,1, 1, -1};
+    } else if(dir >= 7*PI/8 && dir < PI) {
+        return {1,1, 1, 1};
+    } else {
+        return {-1, -1, -1,-1};
+    }
+}
+
+int main() {
+    // Inicializa una red neuronal nueva
 
     srand((unsigned long) time(NULL));
-    //sf::ContextSettings settings;
+    sf::ContextSettings settings;
     //settings.antialiasingLevel = 4;
-    //ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
+    ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Default, settings);
     sf::Vector2f posicionAnterior;
     //ventana.setFramerateLimit(60);
-    sf::Clock reloj;
-    sf::CircleShape sustitutoOvni(15);
+    //sf::Clock reloj;
+    sf::CircleShape sustitutoOvni(radio);
     sustitutoOvni.setFillColor({200, 10, 10});
     sustitutoOvni.setOrigin(sustitutoOvni.getRadius(), sustitutoOvni.getRadius());
     sustitutoOvni.setPosition({rand() % resolucion.x * 1.0f, rand() % resolucion.y * 1.0f});
     long puntuacion = 0;
+
     ControladorSonido csonido;
     Configuracion configuracionGlobal;
+
     Nave nave({rand() % resolucion.x * 1.0f, rand() % resolucion.y * 1.0f}, resolucion, &puntuacion,
               configuracionGlobal.color(), &csonido);
 
-    // Opcionalmente la lee desde fichero
-    // (descomentando las dos lineas siguientes y poniendo el nombre correcto)
-    //string inputRed = "entrenado.nn";
-    //red = red.read(inputRed);
-    int disparos = 1;
-    int aciertos = 0;
-    reloj.restart();
-    for(int i =0; i< 2000000; i++) {
-        /*distancia_aux[0] = distancia_aux[1] = distancia_aux[2] = distancia_aux[3] = distancia_aux[4] = distancia_aux[5] = distancia_aux[6] = distancia_aux[7] = 0;
+    if(leer) {
+        red = red.read(fichero);
+    }
 
-        reloj.restart();
-                sf::Event event;
-                if (ventana.pollEvent(event)) {
-                    switch (event.type) {
-                        case sf::Event::Closed:
-                            ventana.close();
-                            continua = false;
-                            break;
-                        case sf::Event::KeyPressed:
-                            if (event.key.code == sf::Keyboard::Escape) {
-                                ventana.close();
-                                continua = false;
-                                string nombreFichero = "entrenando.nn";
-                                for (unsigned int j = 0; j < pesos.size(); j++) {
-                                    *pesos[j] = mejoresPesos[j];
-                                }
-                                red.write(nombreFichero);
-                            }
-                            break;
-                        default:
-                            break;
+    bool continua = true;
+    int aciertos = 0, disparos = 0;
+    double tiempo = 0.0;
+    while (continua) {
+        sf::Event event;
+        if (ventana.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    ventana.close();
+                    continua = false;
+                    break;
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Escape) {
+                        ventana.close();
+                        continua = false;
+                        if(red.write(fichero)) {
+                            cout << "Fichero " << fichero << " escrito con exito" << endl;
+                        } else {
+                            cout << "Error al escribir el fichero " << fichero << endl;
+                        }
                     }
-                }
+                    break;
+                default:
+                    break;
+            }
+        }
 
-                ventana.clear(sf::Color::Black);*/
+        //ventana.clear(sf::Color::Black);
 
         vector<double> entradasRed{nave.getPosicion().x - sustitutoOvni.getPosition().x,
                                    nave.getPosicion().y - sustitutoOvni.getPosition().y
         };
 
-        double salida = red.run(entradasRed)[0] * PI;
+        double salida = output2Radians(red.run(entradasRed));
         Disparo disparo(sustitutoOvni.getPosition(), salida, resolucion, sf::Color::White);
         disparo.setDireccion((float) salida);
         bool acertado = false;
@@ -189,10 +310,13 @@ int main() {
                 acertado = true;
             }
         }
+        sf::Vector2f vectorDir = (nave.getPosicion() - sustitutoOvni.getPosition());
+        double direccionDisp = atan2(vectorDir.y, vectorDir.x);
+        if(abs(salida-direccionDisp) < PI/8) {
+            acertado = true;
+        }
         if (!acertado) {
-            sf::Vector2f vectorDir = (nave.getPosicion() - sustitutoOvni.getPosition());
-            double direccionDisp = atan2(vectorDir.y, vectorDir.x) / PI;
-            red.trainSingle(entradasRed, {direccionDisp}, 1);
+            red.trainSingle(entradasRed, radians2Output(direccionDisp), ratioAprendizaje);
             cout << aciertos << " " << disparos << " Fallo" << endl;
         } else {
             aciertos++;
@@ -203,7 +327,4 @@ int main() {
         nave.setPosicion({rand() % resolucion.x * 1.0f, rand() % resolucion.y * 1.0f});
         disparos++;
     }
-    red.write(fich);
-
-    cout << "Reinicios: " << aciertos << " tiempo: " << reloj.getElapsedTime().asSeconds() << endl;
 }

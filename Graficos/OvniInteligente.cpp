@@ -3,11 +3,20 @@
 
 using namespace std;
 
+
+neural::Network red(1,1);
+
 OvniInteligente::OvniInteligente(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
         Ovni(limitesPantalla, color, cs) {
     radio = radio * 3 / 4;
     SonidoPresencia = ControladorSonido::OVNI_PEQUENO;
     SonidoDestruccion = ControladorSonido::EXP_1;
+    red = red.read(ficheroRed);
+    ocultas = red.getFirstLayer()->size();
+    capaOculta = red.getFirstLayer();     //Capa oculta de la red
+    for(int i = 0; i < ocultas; i++) {
+        contexto.push_back(0);
+    }
 }
 
 OvniInteligente::~OvniInteligente() {}
@@ -16,20 +25,223 @@ void OvniInteligente::disparar(sf::Vector2f nave) {
     if (estado == VIVO) {
         if (num_disparos < MAX_DISPAROS) {
             sf::Vector2f vectorDir = (nave - posicion);
-            float direccionDisp = atan2f(vectorDir.y, vectorDir.x);
+            double direccionDisp = atan2f(vectorDir.y, vectorDir.x);
+            direccionDisp = output2RadiansDisparo(red.run({vectorDir.x,vectorDir.y}));
             disparos[num_disparos] = Disparo(posicion, (float) direccion, limites, color);
             direccionDisp = direccionDisp + valorAleatorio(-error / 5, error / 5);
-            disparos[num_disparos].setDireccion(direccionDisp);
+            disparos[num_disparos].setDireccion((float)direccionDisp);
             num_disparos++;
         }
         cs->reproducir(SonidoDisparo);
     }
 }
 
+double OvniInteligente::output2RadiansDisparo(std::vector<double> output) {
+    vector<int> salidaEntero;
+    for(int i = 0; i < output.size(); i++) {
+        if(output.at(i) >= 0) {
+            salidaEntero.push_back(1);
+        } else {
+            salidaEntero.push_back(0);
+        }
+    }
+    switch(salidaEntero.at(0)) {
+        case 0:
+            switch(salidaEntero.at(1)) {
+                case 0:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return 0.0;
+
+                                case 1:
+                                    return -PI/8;
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return -PI/4;
+                                case 1:
+                                    return -3*PI/8;
+                            }
+                    }
+
+                case 1:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return -PI/2;
+
+                                case 1:
+                                    return -5*PI/8;
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return -3*PI/4;
+
+                                case 1:
+                                    return -7*PI/8;
+                            }
+                    }
+            }
+        case 1:
+            switch(salidaEntero.at(1)) {
+                case 0:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return PI;
+
+                                case 1:
+                                    return PI/8;
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return PI/4;
+                                case 1:
+                                    return 3*PI/8;
+                            }
+                    }
+
+                case 1:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return PI/2;
+
+                                case 1:
+                                    return 5*PI/8;
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    return 3*PI/4;
+
+                                case 1:
+                                    return 7*PI/8;
+                            }
+                    }
+            }
+    }
+}
+
+
+double OvniInteligente::output2RadiansMover(vector<double> output) {
+    vector<int> salidaEntero;
+    for(int i = 0; i < output.size(); i++) {
+        if(output.at(i) >= 0) {
+            salidaEntero.push_back(1);
+        } else {
+            salidaEntero.push_back(0);
+        }
+    }
+    switch(salidaEntero.at(0)) {
+        case 0:
+            switch(salidaEntero.at(1)) {
+                case 0:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            return 0.0;
+                        case 1:
+                            return -PI/4;
+                    }
+
+                case 1:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            return -PI/2;
+                        case 1:
+                            return -3*PI/4;
+                    }
+            }
+        case 1:
+            switch(salidaEntero.at(1)) {
+                case 0:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            return PI;
+                        case 1:
+                            return PI/4;
+                    }
+
+                case 1:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            return PI/2;
+                        case 1:
+                            return 3*PI/4;
+                    }
+            }
+    }
+}
+
+std::vector<Asteroide *> OvniInteligente::asteroideMasCercano(sf::Vector2f posicion, std::vector<Asteroide> asteroides) {
+    double distanciaMenor1 = 99999999.0;
+    double distanciaMenor2 = 99999999.0;
+    double distanciaMenor3 = 99999999.0;
+    double distanciaMenor4 = 99999999.0;
+    Asteroide *masCercano1 = 0, *masCercano2 = 0, *masCercano3 = 0, *masCercano4 = 0;;
+    std::vector<Asteroide *> masCercanos;
+    for (auto ast = asteroides.begin(); ast != asteroides.end(); ++ast) {
+        double distanciatmp = distancia(ast->getPosicion(), posicion);
+        if (distanciatmp < distanciaMenor1) {
+            distanciaMenor4 = distanciaMenor3;
+            masCercano4 = masCercano3;
+            distanciaMenor3 = distanciaMenor2;
+            masCercano3 = masCercano2;
+            distanciaMenor2 = distanciaMenor1;
+            masCercano2 = masCercano1;
+            distanciaMenor1 = distanciatmp;
+            masCercano1 = ast.base();
+        } else if(distanciatmp < distanciaMenor2) {
+            distanciaMenor4 = distanciaMenor3;
+            masCercano4 = masCercano3;
+            distanciaMenor3 = distanciaMenor2;
+            masCercano3 = masCercano2;
+            distanciaMenor2 = distanciatmp;
+            masCercano2 = ast.base();
+        } else if(distanciatmp < distanciaMenor3) {
+            distanciaMenor4 = distanciaMenor3;
+            masCercano4 = masCercano3;
+            distanciaMenor3 = distanciatmp;
+            masCercano3 = ast.base();
+        } else if(distanciatmp < distanciaMenor4) {
+            distanciaMenor4 = distanciatmp;
+            masCercano4 = ast.base();
+        }
+    }
+    masCercanos.push_back(masCercano1);
+    masCercanos.push_back(masCercano2);
+    masCercanos.push_back(masCercano3);
+    masCercanos.push_back(masCercano4);
+    return masCercanos;
+}
+
 void OvniInteligente::mover(std::vector<Asteroide> &astds, Triangular &nave) {
     if (estado == VIVO) {
         direccion = direccionSegura(sf::CircleShape(radio), posicion, astds);
-
+        /*vector<Asteroide *> asteroidePeligroso = asteroideMasCercano(posicion,astds);
+        vector<double> entradasRed{asteroidePeligroso[0]->getPosicion().x - posicion.x,
+                                   asteroidePeligroso[0]->getPosicion().y - posicion.y,
+                                   asteroidePeligroso[0]->getVelocidad().x,
+                                   asteroidePeligroso[0]->getVelocidad().y,
+                                   asteroidePeligroso[1]->getPosicion().x - posicion.x,
+                                   asteroidePeligroso[1]->getPosicion().y - posicion.y,
+                                   asteroidePeligroso[1]->getVelocidad().x,
+                                   asteroidePeligroso[1]->getVelocidad().y,
+                                   asteroidePeligroso[2]->getPosicion().x - posicion.x,
+                                   asteroidePeligroso[2]->getPosicion().y - posicion.y,
+                                   asteroidePeligroso[2]->getVelocidad().x,
+                                   asteroidePeligroso[2]->getVelocidad().y};
+        entradasRed.insert(entradasRed.end(),contexto.begin(),contexto.end());
+        direccion = output2RadiansMover(red.run(entradasRed));
+        contexto = capaOculta->Output();*/    //Se actualiza el valor de neuronas de contexto
         posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         if (posicion.x - 1 >= limites.x) {
             posicion.x -= limites.x;
