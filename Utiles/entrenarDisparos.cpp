@@ -14,7 +14,7 @@ double radio = radioInteligente;        //Radio que empleara la red
 double ratioAprendizaje = 0.6;      //Ratio de aprendizaje de la red
 
 string fichero = "disparo.nnet";
-bool leer = true;
+bool leer = false;
 
 bool continua = true;
 
@@ -22,7 +22,7 @@ sf::RenderWindow ventana;
 sf::Vector2u resolucion = {800, 600};
 
 // Inicializa una red neuronal nueva
-neural::Network red(2, 4, {12});
+neural::Network red(2, 5, {16});
 
 
 
@@ -125,17 +125,42 @@ double output2Radians(vector<double> output) {
                         case 0:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return 0.0;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 0.0;
+                                        case 1:
+                                            return -PI/16;
+                                    }
 
                                 case 1:
-                                    return -PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -PI/8;
+
+                                        case 1:
+                                            return -3*PI/16;
+                                    }
                             }
                         case 1:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return -PI/4;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -PI/4;
+
+                                        case 1:
+
+                                            return -5*PI/16;
+                                    }
+
                                 case 1:
-                                    return -3*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -3*PI/8;
+
+                                        case 1:
+                                            return -7*PI/16;
+                                    }
                             }
                     }
 
@@ -144,18 +169,43 @@ double output2Radians(vector<double> output) {
                         case 0:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return -PI/2;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -PI/2;
+
+                                        case 1:
+
+                                            return -9*PI/16;
+                                    }
 
                                 case 1:
-                                    return -5*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -10*PI/16;
+
+                                        case 1:
+                                            return -11*PI/16;
+                                    }
                             }
                         case 1:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return -3*PI/4;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -3*PI/4;
+
+                                        case 1:
+                                            return -13*PI/16;
+                                    }
 
                                 case 1:
-                                    return -7*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -7*PI/8;
+
+                                        case 1:
+                                            return -15*PI/16;
+                                    }
                             }
                     }
             }
@@ -166,17 +216,42 @@ double output2Radians(vector<double> output) {
                         case 0:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return PI;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI;
+                                        case 1:
+                                            return PI/16;
+                                    }
 
                                 case 1:
-                                    return PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI/8;
+
+                                        case 1:
+                                            return 3*PI/16;
+                                    }
                             }
                         case 1:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return PI/4;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI/4;
+
+                                        case 1:
+
+                                            return 5*PI/16;
+                                    }
+
                                 case 1:
-                                    return 3*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 3*PI/8;
+
+                                        case 1:
+                                            return 7*PI/16;
+                                    }
                             }
                     }
 
@@ -185,18 +260,44 @@ double output2Radians(vector<double> output) {
                         case 0:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return PI/2;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI/2;
+
+                                        case 1:
+
+                                            return 9*PI/16;
+                                    }
 
                                 case 1:
-                                    return 5*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 10*PI/16;
+
+                                        case 1:
+                                            return 11*PI/16;
+
+                                    }
                             }
                         case 1:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return 3*PI/4;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 3*PI/4;
+
+                                        case 1:
+                                            return 13*PI/16;
+                                    }
 
                                 case 1:
-                                    return 7*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 7*PI/8;
+
+                                        case 1:
+                                            return 15*PI/16;
+                                    }
                             }
                     }
             }
@@ -204,40 +305,72 @@ double output2Radians(vector<double> output) {
 }
 
 vector<double> radians2Output(double dir) {
-    if(dir <= 0.0 && dir > -PI/8 ) {
-        return {-1,-1, -1, -1};
-    } else if(dir <= -PI/8 && dir > -PI/4) {
-        return {-1,-1, -1, 1};
-    } else if(dir <= -PI/4 && dir > -3*PI/8) {
-        return {-1,-1, 1, -1};
-    } else if(dir <= -3*PI/8 && dir > -PI/2) {
-        return {-1,-1, 1, 1};
-    } else if(dir <= -PI/2 && dir > -5*PI/8) {
-        return {-1,1,-1, -1};
-    } else if(dir <= -5*PI/8 && dir > -3*PI/4) {
-        return {-1,1, -1, 1};
-    } else if(dir <= -3*PI/4 && dir > -7*PI/8) {
-        return {-1,1, 1, -1};
-    } else if(dir <= -7*PI/8 && dir > -PI) {
-        return {-1,1, 1, 1};
-    } else if(dir <= PI && dir > 7*PI/8 ) {
-        return {1,-1, -1, -1};
-    } else if(dir >= PI/8 && dir < PI/4) {
-        return {1,-1, -1, 1};
-    } else if(dir >= PI/4 && dir < 3*PI/8) {
-        return {1,-1, 1, -1};
-    } else if(dir >= 3*PI/8 && dir < PI/2) {
-        return {1,-1, 1, 1};
-    } else if(dir >= PI/2 && dir < 5*PI/8) {
-        return {1,1,-1, -1};
-    } else if(dir >= 5*PI/8 && dir < 3*PI/4) {
-        return {1,1, -1, 1};
-    } else if(dir >= 3*PI/4 && dir < 7*PI/8) {
-        return {1,1, 1, -1};
-    } else if(dir >= 7*PI/8 && dir < PI) {
-        return {1,1, 1, 1};
+    if(dir <= 0.0 && dir > -PI/16 ) {
+        return {-1,-1,-1, -1, -1};
+    } else if(dir <= -PI/16 && dir > -PI/8) {
+        return {-1,-1,-1, -1, 1};
+    } else if(dir <= -PI/8 && dir > -3*PI/16) {
+        return {-1,-1,-1, 1, -1};
+    } else if(dir <= -3*PI/16 && dir > -PI/4) {
+        return {-1,-1,-1, 1, 1};
+    } else if(dir <= -PI/4 && dir > -5*PI/16) {
+        return {-1,-1,1,-1, -1};
+    } else if(dir <= -5*PI/16 && dir > -3*PI/8) {
+        return {-1,-1,1, -1, 1};
+    } else if(dir <= -3*PI/8 && dir > -7*PI/16) {
+        return {-1,-1,1, 1, -1};
+    } else if(dir <= -7*PI/16 && dir > -PI/2) {
+        return {-1,-1,1, 1, 1};
+    } else if(dir <= -PI/2 && dir > -9*PI/16 ) {
+        return {-1,1,-1, -1, -1};
+    } else if(dir <= -9*PI/16 && dir > -5*PI/8) {
+        return {-1,1,-1, -1, 1};
+    } else if(dir <= -5*PI/8 && dir > -11*PI/16) {
+        return {-1,1,-1, 1, -1};
+    } else if(dir <= -11*PI/16 && dir > -3*PI/4) {
+        return {-1,1,-1, 1, 1};
+    } else if(dir <= -3*PI/4 && dir > -13*PI/16) {
+        return {-1,1,1,-1, -1};
+    } else if(dir <= -13*PI/16 && dir > -7*PI/8) {
+        return {-1,1,1, -1, 1};
+    } else if(dir <= -7*PI/8 && dir > -15*PI/16) {
+        return {-1,1,1, 1, -1};
+    } else if(dir <= -15*PI/16 && dir > -PI) {
+        return {-1,1,1, 1, 1};
+    } else if(dir <= PI && dir > 15*PI/16 ) {
+        return {1,-1,-1, -1, -1};
+    } else if(dir > 0.0 && dir <= PI/16) {
+        return {1,-1,-1, -1, 1};
+    } else if(dir > PI/16 && dir <= PI/8) {
+        return {1,-1,-1, 1, -1};
+    } else if(dir > PI/8 && dir <= 3*PI/16) {
+        return {1,-1,-1, 1, 1};
+    } else if(dir > 3*PI/16 && dir <= PI/4) {
+        return {1,-1,1,-1, -1};
+    } else if(dir > PI/4 && dir <= 5*PI/16) {
+        return {1,-1,1, -1, 1};
+    } else if(dir > 5*PI/16 && dir <= 3*PI/8) {
+        return {1,-1,1, 1, -1};
+    } else if(dir > 3*PI/8 && dir <= 7*PI/16) {
+        return {1,-1,1, 1, 1};
+    } else if(dir > 7*PI/16 && dir <= PI/2 ) {
+        return {1,1,-1, -1, -1};
+    } else if(dir > PI/2 && dir <= 9*PI/16) {
+        return {1,1,-1, -1, 1};
+    } else if(dir > 9*PI/16 && dir <= 10*PI/16) {
+        return {1,1,-1, 1, -1};
+    } else if(dir > 10*PI/16 && dir <= 11*PI/16) {
+        return {1,1,-1, 1, 1};
+    } else if(dir > 11*PI/16 && dir <= 3*PI/4) {
+        return {1,1,1,-1, -1};
+    } else if(dir > 3*PI/4 && dir <= 13*PI/16) {
+        return {1,1,1, -1, 1};
+    } else if(dir > 13*PI/16 && dir <= 7*PI/8) {
+        return {1,1,1, 1, -1};
+    } else if(dir > 7*PI/8 && dir <= 15*PI/16) {
+        return {1,1,1, 1, 1};
     } else {
-        return {-1, -1, -1,-1};
+        return {-1,-1, -1, -1,-1};
     }
 }
 
@@ -312,7 +445,7 @@ int main() {
         }
         sf::Vector2f vectorDir = (nave.getPosicion() - sustitutoOvni.getPosition());
         double direccionDisp = atan2(vectorDir.y, vectorDir.x);
-        if(abs(salida-direccionDisp) < PI/8) {
+        if(abs(salida-direccionDisp) < PI/16) {
             acertado = true;
         }
         if (!acertado) {
