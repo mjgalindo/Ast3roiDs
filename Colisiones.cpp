@@ -50,6 +50,16 @@ bool colisionVerticesTriangulo(sf::VertexArray vs, sf::VertexArray triangulo) {
     return false;
 }
 
+//Colision entre dos esferas: e(centro,radio)
+bool colisionEsferaEsfera(sf::Vector3f c1, float r1, sf::Vector3f c2, float r2){
+    return distanciaEuclidea(c1,c2)<=r1+r2;
+}
+
+//Devuelve true si el punto esta dentro de la esfera
+bool colisionPuntoEsfera(sf::Vector3f p, sf::Vector3f c, float r){
+    return distanciaEuclidea(p,c)<=r;
+}
+
 //Devuelve la dorientacion de un triangulo(v1,v2,v3)
 float orientacionTriangular(sf::Vertex v1, sf::Vertex v2, sf::Vertex v3) {
     return (v1.position.x - v3.position.x) * (v2.position.y - v3.position.y) -
