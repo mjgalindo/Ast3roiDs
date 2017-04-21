@@ -3,6 +3,7 @@
 #include "Graficos3D/Nave3D.hpp"
 #include "Util3D/Ventana3D.hpp"
 #include "Util3D/ControladorTexturas.hpp"
+#include "Util3D/ControladorShaders.hpp"
 
 using namespace std;
 using namespace sf;
@@ -23,23 +24,27 @@ int main() {
     // hacer al principio.
     Ventana3D ventana(sf::VideoMode(WIDTH, HEIGHT), "OpenGL", sf::Style::Close | sf::Style::Titlebar, configuracion,
                       60);
+    ventana.setMouseCursorVisible(false);
+    ventana.setMouseCursorGrabbed(true);
 
     // Inicializa los modelos 3D y las texturas. Esto objetos solo existe para controlar
     // la creacion y destrucción de recursos.
     ControladorModelos __controladorModelos;
     ControladorTexturas __controladorTexturas;
+    ControladorShaders __controladorShaders;
 
     // Inicializa shaders y texturas.
-    vj::Shader shaderPrincipal(string("Recursos/Shaders/shaderBasico"));
-    shaderPrincipal.bind();
-    shaderPrincipal.setDireccionLuz({0.0f, -0.75f, 0.25f});
+    ControladorShaders::getShader(ControladorShaders::SIMPLE)->bind();
+    ControladorShaders::getShader(ControladorShaders::SIMPLE)->setDireccionLuz({0.0f, -0.75f, 0.25f});
+    ControladorShaders::getShader(ControladorShaders::BRILLO)->bind();
+    ControladorShaders::getShader(ControladorShaders::BRILLO)->setDireccionLuz({0.0f, -0.75f, 0.25f});
 
     // Carga asteroides para ver como se mueve la nave
     vector<Asteroide3D> asteroides;
     for (int i = 0; i < 100; i++)
-        asteroides.emplace_back(&shaderPrincipal);
+        asteroides.emplace_back();
 
-    Nave3D testNave(&shaderPrincipal);
+    Nave3D testNave;
 
     Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
@@ -50,6 +55,11 @@ int main() {
         sf::Event event;
         while (ventana.pollEvent(event)) {
             switch (event.type) {
+                case sf::Event::MouseButtonPressed:
+                    if (event.mouseButton.button == sf::Mouse::Left){
+                        testNave.disparar();
+                        break;
+                    }
                 case sf::Event::KeyPressed:
                     if (event.key.code != sf::Keyboard::Escape) { break; }
                 case sf::Event::Closed:
@@ -62,7 +72,7 @@ int main() {
 
         // Mueve todos los elementos
         for (auto asteroide : asteroides)
-            asteroide.mover();
+            asteroide.actualizar();
 
         testNave.actualizar();
 
@@ -80,9 +90,9 @@ int main() {
 
         // Dibuja todos los elementos
         for (auto asteroide : asteroides)
-            ventana.draw(asteroide.predibujado(camara));
+            asteroide.dibujar(ventana, camara);
 
-        ventana.draw(testNave.predibujado(camara));
+        testNave.dibujar(ventana, camara);
         // Muestra el fotograma
         ventana.display();
     }

@@ -27,6 +27,7 @@ public:
     enum TipoModelo {
         ASTEROIDE = 0,
         NAVE,
+        DISPARO,
         NUM_MODELOS
     };
 

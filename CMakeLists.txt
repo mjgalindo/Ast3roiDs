@@ -52,6 +52,8 @@ set(FUENTES_3D
 		Graficos3D/Asteroide3D.cpp
 		Graficos3D/Nave3D.hpp
 		Graficos3D/Nave3D.cpp
+		Graficos3D/Disparo3D.cpp
+		Graficos3D/Disparo3D.hpp
 		Util3D/Ventana3D.cpp
 		Util3D/Ventana3D.hpp
 		Util3D/Shader.hpp
@@ -63,7 +65,9 @@ set(FUENTES_3D
 		Util3D/ControladorModelos.cpp
 		Util3D/ControladorModelos.hpp
 		Util3D/ControladorTexturas.cpp
-		Util3D/ControladorTexturas.hpp)
+		Util3D/ControladorTexturas.hpp
+		Util3D/ControladorShaders.cpp
+		Util3D/ControladorShaders.hpp)
 
 set(SFML_ROOT "C:/Program Files (x86)/SFML")
 

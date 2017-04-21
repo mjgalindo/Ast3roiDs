@@ -1,9 +1,9 @@
 #include "Asteroide3D.hpp"
-#include "../matematicas.hpp"
 #include "../Util3D/ControladorTexturas.hpp"
+#include "../Util3D/ControladorShaders.hpp"
 
-Asteroide3D::Asteroide3D(vj::Shader *shader) :
-        Elemento3D(shader, ControladorTexturas::getTextura(ControladorTexturas::BLANCO)) {
+Asteroide3D::Asteroide3D() :
+        Elemento3D(ControladorShaders::getShader(ControladorShaders::SIMPLE), ControladorTexturas::getTextura(ControladorTexturas::BLANCO)) {
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ASTEROIDE);
     velocidad = {0.0f, 0.0f, 0.0f};
     pos.posicion = {
@@ -16,6 +16,6 @@ Asteroide3D::Asteroide3D(vj::Shader *shader) :
     pos.rotacion = {PI, 0.0f, 0.0f};
 }
 
-void Asteroide3D::mover() {
+void Asteroide3D::actualizar() {
     pos.posicion += velocidad * (1 / 60.f);
 }

@@ -11,9 +11,13 @@ void Elemento3D::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     glUseProgram(0);
 }
 
-Elemento3D &Elemento3D::predibujado(Camara &camara) {
+void Elemento3D::predibujado(Camara &camara) const {
     shader->bind();
     textura->bind();
     shader->actualizar(pos, camara);
-    return *this;
+}
+
+void Elemento3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states) const {
+    predibujado(camara);
+    draw(target, states);
 }

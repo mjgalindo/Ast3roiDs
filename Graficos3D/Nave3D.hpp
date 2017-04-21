@@ -3,12 +3,16 @@
 
 #include <SFML/Graphics/Drawable.hpp>
 #include "Elemento3D.hpp"
+#include "Disparo3D.hpp"
 
 class Nave3D : public Elemento3D {
 public:
-    Nave3D(vj::Shader *shader);
+    Nave3D();
 
     void actualizar();
+    void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
+
+    void disparar();
 
     const float VELOCIDAD_MAX = 0.5f;
 
@@ -19,6 +23,8 @@ public:
 
 private:
     sf::Vector2i ultimaPosicionRaton;
+    std::vector<Disparo3D> disparos;
+
 };
 
 

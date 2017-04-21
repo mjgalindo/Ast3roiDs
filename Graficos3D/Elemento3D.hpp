@@ -12,16 +12,25 @@
 
 class Elemento3D : public sf::Drawable {
 public:
-    Elemento3D& predibujado(Camara& camara);
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const;
-
     Posicionamiento pos;
+    enum Estado3D {
+        NORMAL, EXPLOTANDO, DESTRUIDO
+    };
+    Estado3D estado = NORMAL;
+
+    virtual void
+    dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
 
 protected:
+    void predibujado(Camara &camara) const;
+
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+
     // Constructor protegido para que no se instancie la clase
-    Elemento3D(vj::Shader* shader, vj::Textura* textura) : shader(shader), textura(textura){}
-    vj::Shader* shader;
-    vj::Textura* textura;
+    Elemento3D(vj::Shader *shader, vj::Textura *textura) : shader(shader), textura(textura) {}
+
+    vj::Shader *shader;
+    vj::Textura *textura;
     Modelo modelo3D;
 };
 

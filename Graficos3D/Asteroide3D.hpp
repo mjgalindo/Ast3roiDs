@@ -5,8 +5,8 @@
 
 class Asteroide3D : public Elemento3D {
 public:
-    Asteroide3D(vj::Shader* shader);
-    void mover();
+    Asteroide3D();
+    void actualizar();
 
 private:
     const float VELOCIDAD_MAX = 0.5f;
