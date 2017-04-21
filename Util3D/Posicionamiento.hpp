@@ -4,11 +4,19 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include "Camara.hpp"
+#include "../matematicas.hpp"
 
 inline glm::mat4 matrizRotacion(glm::vec3 rotXYZ){
     return glm::rotate(rotXYZ.x, glm::vec3(1.0, 0.0, 0.0)) *
            glm::rotate(rotXYZ.y, glm::vec3(0.0, 1.0, 0.0)) *
            glm::rotate(rotXYZ.z, glm::vec3(0.0, 0.0, 1.0));
+}
+
+inline glm::vec3 &normalizaRotacion(glm::vec3 &rotacion) {
+    for (int i = 0; i < 3; i++) {
+        rotacion[i] = (float) fmod(rotacion[i], 2 * PI);
+    }
+    return rotacion;
 }
 
 struct Posicionamiento {

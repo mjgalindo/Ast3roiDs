@@ -1,7 +1,8 @@
 #include <string>
+#include <iostream>
 #include "Nave3D.hpp"
-#include "../matematicas.hpp"
 #include "../Util3D/ControladorTexturas.hpp"
+#include <glm/gtx/quaternion.hpp>
 
 using namespace std;
 using namespace sf;
@@ -27,10 +28,15 @@ void Nave3D::actualizar() {
     // Aplicar el movimiento del ratón a una rotación.
     // X es el eje horizontal, alrededor del cual se inclina la nave (arriba-abajo).
     // Y es el eje vertical, alrededor del cual gira la nave (izquierda-derecha).
-    glm::vec3 rotacion = {-desplazamientoRaton.y * 0.005f, desplazamientoRaton.x * 0.005f, 0.0f};
+    glm::vec4 rotacion = {0.0f, -desplazamientoRaton.x * 0.005f, -desplazamientoRaton.y * 0.005f, 0.0f};
+
+    // DEBUG:
+    //rotacion = {0.0f, -3 * 0.005f, -1 * 0.005f, 0.0f};
 
     // Transformar la rotación al espacio local de la nave y aplicarla (actualizando pos.rotacion).
-    // TODO: ^
+    // TODO: Implementarlo bien!
+    pos.rotacion = pos.rotacion + glm::vec3(matrizRotacion(pos.rotacion) * rotacion);
+    normalizaRotacion(pos.rotacion);
 
     direccion = matrizRotacion(pos.rotacion) * DIRECCION_INICIAL;
     direccion = glm::normalize(direccion);
