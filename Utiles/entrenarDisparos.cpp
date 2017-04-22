@@ -14,7 +14,7 @@ double radio = radioInteligente;        //Radio que empleara la red
 double ratioAprendizaje = 0.6;      //Ratio de aprendizaje de la red
 
 string fichero = "disparo.nnet";
-bool leer = false;
+bool leer = true;
 
 bool continua = true;
 

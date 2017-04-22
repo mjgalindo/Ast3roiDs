@@ -8,6 +8,7 @@ public:
 
     enum TipoTextura {
         BLANCO = 0,
+        VERDE,
         NAVE,
         NUM_TEXTURAS
     };

@@ -46,12 +46,16 @@ set(FUENTES_2D
 
 set(PRUEBA3D prueba3D)
 set(FUENTES_3D
+		Colisiones.cpp
+		Colisiones.hpp
         Graficos3D/Elemento3D.hpp
         Graficos3D/Elemento3D.cpp
 		Graficos3D/Asteroide3D.hpp
 		Graficos3D/Asteroide3D.cpp
 		Graficos3D/Nave3D.hpp
 		Graficos3D/Nave3D.cpp
+		Graficos3D/Ovni3D.cpp
+		Graficos3D/Ovni3D.hpp
 		Graficos3D/Disparo3D.cpp
 		Graficos3D/Disparo3D.hpp
 		Util3D/Ventana3D.cpp

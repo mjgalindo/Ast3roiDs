@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Graficos3D/Asteroide3D.hpp"
 #include "Graficos3D/Nave3D.hpp"
+#include "Graficos3D/Ovni3D.hpp"
 #include "Util3D/Ventana3D.hpp"
 #include "Util3D/ControladorTexturas.hpp"
 #include "Util3D/ControladorShaders.hpp"
@@ -46,6 +47,8 @@ int main() {
 
     Nave3D testNave;
 
+    Ovni3D ovni;
+
     Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
 
@@ -56,7 +59,7 @@ int main() {
         while (ventana.pollEvent(event)) {
             switch (event.type) {
                 case sf::Event::MouseButtonPressed:
-                    if (event.mouseButton.button == sf::Mouse::Left){
+                    if (event.mouseButton.button == sf::Mouse::Left) {
                         testNave.disparar();
                         break;
                     }
@@ -74,7 +77,11 @@ int main() {
         for (auto asteroide : asteroides)
             asteroide.actualizar();
 
-        testNave.actualizar(asteroides);
+        sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
+
+        testNave.actualizar(asteroides, {posCursor.x - WIDTH / 2, posCursor.y - HEIGHT / 2});
+        sf::Mouse::setPosition({WIDTH / 2, HEIGHT / 2}, ventana);
+        ovni.actualizar(asteroides);
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = testNave.pos.matrizModelo();
@@ -95,6 +102,7 @@ int main() {
             asteroide.dibujar(ventana, camara);
 
         testNave.dibujar(ventana, camara);
+        ovni.dibujar(ventana, camara);
         // Muestra el fotograma
         ventana.display();
     }

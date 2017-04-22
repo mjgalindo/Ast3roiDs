@@ -36,7 +36,7 @@ void OvniInteligente::disparar(sf::Vector2f nave) {
     }
 }
 
-double OvniInteligente::output2RadiansDisparo(std::vector<double> output) {
+double OvniInteligente::output2RadiansDisparo(vector<double> output) {
     vector<int> salidaEntero;
     for(int i = 0; i < output.size(); i++) {
         if(output.at(i) >= 0) {
@@ -53,17 +53,42 @@ double OvniInteligente::output2RadiansDisparo(std::vector<double> output) {
                         case 0:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return 0.0;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 0.0;
+                                        case 1:
+                                            return -PI/16;
+                                    }
 
                                 case 1:
-                                    return -PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -PI/8;
+
+                                        case 1:
+                                            return -3*PI/16;
+                                    }
                             }
                         case 1:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return -PI/4;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -PI/4;
+
+                                        case 1:
+
+                                            return -5*PI/16;
+                                    }
+
                                 case 1:
-                                    return -3*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -3*PI/8;
+
+                                        case 1:
+                                            return -7*PI/16;
+                                    }
                             }
                     }
 
@@ -72,18 +97,43 @@ double OvniInteligente::output2RadiansDisparo(std::vector<double> output) {
                         case 0:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return -PI/2;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -PI/2;
+
+                                        case 1:
+
+                                            return -9*PI/16;
+                                    }
 
                                 case 1:
-                                    return -5*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -10*PI/16;
+
+                                        case 1:
+                                            return -11*PI/16;
+                                    }
                             }
                         case 1:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return -3*PI/4;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -3*PI/4;
+
+                                        case 1:
+                                            return -13*PI/16;
+                                    }
 
                                 case 1:
-                                    return -7*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -7*PI/8;
+
+                                        case 1:
+                                            return -15*PI/16;
+                                    }
                             }
                     }
             }
@@ -94,17 +144,42 @@ double OvniInteligente::output2RadiansDisparo(std::vector<double> output) {
                         case 0:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return PI;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI;
+                                        case 1:
+                                            return PI/16;
+                                    }
 
                                 case 1:
-                                    return PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI/8;
+
+                                        case 1:
+                                            return 3*PI/16;
+                                    }
                             }
                         case 1:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return PI/4;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI/4;
+
+                                        case 1:
+
+                                            return 5*PI/16;
+                                    }
+
                                 case 1:
-                                    return 3*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 3*PI/8;
+
+                                        case 1:
+                                            return 7*PI/16;
+                                    }
                             }
                     }
 
@@ -113,18 +188,44 @@ double OvniInteligente::output2RadiansDisparo(std::vector<double> output) {
                         case 0:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return PI/2;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI/2;
+
+                                        case 1:
+
+                                            return 9*PI/16;
+                                    }
 
                                 case 1:
-                                    return 5*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 10*PI/16;
+
+                                        case 1:
+                                            return 11*PI/16;
+
+                                    }
                             }
                         case 1:
                             switch(salidaEntero.at(3)) {
                                 case 0:
-                                    return 3*PI/4;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 3*PI/4;
+
+                                        case 1:
+                                            return 13*PI/16;
+                                    }
 
                                 case 1:
-                                    return 7*PI/8;
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 7*PI/8;
+
+                                        case 1:
+                                            return 15*PI/16;
+                                    }
                             }
                     }
             }

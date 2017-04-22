@@ -20,16 +20,12 @@ Nave3D::Nave3D() :
     ultimaPosicionRaton = sf::Mouse::getPosition();
 }
 
-void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides) {
-    // Gira la nave
-    sf::Vector2i ratonActual = sf::Mouse::getPosition();
-    sf::Vector2i desplazamientoRaton = ratonActual - ultimaPosicionRaton;
-    ultimaPosicionRaton = ratonActual;
+void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRaton) {
 
     // Aplicar el movimiento del ratón a una rotación.
     // X es el eje horizontal, alrededor del cual se inclina la nave (arriba-abajo).
     // Y es el eje vertical, alrededor del cual gira la nave (izquierda-derecha).
-    glm::vec4 rotacion = {0.0f, -desplazamientoRaton.x * 0.005f, -desplazamientoRaton.y * 0.005f, 0.0f};
+    glm::vec4 rotacion = {0.0f, -movRaton.y * 0.005f, -movRaton.x * 0.005f, 0.0f};
 
     // DEBUG:
     //rotacion = {0.0f, -3 * 0.005f, -1 * 0.005f, 0.0f};
