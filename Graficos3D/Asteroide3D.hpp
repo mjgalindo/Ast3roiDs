@@ -2,6 +2,7 @@
 #define AST3ROIDS_ASTEROIDE3D_HPP
 
 #include "Elemento3D.hpp"
+#include "../Estados.hpp"
 #include "../ControladorSonido.hpp"
 #include "../Estados.hpp"
 
