@@ -16,4 +16,11 @@ enum Tipo {
 enum Tamano {
     TAM_0, TAM_1, TAM_2
 };
+
+enum Tipo3D {
+    TIPO3D_0, TIPO3D_1, TIPO3D_2
+};
+enum Tamano3D {
+    TAM3D_0, TAM3D_1, TAM3D_2
+};
 #endif //AST3ROIDS_ESTADOS_HPP
