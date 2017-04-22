@@ -6,13 +6,15 @@
 
 class Disparo3D : public Elemento3D {
 public:
-    Disparo3D(glm::vec3 direccion, glm::vec3 posicion);
+    Disparo3D(glm::vec3 direccion, glm::vec3 posicion, glm::vec3 rotacion);
 
     void actualizar();
 
-    const float VELOCIDAD_BASE = 5.0f;
+    static constexpr float VELOCIDAD_BASE = 1.0f;
+    static constexpr float DISTANCIA_MAX = 200.0f;
 
     glm::vec3 velocidad;
+    glm::vec3 posicionInicial;
 };
 
 

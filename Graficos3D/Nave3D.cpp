@@ -50,8 +50,12 @@ void Nave3D::actualizar() {
     pos.posicion += velocidad * (1 / 60.f);
 
     // Actualiza los disparos de la nave
-    for (Disparo3D& disparo : disparos)
-        disparo.actualizar();
+    for (int i = 0; i < disparos.size(); i++) {
+        disparos[i].actualizar();
+        if (disparos[i].estado == DESTRUIDO) {
+            disparos.erase(disparos.begin() + i);
+        }
+    }
 }
 
 void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states) const {
@@ -64,6 +68,6 @@ void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates 
 }
 
 void Nave3D::disparar() {
-    disparos.emplace_back(direccion, pos.posicion);
+    disparos.emplace_back(direccion, pos.posicion, pos.rotacion);
     std::cout << "PEW!! ";
 }

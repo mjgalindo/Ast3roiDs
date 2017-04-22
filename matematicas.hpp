@@ -32,8 +32,8 @@ static T distanciaEuclidea(sf::Vector2<T> a, sf::Vector2<T> b) {
 }
 
 template<typename T>
-static T distanciaEuclidea(sf::Vector3<T> a, sf::Vector3<T> b) {
-    return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
+static float distanciaEuclidea(T a, T b) {
+    return (float) sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
 }
 
 template<typename T>
