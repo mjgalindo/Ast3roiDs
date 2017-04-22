@@ -20,7 +20,7 @@ Nave3D::Nave3D() :
     ultimaPosicionRaton = sf::Mouse::getPosition();
 }
 
-void Nave3D::actualizar(std::vector<Asteroide3D> asteroides) {
+void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides) {
     // Gira la nave
     sf::Vector2i ratonActual = sf::Mouse::getPosition();
     sf::Vector2i desplazamientoRaton = ratonActual - ultimaPosicionRaton;
@@ -54,6 +54,7 @@ void Nave3D::actualizar(std::vector<Asteroide3D> asteroides) {
         if(colisionEsferaEsfera(this->pos.posicion, 7.6f*this->pos.escala.z, asteroides[i].pos.posicion, 1.0f*asteroides[i].pos.escala.y)){
             //COLISION!!!!!!!!!!!!
             //asteroides[i].colisionDetectada();
+            cout << "DESTRUCCION!!!!!!!" << endl;
             asteroides.erase(asteroides.begin()+i);
             i--;
         }
@@ -63,17 +64,20 @@ void Nave3D::actualizar(std::vector<Asteroide3D> asteroides) {
     for (int i = 0; i < disparos.size(); i++) {
         disparos[i].actualizar();
 
+        bool colisionado = false;
+
         //Se comprueba la colision de los disparos con los asteroides
         for(int j=0 ; j<asteroides.size() ; j++){
             if(colisionPuntoEsfera(disparos[i].pos.posicion,asteroides[j].pos.posicion, 1.0f*asteroides[j].pos.escala.y)){
                 //COLISION!!!!!!!!!!!!
-                //asteroides[i].colisionDetectada();
+                asteroides[i].colisionDetectada(asteroides);
                 asteroides.erase(asteroides.begin()+j);
                 j--;
+                colisionado = true;
+                break;
             }
         }
-
-        if (disparos[i].estado == DESTRUIDO) {
+        if(colisionado || disparos[i].estado == DESTRUIDO){
             disparos.erase(disparos.begin() + i);
             i--;
         }

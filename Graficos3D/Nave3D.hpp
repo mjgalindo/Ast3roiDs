@@ -11,7 +11,7 @@ class Nave3D : public Elemento3D {
 public:
     Nave3D();
 
-    void actualizar(std::vector<Asteroide3D> asteroides);
+    void actualizar(std::vector<Asteroide3D> &asteroides);
     void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
 
     void disparar();

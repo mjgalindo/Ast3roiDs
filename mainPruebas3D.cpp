@@ -88,6 +88,8 @@ int main() {
         // Limpia la ventana (no en negro para detectar posibles formas 3D sin color)
         ventana.clear({0.1f, 0.1f, 0.1f});
 
+
+        cout << "Numero de Asteroides: " << asteroides.size() << endl;
         // Dibuja todos los elementos
         for (auto asteroide : asteroides)
             asteroide.dibujar(ventana, camara);
