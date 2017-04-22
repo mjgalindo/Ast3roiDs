@@ -9,7 +9,7 @@ public:
     void actualizar();
 
 private:
-    const float VELOCIDAD_MAX = 0.5f;
+    static constexpr float VELOCIDAD_MAX = 0.5f;
 
     glm::vec3 velocidad;
 };
