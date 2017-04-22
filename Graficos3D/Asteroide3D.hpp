@@ -16,6 +16,9 @@ public:
 private:
     static constexpr float VELOCIDAD_MAX = 0.5f;
 
+    Tipo3D version;
+    Tamano3D tamano3D;
+
     glm::vec3 velocidad;
     ControladorSonido *csonido;
 };
