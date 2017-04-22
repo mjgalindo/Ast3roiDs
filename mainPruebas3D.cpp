@@ -48,7 +48,7 @@ int main() {
 
     Nave3D testNave(csonido.get());
 
-    Ovni3D ovni;
+    Ovni3D ovni(csonido.get());
 
     Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);

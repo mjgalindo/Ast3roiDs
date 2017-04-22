@@ -3,21 +3,24 @@
 #include "Ovni3D.hpp"
 #include "../Util3D/ControladorTexturas.hpp"
 #include "../Util3D/ControladorShaders.hpp"
+#include "../ControladorSonido.hpp"
 
 using namespace std;
 using namespace sf;
 
-Ovni3D::Ovni3D() :
+Ovni3D::Ovni3D(ControladorSonido *controladorSonido) :
+        csonido(controladorSonido),
         Elemento3D(ControladorShaders::getShader(ControladorShaders::SIMPLE),
                    ControladorTexturas::getTextura(ControladorTexturas::VERDE)) {
 
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ASTEROIDE);
-    velocidad = {2.0f,  2.0f, 2.0f};
+    velocidad = {5.0f,  5.0f, 5.0f};
     pos.posicion = {valorAleatorio(-80.0,80.0), valorAleatorio(-80.0,80.0), valorAleatorio(-80.0,80.0)};
     pos.escala = {2.0f, 2.0f, 2.0f};
     pos.rotacion = {0.0f, -PI / 2, 0.0f};
-    direccion = glm::vec3(enteroAleatorio(-1,1),enteroAleatorio(-1,1),enteroAleatorio(-1,1));
-    velocidad = velocidad*direccion;
+    direccion = glm::vec3(valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f));
+    velocidad = VELOCIDAD_INICIAL*direccion;
+    csonido->reproducir(ControladorSonido::OVNI_GRANDE,false);
 }
 
 void Ovni3D::actualizar(std::vector<Asteroide3D> asteroides) {
@@ -32,6 +35,15 @@ void Ovni3D::actualizar(std::vector<Asteroide3D> asteroides) {
             asteroides.erase(asteroides.begin()+i);
             i--;
         }
+    }
+
+    if(valorAleatorio() <= 0.01) {
+        disparar();
+    }
+
+    if(valorAleatorio() <= 0.001) {
+        direccion = glm::vec3(valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f));
+        velocidad = VELOCIDAD_INICIAL*direccion;
     }
 
     // Actualiza los disparos del ovni
@@ -65,5 +77,7 @@ void Ovni3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates 
 }
 
 void Ovni3D::disparar() {
-    disparos.emplace_back(glm::vec3(valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f)), pos.posicion, pos.rotacion);
+    disparos.emplace_back(direccion, pos.posicion, pos.rotacion);
+
+    csonido->reproducir(ControladorSonido::DISPARO,true);
 }
