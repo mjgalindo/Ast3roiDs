@@ -9,9 +9,11 @@ class Asteroide3D : public Elemento3D {
 public:
     Asteroide3D(ControladorSonido *controladorSonido);
 
-    Asteroide3D(ControladorSonido *controladorSonido, glm::vec3 pos, glm::vec3 vel, glm::vec3 rot, glm::vec3 esc);
+    Asteroide3D(ControladorSonido *controladorSonido, glm::vec3 pos, glm::vec3 vel, glm::vec3 rot, Tipo3D tipo,
+                Tamano3D tam3D);
 
     void actualizar();
+
     void colisionDetectada(std::vector<Asteroide3D> &asteroides);
 
 private:
