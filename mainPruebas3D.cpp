@@ -12,6 +12,35 @@ using namespace sf;
 #define WIDTH 1700
 #define HEIGHT 1100
 
+/**
+ * De: https://guidedhacking.com/showthread.php?6588-OpenGL-Draw-a-crosshair
+ * Dibuja una cruz en el centro de la ventana.
+ */
+void dibujaCruz(sf::Vector2u tamVentana) {
+    glPushMatrix();
+    glViewport(0, 0, tamVentana.x, tamVentana.y);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, tamVentana.x, tamVentana.y, 0, -1, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glColor3ub(240, 240, 240);//white
+    glLineWidth(2.0);
+    glBegin(GL_LINES);
+    //horizontal line
+    glVertex2i(tamVentana.x / 2 - 7, tamVentana.y / 2);
+    glVertex2i(tamVentana.x / 2 + 7, tamVentana.y / 2);
+    glEnd();
+    //vertical line
+    glBegin(GL_LINES);
+    glVertex2i(tamVentana.x / 2, tamVentana.y / 2 + 7);
+    glVertex2i(tamVentana.x / 2, tamVentana.y / 2 - 7);
+    glEnd();
+
+    glPopMatrix();
+}
+
 int main() {
     // Configura la ventana
     sf::ContextSettings configuracion;
@@ -86,7 +115,7 @@ int main() {
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = testNave.pos.matrizModelo();
-        camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 7.0f, 0.0f, 1.0f));
+        camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 4.0f, 0.0f, 1.0f));
         camara.forward = glm::vec3(modeloNave * testNave.DIRECCION_INICIAL);
 
         // Mantiene el vector up de la cámara apuntando hacia arriba
@@ -96,7 +125,6 @@ int main() {
         // Limpia la ventana (no en negro para detectar posibles formas 3D sin color)
         ventana.clear({0.1f, 0.1f, 0.1f});
 
-
         cout << "Numero de Asteroides: " << asteroides.size() << endl;
         // Dibuja todos los elementos
         for (auto asteroide : asteroides)
@@ -104,6 +132,7 @@ int main() {
 
         testNave.dibujar(ventana, camara);
         ovni.dibujar(ventana, camara);
+
         // Muestra el fotograma
         ventana.display();
     }
