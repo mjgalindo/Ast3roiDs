@@ -24,7 +24,9 @@ set(FUENTES_ASTEROIDS
 		matematicas.hpp
 		Estados.hpp
 		Colisiones.hpp
-		Colisiones.cpp)
+		Colisiones.cpp
+		ControladorSonido.cpp
+		ControladorSonido.hpp)
 
 set(FUENTES_2D
 		Graficos/Triangular.hpp
@@ -40,14 +42,10 @@ set(FUENTES_2D
 		Graficos/Ovni.cpp
 		Graficos/Ovni.hpp
 		constantesGlobales.hpp
-		ControladorSonido.cpp
-		ControladorSonido.hpp
 		Graficos/OvniInteligente.cpp)
 
 set(PRUEBA3D prueba3D)
 set(FUENTES_3D
-		Colisiones.cpp
-		Colisiones.hpp
         Graficos3D/Elemento3D.hpp
         Graficos3D/Elemento3D.cpp
 		Graficos3D/Asteroide3D.hpp

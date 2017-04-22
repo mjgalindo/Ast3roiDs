@@ -7,8 +7,8 @@
 using namespace std;
 using namespace sf;
 
-Nave3D::Nave3D() :
-        Elemento3D(ControladorShaders::getShader(ControladorShaders::SIMPLE),
+Nave3D::Nave3D(ControladorSonido *controladorSonido) : csonido(controladorSonido),
+                                                       Elemento3D(ControladorShaders::getShader(ControladorShaders::SIMPLE),
                    ControladorTexturas::getTextura(ControladorTexturas::NAVE)) {
 
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::NAVE);
@@ -39,8 +39,10 @@ void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRa
     direccion = glm::normalize(direccion);
 
     // Acelera
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
         velocidad += direccion * 0.1f;
+        csonido->reproducir(ControladorSonido::ACELERAR);
+    }
     else velocidad = velocidad * 0.98f;
 
     pos.posicion += velocidad * (1 / 60.f);
@@ -91,5 +93,5 @@ void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates 
 
 void Nave3D::disparar() {
     disparos.emplace_back(direccion, pos.posicion, pos.rotacion);
-    std::cout << "PEW!! ";
+    csonido->reproducir(ControladorSonido::DISPARO, true);
 }

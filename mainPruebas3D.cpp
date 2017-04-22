@@ -33,6 +33,7 @@ int main() {
     ControladorModelos __controladorModelos;
     ControladorTexturas __controladorTexturas;
     ControladorShaders __controladorShaders;
+    unique_ptr<ControladorSonido> csonido{new ControladorSonido};
 
     // Inicializa shaders y texturas.
     ControladorShaders::getShader(ControladorShaders::SIMPLE)->bind();
@@ -43,9 +44,9 @@ int main() {
     // Carga asteroides para ver como se mueve la nave
     vector<Asteroide3D> asteroides;
     for (int i = 0; i < 100; i++)
-        asteroides.emplace_back();
+        asteroides.emplace_back(csonido.get());
 
-    Nave3D testNave;
+    Nave3D testNave(csonido.get());
 
     Ovni3D ovni;
 
