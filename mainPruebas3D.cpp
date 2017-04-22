@@ -59,7 +59,7 @@ int main() {
         while (ventana.pollEvent(event)) {
             switch (event.type) {
                 case sf::Event::MouseButtonPressed:
-                    if (event.mouseButton.button == sf::Mouse::Left){
+                    if (event.mouseButton.button == sf::Mouse::Left) {
                         testNave.disparar();
                         break;
                     }
@@ -77,8 +77,10 @@ int main() {
         for (auto asteroide : asteroides)
             asteroide.actualizar();
 
-        testNave.actualizar(asteroides);
+        sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
 
+        testNave.actualizar(asteroides, {posCursor.x - WIDTH / 2, posCursor.y - HEIGHT / 2});
+        sf::Mouse::setPosition({WIDTH / 2, HEIGHT / 2}, ventana);
         ovni.actualizar(asteroides);
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
@@ -98,7 +100,7 @@ int main() {
             asteroide.dibujar(ventana, camara);
 
         testNave.dibujar(ventana, camara);
-        ovni.dibujar(ventana,camara);
+        ovni.dibujar(ventana, camara);
         // Muestra el fotograma
         ventana.display();
     }
