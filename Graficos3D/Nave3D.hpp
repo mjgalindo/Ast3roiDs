@@ -2,14 +2,16 @@
 #define AST3ROIDS_NAVE3D_HPP
 
 #include <SFML/Graphics/Drawable.hpp>
+#include "../Colisiones.hpp"
 #include "Elemento3D.hpp"
+#include "Asteroide3D.hpp"
 #include "Disparo3D.hpp"
 
 class Nave3D : public Elemento3D {
 public:
     Nave3D();
 
-    void actualizar();
+    void actualizar(std::vector<Asteroide3D> asteroides);
     void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
 
     void disparar();

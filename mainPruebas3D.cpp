@@ -74,7 +74,7 @@ int main() {
         for (auto asteroide : asteroides)
             asteroide.actualizar();
 
-        testNave.actualizar();
+        testNave.actualizar(asteroides);
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = testNave.pos.matrizModelo();

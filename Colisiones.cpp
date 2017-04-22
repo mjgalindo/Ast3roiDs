@@ -1,3 +1,4 @@
+#include <glm/vec3.hpp>
 #include "Colisiones.hpp"
 #include "matematicas.hpp"
 
@@ -51,12 +52,12 @@ bool colisionVerticesTriangulo(sf::VertexArray vs, sf::VertexArray triangulo) {
 }
 
 //Colision entre dos esferas: e(centro,radio)
-bool colisionEsferaEsfera(sf::Vector3f c1, float r1, sf::Vector3f c2, float r2){
+bool colisionEsferaEsfera(glm::vec3 c1, float r1, glm::vec3 c2, float r2){
     return distanciaEuclidea(c1,c2)<=r1+r2;
 }
 
 //Devuelve true si el punto esta dentro de la esfera
-bool colisionPuntoEsfera(sf::Vector3f p, sf::Vector3f c, float r){
+bool colisionPuntoEsfera(glm::vec3 p, glm::vec3 c, float r){
     return distanciaEuclidea(p,c)<=r;
 }
 

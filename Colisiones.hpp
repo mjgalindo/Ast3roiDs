@@ -2,6 +2,7 @@
 #define AST3ROIDS_COLISIONES_HPP
 
 #include <SFML/Graphics.hpp>
+#include <glm/glm.hpp>
 
 bool colisionCirculos(sf::Vector2f c1, float r1, sf::Vector2f c2, float r2);
 
@@ -11,9 +12,9 @@ bool colisionTrianguloCirculo(sf::VertexArray vs, sf::Vector2f c, float r);
 
 bool colisionVerticesTriangulo(sf::VertexArray vs, sf::VertexArray triangulo);
 
-bool colisionEsferaEsfera(sf::Vector3f c1, float r1, sf::Vector3f c2, float r2);
+bool colisionEsferaEsfera(glm::vec3 c1, float r1, glm::vec3 c2, float r2);
 
-bool colisionPuntoEsfera(sf::Vector3f p, sf::Vector3f c, float r);
+bool colisionPuntoEsfera(glm::vec3 p, glm::vec3 c, float r);
 
 //Funciones auxiliares
 

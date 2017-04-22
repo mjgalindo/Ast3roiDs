@@ -20,7 +20,7 @@ Nave3D::Nave3D() :
     ultimaPosicionRaton = sf::Mouse::getPosition();
 }
 
-void Nave3D::actualizar() {
+void Nave3D::actualizar(std::vector<Asteroide3D> asteroides) {
     // Gira la nave
     sf::Vector2i ratonActual = sf::Mouse::getPosition();
     sf::Vector2i desplazamientoRaton = ratonActual - ultimaPosicionRaton;
@@ -49,11 +49,33 @@ void Nave3D::actualizar() {
 
     pos.posicion += velocidad * (1 / 60.f);
 
+    //Se comprueba la colision con los asteroides
+    for(int i=0 ; i<asteroides.size() ; i++){
+        if(colisionEsferaEsfera(this->pos.posicion, 7.6f*this->pos.escala.z, asteroides[i].pos.posicion, 1.0f*asteroides[i].pos.escala.y)){
+            //COLISION!!!!!!!!!!!!
+            //asteroides[i].colisionDetectada();
+            asteroides.erase(asteroides.begin()+i);
+            i--;
+        }
+    }
+
     // Actualiza los disparos de la nave
     for (int i = 0; i < disparos.size(); i++) {
         disparos[i].actualizar();
+
+        //Se comprueba la colision de los disparos con los asteroides
+        for(int j=0 ; j<asteroides.size() ; j++){
+            if(colisionPuntoEsfera(disparos[i].pos.posicion,asteroides[j].pos.posicion, 1.0f*asteroides[j].pos.escala.y)){
+                //COLISION!!!!!!!!!!!!
+                //asteroides[i].colisionDetectada();
+                asteroides.erase(asteroides.begin()+j);
+                j--;
+            }
+        }
+
         if (disparos[i].estado == DESTRUIDO) {
             disparos.erase(disparos.begin() + i);
+            i--;
         }
     }
 }
