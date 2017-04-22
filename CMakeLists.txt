@@ -72,7 +72,7 @@ set(FUENTES_3D
 set(SFML_ROOT "C:/Program Files (x86)/SFML")
 
 add_executable(${EXECUTABLE_NAME} main.cpp ${FUENTES_ASTEROIDS} ${FUENTES_2D})
-add_executable(${PRUEBA3D} mainPruebas3D.cpp ${FUENTES_3D})
+add_executable(${PRUEBA3D} mainPruebas3D.cpp ${FUENTES_ASTEROIDS} ${FUENTES_3D})
 
 find_package(OpenGL)
 find_package(glew)
