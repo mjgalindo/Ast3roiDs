@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Graficos3D/Asteroide3D.hpp"
 #include "Graficos3D/Nave3D.hpp"
+#include "Graficos3D/Ovni3D.hpp"
 #include "Util3D/Ventana3D.hpp"
 #include "Util3D/ControladorTexturas.hpp"
 #include "Util3D/ControladorShaders.hpp"
@@ -46,6 +47,8 @@ int main() {
 
     Nave3D testNave;
 
+    Ovni3D ovni;
+
     Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
 
@@ -76,6 +79,8 @@ int main() {
 
         testNave.actualizar(asteroides);
 
+        ovni.actualizar(asteroides);
+
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = testNave.pos.matrizModelo();
         camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 7.0f, 0.0f, 1.0f));
@@ -93,6 +98,7 @@ int main() {
             asteroide.dibujar(ventana, camara);
 
         testNave.dibujar(ventana, camara);
+        ovni.dibujar(ventana,camara);
         // Muestra el fotograma
         ventana.display();
     }
