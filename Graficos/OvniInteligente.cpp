@@ -25,6 +25,20 @@ void OvniInteligente::disparar(sf::Vector2f nave) {
     if (estado == VIVO) {
         if (num_disparos < MAX_DISPAROS) {
             sf::Vector2f vectorDir = (nave - posicion);
+            if((abs(vectorDir.x) > limites.x/2)) {
+                if(vectorDir.x > 0.0f) {
+                    vectorDir.x = -posicion.x - (limites.x - nave.x);
+                } else {
+                    vectorDir.x = posicion.x + limites.x + nave.x;
+                }
+            }
+            if((abs(vectorDir.y) > limites.y/2)) {
+                if(vectorDir.y > 0.0f) {
+                    vectorDir.y = -posicion.y - (limites.y - nave.y);
+                } else {
+                    vectorDir.y = posicion.y + limites.y + nave.y;
+                }
+            }
             double direccionDisp = atan2f(vectorDir.y, vectorDir.x);
             direccionDisp = output2RadiansDisparo(red.run({vectorDir.x,vectorDir.y}));
             disparos[num_disparos] = Disparo(posicion, (float) direccion, limites, color);
