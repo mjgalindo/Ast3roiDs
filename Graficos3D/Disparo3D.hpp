@@ -10,7 +10,7 @@ public:
 
     void actualizar();
 
-    static constexpr float VELOCIDAD_BASE = 1.0f;
+    static constexpr float VELOCIDAD_BASE = 3.0f;
     static constexpr float DISTANCIA_MAX = 200.0f;
 
     glm::vec3 velocidad;

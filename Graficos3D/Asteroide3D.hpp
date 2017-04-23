@@ -8,24 +8,26 @@
 
 class Asteroide3D : public Elemento3D {
 public:
-    Asteroide3D(ControladorSonido *controladorSonido);
+    Asteroide3D(ControladorSonido *controladorSonido, float limitesMovimiento);
 
-    Asteroide3D(ControladorSonido *controladorSonido, glm::vec3 pos, glm::vec3 vel, glm::vec3 rot, Tipo3D tipo,
-                Tamano3D tam3D);
+    Asteroide3D(ControladorSonido *controladorSonido, float limitesMovimiento,
+                glm::vec3 pos, glm::vec3 vel, glm::vec3 rot, Tipo3D tipo, Tamano3D tam3D);
 
     void actualizar();
 
     void colisionDetectada(std::vector<Asteroide3D> &asteroides);
-    void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
 
 private:
-    static constexpr float VELOCIDAD_MAX = 0.5f;
+    static constexpr float VELOCIDAD_MAX = 0.2f;
 
     Tipo3D version;
     Tamano3D tamano3D;
 
     glm::vec3 velocidad;
+    glm::quat velocidadAngular;
     ControladorSonido *csonido;
+
+    float limiteMovimiento;
 };
 
 

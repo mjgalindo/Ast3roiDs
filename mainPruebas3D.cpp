@@ -81,7 +81,7 @@ int main() {
     // Carga asteroides para ver como se mueve la nave
     vector<Asteroide3D> asteroides;
     for (int i = 0; i < 100; i++)
-        asteroides.emplace_back(csonido.get());
+        asteroides.emplace_back(csonido.get(), LIMITES_ESPACIO);
 
     Nave3D testNave(csonido.get(), &puntuacion, LIMITES_ESPACIO);
 
@@ -123,7 +123,7 @@ int main() {
         ovni.actualizar(asteroides, testNave);
 
         if(testNave.getVidas()<0){
-            running=false;
+            //running=false;
         }
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
