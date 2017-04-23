@@ -12,7 +12,7 @@
 using namespace std;
 
 enum Estado {
-    TITULO, MENU, JUEGO, GAME_OVER, PUNTUACIONES, CONTROLES, OPCIONES, CREDITOS, EXIT
+    TITULO, MENU, JUEGO2D, JUEGO3D, GAME_OVER, PUNTUACIONES, CONTROLES, OPCIONES, CREDITOS, EXIT
 };
 enum controles {
     GIRAR_IZQUIERDA = 0, GIRAR_DERECHA = 1, ACELERAR = 2, DISPARAR = 3, HIPERESPACIO = 4, VOLVER = 5
@@ -174,7 +174,10 @@ int main() {
             case MENU:
                 estado_actual = tratarMenu(estado_actual);
                 break;
-            case JUEGO:
+            case JUEGO2D:
+                estado_actual = tratarJuego(estado_actual);
+                break;
+            case JUEGO3D:
                 estado_actual = tratarJuego(estado_actual);
                 break;
             case GAME_OVER:
@@ -273,43 +276,49 @@ Estado tratarMenu(Estado estado) {
     sf::Text opcion4;
     sf::Text opcion5;
     sf::Text opcion6;
+    sf::Text opcion7;
 
 
     inicializaTexto(texto, ajustar_h(80u), 1.5);
     texto.setString("MENU");
-    texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 10.0f});
+    texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 20.0f});
 
     inicializaTexto(opcion1, ajustar_h(40u));
-    opcion1.setString("JUGAR");
+    opcion1.setString("JUGAR 2D");
     opcion1.setPosition(
-            {(resolucion.x - opcion1.getLocalBounds().width) / 2.0f, resolucion.y / 8 + resolucion.y / 8.0f});
+            {(resolucion.x - opcion1.getLocalBounds().width) / 2.0f, resolucion.y / 9 + resolucion.y / 9.0f});
 
     inicializaTexto(opcion2, ajustar_h(40u));
-    opcion2.setString("PUNTUACIONES");
+    opcion2.setString("JUGAR 3D");
     opcion2.setPosition(
-            {(resolucion.x - opcion2.getLocalBounds().width) / 2.0f, resolucion.y / 8 + 2 * resolucion.y / 8.0f});
+            {(resolucion.x - opcion2.getLocalBounds().width) / 2.0f, resolucion.y / 9 +  2 * resolucion.y / 9.0f});
 
     inicializaTexto(opcion3, ajustar_h(40u));
-    opcion3.setString("OPCIONES");
+    opcion3.setString("PUNTUACIONES");
     opcion3.setPosition(
-            {(resolucion.x - opcion3.getLocalBounds().width) / 2, resolucion.y / 8.0f + 3 * resolucion.y / 8.0f});
+            {(resolucion.x - opcion3.getLocalBounds().width) / 2.0f, resolucion.y / 9 + 3 * resolucion.y / 9.0f});
 
     inicializaTexto(opcion4, ajustar_h(40u));
-    opcion4.setString("CONTROLES");
+    opcion4.setString("OPCIONES");
     opcion4.setPosition(
-            {(resolucion.x - opcion4.getLocalBounds().width) / 2, resolucion.y / 8.0f + 4 * resolucion.y / 8.0f});
+            {(resolucion.x - opcion4.getLocalBounds().width) / 2, resolucion.y / 9.0f + 4 * resolucion.y / 9.0f});
 
     inicializaTexto(opcion5, ajustar_h(40u));
-    opcion5.setString("CREDITOS");
+    opcion5.setString("CONTROLES");
     opcion5.setPosition(
-            {(resolucion.x - opcion5.getLocalBounds().width) / 2, resolucion.y / 8.0f + 5 * resolucion.y / 8.0f});
+            {(resolucion.x - opcion5.getLocalBounds().width) / 2, resolucion.y / 9.0f + 5 * resolucion.y / 9.0f});
 
     inicializaTexto(opcion6, ajustar_h(40u));
-    opcion6.setString("SALIR");
+    opcion6.setString("CREDITOS");
     opcion6.setPosition(
-            {(resolucion.x - opcion6.getLocalBounds().width) / 2, resolucion.y / 8.0f + 6 * resolucion.y / 8.0f});
+            {(resolucion.x - opcion6.getLocalBounds().width) / 2, resolucion.y / 9.0f + 6 * resolucion.y / 9.0f});
 
-    array<Estado, 6> opciones = {JUEGO, PUNTUACIONES, OPCIONES, CONTROLES, CREDITOS, EXIT};
+    inicializaTexto(opcion7, ajustar_h(40u));
+    opcion7.setString("SALIR");
+    opcion7.setPosition(
+            {(resolucion.x - opcion7.getLocalBounds().width) / 2, resolucion.y / 9.0f + 7 * resolucion.y / 9.0f});
+
+    array<Estado, 7> opciones = {JUEGO2D, JUEGO3D, PUNTUACIONES, OPCIONES, CONTROLES, CREDITOS, EXIT};
     int seleccion = 0;
 
     while (true) {
@@ -365,6 +374,10 @@ Estado tratarMenu(Estado estado) {
                 t.translate({opcion6.getPosition().x - resolucion.x / 10, opcion6.getPosition().y + ajustar_h(20u)})
                         .scale(ajustar_h(35u), ajustar_w(20u));
                 break;
+            case 6:
+                t.translate({opcion7.getPosition().x - resolucion.x / 10, opcion7.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
             default:
                 break;
         }
@@ -378,6 +391,7 @@ Estado tratarMenu(Estado estado) {
         ventana.draw(opcion4);
         ventana.draw(opcion5);
         ventana.draw(opcion6);
+        ventana.draw(opcion7);
         ventana.display();
     }
 }
