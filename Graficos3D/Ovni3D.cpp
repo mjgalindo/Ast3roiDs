@@ -7,7 +7,7 @@
 using namespace std;
 using namespace sf;
 
-Ovni3D::Ovni3D(ControladorSonido *controladorSonido) :
+Ovni3D::Ovni3D(ControladorSonido *controladorSonido, float limitesMovimiento) :
         csonido(controladorSonido),
         Elemento3D(ControladorShaders::getShader(ControladorShaders::SIMPLE),
                    ControladorTexturas::getTextura(ControladorTexturas::VERDE)) {
@@ -20,6 +20,7 @@ Ovni3D::Ovni3D(ControladorSonido *controladorSonido) :
     direccion = glm::vec3(valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f));
     velocidad = VELOCIDAD_INICIAL*direccion;
     csonido->reproducir(ControladorSonido::OVNI_GRANDE,false);
+    limiteMovimiento = limitesMovimiento;
 }
 
 void Ovni3D::actualizar(std::vector<Asteroide3D> asteroides, Nave3D nave) {
@@ -91,7 +92,7 @@ void Ovni3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates 
 }
 
 void Ovni3D::disparar() {
-    disparos.emplace_back(direccion, pos.posicion, pos.rotacion);
+    disparos.emplace_back(direccion, pos.posicion, pos.rotacion, limiteMovimiento);
 
     csonido->reproducir(ControladorSonido::DISPARO,true);
 }

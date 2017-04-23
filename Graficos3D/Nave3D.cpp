@@ -98,7 +98,7 @@ void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates 
 }
 
 void Nave3D::disparar() {
-    disparos.emplace_back(dirFrente, pos.posicion, pos.rotacion);
+    disparos.emplace_back(dirFrente, pos.posicion, pos.rotacion, limiteMovimiento);
     csonido->reproducir(ControladorSonido::DISPARO, true);
 }
 

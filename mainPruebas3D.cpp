@@ -74,18 +74,19 @@ int main() {
     ControladorShaders::getShader(ControladorShaders::BRILLO)->setDireccionLuz({0.0f, -0.75f, 0.25f});
 
     Esfera espacio(ControladorTexturas::ESPACIO, {0, 0, 0}, {800, 800, 800});
-    const float LIMITES_ESPACIO = 100.0f;
-    Esfera mallaLimites(ControladorTexturas::BLANCO, {0, 0, 0}, {LIMITES_ESPACIO, LIMITES_ESPACIO, LIMITES_ESPACIO},
-                        true);
+
+    const float RADIO_ESFERA_JUGABLE = 100.0f;
+    Esfera mallaLimites(ControladorTexturas::BLANCO, {0, 0, 0},
+                        {RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE}, true);
 
     // Carga asteroides para ver como se mueve la nave
     vector<Asteroide3D> asteroides;
-    for (int i = 0; i < 100; i++)
-        asteroides.emplace_back(csonido.get(), LIMITES_ESPACIO);
+    for (int i = 0; i < 10; i++)
+        asteroides.emplace_back(csonido.get(), RADIO_ESFERA_JUGABLE);
 
-    Nave3D testNave(csonido.get(), &puntuacion, LIMITES_ESPACIO);
+    Nave3D testNave(csonido.get(), &puntuacion, RADIO_ESFERA_JUGABLE);
 
-    Ovni3D ovni(csonido.get());
+    Ovni3D ovni(csonido.get(), RADIO_ESFERA_JUGABLE);
 
     Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
@@ -120,7 +121,7 @@ int main() {
         testNave.actualizar(asteroides, {posCursor.x - WIDTH / 2, posCursor.y - HEIGHT / 2});
         if (ventana.hasFocus()) sf::Mouse::setPosition({WIDTH / 2, HEIGHT / 2}, ventana);
 
-        ovni.actualizar(asteroides, testNave);
+        //ovni.actualizar(asteroides, testNave);
 
         if(testNave.getVidas()<0){
             //running=false;

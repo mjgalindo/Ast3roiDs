@@ -11,7 +11,7 @@
 
 class Ovni3D : public Elemento3D {
 public:
-    Ovni3D(ControladorSonido *controladorSonido);
+    Ovni3D(ControladorSonido *controladorSonido, float limitesMovimiento);
 
     void actualizar(std::vector<Asteroide3D> asteroides, Nave3D nave);
     void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
@@ -24,6 +24,7 @@ public:
 
 private:
     std::vector<Disparo3D> disparos;
+    float limiteMovimiento;
     ControladorSonido *csonido;
 
 };
