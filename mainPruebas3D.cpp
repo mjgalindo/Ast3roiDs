@@ -56,7 +56,7 @@ int main() {
     // hacer al principio.
     Ventana3D ventana(sf::VideoMode(WIDTH, HEIGHT), "OpenGL", sf::Style::Close | sf::Style::Titlebar, configuracion,
                       60);
-    ventana.setMouseCursorVisible(true);
+    ventana.setMouseCursorVisible(false);
     ventana.setMouseCursorGrabbed(true);
 
     // Inicializa los modelos 3D y las texturas. Esto objetos solo existe para controlar
@@ -106,7 +106,7 @@ int main() {
         }
 
         // Mueve todos los elementos
-        for (auto asteroide : asteroides)
+        for (Asteroide3D &asteroide : asteroides)
             asteroide.actualizar();
 
         sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
@@ -133,7 +133,7 @@ int main() {
         ventana.clear({0.1f, 0.1f, 0.1f});
 
         // Dibuja todos los elementos
-        for (auto asteroide : asteroides)
+        for (const Asteroide3D &asteroide : asteroides)
             asteroide.dibujar(ventana, camara);
 
         testNave.dibujar(ventana, camara);
