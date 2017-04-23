@@ -8,7 +8,7 @@ Asteroide3D::Asteroide3D(ControladorSonido *controladorSonido) : csonido(control
                                                                             ControladorTexturas::getTextura(
                                                                                     ControladorTexturas::BLANCO)) {
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ASTEROIDE);
-    velocidad = {0.0f, 0.0f, 0.0f};
+    velocidad = {valorAleatorio(3.0f,6.0f),valorAleatorio(3.0f,6.0f),valorAleatorio(3.0f,6.0f)};
     pos.posicion = {
             valorAleatorio(-80, 80),
             valorAleatorio(-80, 80),
@@ -57,7 +57,7 @@ Asteroide3D::Asteroide3D(ControladorSonido *controladorSonido, glm::vec3 pos, gl
 }
 
 void Asteroide3D::actualizar() {
-    pos.posicion += velocidad * (1 / 60.f);
+    pos.posicion += velocidad;
 }
 
 void Asteroide3D::colisionDetectada(std::vector<Asteroide3D> &asteroides) {
@@ -204,4 +204,10 @@ void Asteroide3D::colisionDetectada(std::vector<Asteroide3D> &asteroides) {
             }
             break;
     }
+}
+
+void Asteroide3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states) const {
+
+    predibujado(camara);
+    draw(target, states);
 }

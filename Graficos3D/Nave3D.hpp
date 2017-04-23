@@ -9,13 +9,17 @@
 
 class Nave3D : public Elemento3D {
 public:
-    Nave3D(ControladorSonido *controladorSonido);
+    Nave3D(ControladorSonido *controladorSonido, long int *punt);
 
     void actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRaton);
 
     void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
 
     void disparar();
+
+    void destruida();
+
+    int getVidas();
 
     const float VELOCIDAD_MAX = 0.5f;
 
@@ -32,6 +36,11 @@ private:
     sf::Vector2i ultimaPosicionRaton;
     std::vector<Disparo3D> disparos;
     ControladorSonido *csonido;
+
+    //Numero de autoreapariciones de la nave
+    int vidas = 5;
+    //Puntuacion
+    long int *puntuacion;
 };
 
 

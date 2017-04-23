@@ -22,7 +22,7 @@ Ovni3D::Ovni3D(ControladorSonido *controladorSonido) :
     csonido->reproducir(ControladorSonido::OVNI_GRANDE,false);
 }
 
-void Ovni3D::actualizar(std::vector<Asteroide3D> asteroides) {
+void Ovni3D::actualizar(std::vector<Asteroide3D> asteroides, Nave3D nave) {
 
     pos.posicion += velocidad * (1 / 60.f);
 
@@ -30,7 +30,7 @@ void Ovni3D::actualizar(std::vector<Asteroide3D> asteroides) {
     for(int i=0 ; i<asteroides.size() ; i++){
         if(colisionEsferaEsfera(this->pos.posicion, 7.6f*this->pos.escala.z, asteroides[i].pos.posicion, 1.0f*asteroides[i].pos.escala.y)){
             //COLISION!!!!!!!!!!!!
-            //asteroides[i].colisionDetectada();
+            asteroides[i].colisionDetectada(asteroides);
             asteroides.erase(asteroides.begin()+i);
             i--;
         }
@@ -45,21 +45,36 @@ void Ovni3D::actualizar(std::vector<Asteroide3D> asteroides) {
         velocidad = VELOCIDAD_INICIAL*direccion;
     }
 
+    //Se comprueba la colision del ovni con la nave
+    if(colisionEsferaEsfera(pos.posicion,1.0f,nave.pos.posicion,7.6f * nave.pos.escala.z)){
+        //COLISION
+        nave.destruida();
+    }
+
     // Actualiza los disparos del ovni
     for (int i = 0; i < disparos.size(); i++) {
         disparos[i].actualizar();
+
+        bool colisionado = false;
 
         //Se comprueba la colision de los disparos con los asteroides
         for(int j=0 ; j<asteroides.size() ; j++){
             if(colisionPuntoEsfera(disparos[i].pos.posicion,asteroides[j].pos.posicion, 1.0f*asteroides[j].pos.escala.y)){
                 //COLISION!!!!!!!!!!!!
-                //asteroides[i].colisionDetectada();
+                asteroides[j].colisionDetectada(asteroides);
                 asteroides.erase(asteroides.begin()+j);
                 j--;
+                colisionado = true;
+                break;
             }
         }
 
-        if (disparos[i].estado == DESTRUIDO) {
+        //Se comprueba la colision de los disparos con la nave
+        if(!colisionado && colisionPuntoEsfera(disparos[i].pos.posicion,nave.pos.posicion,7.6f * nave.pos.escala.z)){
+            //COLISION!!!!!!!!!!!!
+        }
+
+        if (colisionado || disparos[i].estado == DESTRUIDO) {
             disparos.erase(disparos.begin() + i);
             i--;
         }

@@ -16,6 +16,7 @@ public:
     void actualizar();
 
     void colisionDetectada(std::vector<Asteroide3D> &asteroides);
+    void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
 
 private:
     static constexpr float VELOCIDAD_MAX = 0.5f;

@@ -12,6 +12,8 @@ using namespace sf;
 #define WIDTH 1700
 #define HEIGHT 1100
 
+long int puntuacion = 0;
+
 /**
  * De: https://guidedhacking.com/showthread.php?6588-OpenGL-Draw-a-crosshair
  * Dibuja una cruz en el centro de la ventana.
@@ -75,7 +77,7 @@ int main() {
     for (int i = 0; i < 100; i++)
         asteroides.emplace_back(csonido.get());
 
-    Nave3D testNave(csonido.get());
+    Nave3D testNave(csonido.get(), &puntuacion);
 
     Ovni3D ovni(csonido.get());
 
@@ -112,7 +114,11 @@ int main() {
         testNave.actualizar(asteroides, {posCursor.x - WIDTH / 2, posCursor.y - HEIGHT / 2});
         if (ventana.hasFocus()) sf::Mouse::setPosition({WIDTH / 2, HEIGHT / 2}, ventana);
 
-        ovni.actualizar(asteroides);
+        ovni.actualizar(asteroides, testNave);
+
+        if(testNave.getVidas()<0){
+            running=false;
+        }
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = testNave.pos.matrizModelo();

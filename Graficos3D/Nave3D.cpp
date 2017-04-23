@@ -8,7 +8,7 @@
 using namespace std;
 using namespace sf;
 
-Nave3D::Nave3D(ControladorSonido *controladorSonido) : csonido(controladorSonido),
+Nave3D::Nave3D(ControladorSonido *controladorSonido, long int *punt) : csonido(controladorSonido),
                                                        Elemento3D(ControladorShaders::getShader(
                                                                ControladorShaders::SIMPLE),
                                                                   ControladorTexturas::getTextura(
@@ -21,6 +21,7 @@ Nave3D::Nave3D(ControladorSonido *controladorSonido) : csonido(controladorSonido
     pos.rotacion = glm::angleAxis((float) -PI / 2, glm::vec3{0, 1, 0});
     dirFrente = glm::vec3(DIRECCION_FRENTE_INICIAL);
     ultimaPosicionRaton = sf::Mouse::getPosition();
+    puntuacion = punt;
 }
 
 void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRaton) {
@@ -51,10 +52,10 @@ void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRa
         if (colisionEsferaEsfera(pos.posicion, 7.6f * pos.escala.z, asteroides[i].pos.posicion,
                                  1.0f * asteroides[i].pos.escala.y)) {
             //COLISION!!!!!!!!!!!!
-            //asteroides[i].colisionDetectada();
-            cout << "DESTRUCCION!!!!!!!" << endl;
+            asteroides[i].colisionDetectada(asteroides);
             asteroides.erase(asteroides.begin() + i);
             i--;
+            destruida();
         }
     }
 
@@ -95,4 +96,12 @@ void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates 
 void Nave3D::disparar() {
     disparos.emplace_back(dirFrente, pos.posicion, pos.rotacion);
     csonido->reproducir(ControladorSonido::DISPARO, true);
+}
+
+void Nave3D::destruida() {
+    vidas--;
+}
+
+int Nave3D::getVidas() {
+    return vidas;
 }
