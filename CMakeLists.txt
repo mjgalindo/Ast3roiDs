@@ -56,6 +56,8 @@ set(FUENTES_3D
 		Graficos3D/Ovni3D.hpp
 		Graficos3D/Disparo3D.cpp
 		Graficos3D/Disparo3D.hpp
+        Graficos3D/Esfera.cpp
+        Graficos3D/Esfera.hpp
 		Util3D/Ventana3D.cpp
 		Util3D/Ventana3D.hpp
 		Util3D/Shader.hpp

@@ -10,6 +10,7 @@ public:
         BLANCO = 0,
         VERDE,
         NAVE,
+        ESPACIO,
         NUM_TEXTURAS
     };
 

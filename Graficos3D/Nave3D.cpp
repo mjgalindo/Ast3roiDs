@@ -8,11 +8,9 @@
 using namespace std;
 using namespace sf;
 
-Nave3D::Nave3D(ControladorSonido *controladorSonido, long int *punt) : csonido(controladorSonido),
-                                                       Elemento3D(ControladorShaders::getShader(
-                                                               ControladorShaders::SIMPLE),
-                                                                  ControladorTexturas::getTextura(
-                                                                          ControladorTexturas::NAVE)) {
+Nave3D::Nave3D(ControladorSonido *controladorSonido, long int *punt, const float limitesMovimiento) :
+        csonido(controladorSonido), Elemento3D(ControladorShaders::getShader(ControladorShaders::SIMPLE),
+                                               ControladorTexturas::getTextura(ControladorTexturas::NAVE)) {
 
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::NAVE);
     velocidad = {0.0f, 0.0f, 0.0f};
@@ -22,6 +20,7 @@ Nave3D::Nave3D(ControladorSonido *controladorSonido, long int *punt) : csonido(c
     dirFrente = glm::vec3(DIRECCION_FRENTE_INICIAL);
     ultimaPosicionRaton = sf::Mouse::getPosition();
     puntuacion = punt;
+    limiteMovimiento = limitesMovimiento;
 }
 
 void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRaton) {
@@ -46,6 +45,11 @@ void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRa
     } else velocidad = velocidad * 0.98f;
 
     pos.posicion += velocidad * (1 / 60.f);
+
+    if (distanciaEuclidea(pos.posicion, glm::vec3{0, 0, 0}) > limiteMovimiento) {
+        // Mover la nave al lugar opuesto en el que se encuentra.
+        pos.posicion = glm::vec3{0, 0, 0} - pos.posicion;
+    }
 
     //Se comprueba la colision con los asteroides
     for (int i = 0; i < asteroides.size(); i++) {

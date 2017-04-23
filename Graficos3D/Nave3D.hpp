@@ -9,7 +9,7 @@
 
 class Nave3D : public Elemento3D {
 public:
-    Nave3D(ControladorSonido *controladorSonido, long int *punt);
+    Nave3D(ControladorSonido *controladorSonido, long int *punt, float limitesMovimiento);
 
     void actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRaton);
 
@@ -36,6 +36,8 @@ private:
     sf::Vector2i ultimaPosicionRaton;
     std::vector<Disparo3D> disparos;
     ControladorSonido *csonido;
+
+    float limiteMovimiento;
 
     //Numero de autoreapariciones de la nave
     int vidas = 5;

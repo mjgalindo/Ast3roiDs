@@ -28,6 +28,7 @@ public:
         ASTEROIDE = 0,
         NAVE,
         DISPARO,
+        ESFERA,
         NUM_MODELOS
     };
 

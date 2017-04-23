@@ -5,6 +5,7 @@
 #include "Util3D/Ventana3D.hpp"
 #include "Util3D/ControladorTexturas.hpp"
 #include "Util3D/ControladorShaders.hpp"
+#include "Graficos3D/Esfera.hpp"
 
 using namespace std;
 using namespace sf;
@@ -72,12 +73,17 @@ int main() {
     ControladorShaders::getShader(ControladorShaders::BRILLO)->bind();
     ControladorShaders::getShader(ControladorShaders::BRILLO)->setDireccionLuz({0.0f, -0.75f, 0.25f});
 
+    Esfera espacio(ControladorTexturas::ESPACIO, {0, 0, 0}, {800, 800, 800});
+    const float LIMITES_ESPACIO = 100.0f;
+    Esfera mallaLimites(ControladorTexturas::BLANCO, {0, 0, 0}, {LIMITES_ESPACIO, LIMITES_ESPACIO, LIMITES_ESPACIO},
+                        true);
+
     // Carga asteroides para ver como se mueve la nave
     vector<Asteroide3D> asteroides;
     for (int i = 0; i < 100; i++)
         asteroides.emplace_back(csonido.get());
 
-    Nave3D testNave(csonido.get(), &puntuacion);
+    Nave3D testNave(csonido.get(), &puntuacion, LIMITES_ESPACIO);
 
     Ovni3D ovni(csonido.get());
 
@@ -138,7 +144,8 @@ int main() {
 
         testNave.dibujar(ventana, camara);
         ovni.dibujar(ventana, camara);
-
+        espacio.dibujar(ventana, camara);
+        mallaLimites.dibujar(ventana, camara);
         // Muestra el fotograma
         ventana.display();
     }

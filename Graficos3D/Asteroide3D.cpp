@@ -7,6 +7,7 @@ Asteroide3D::Asteroide3D(ControladorSonido *controladorSonido) : csonido(control
                                                                          ControladorShaders::SIMPLE),
                                                                             ControladorTexturas::getTextura(
                                                                                     ControladorTexturas::BLANCO)) {
+
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ASTEROIDE);
     velocidad = {valorAleatorio(3.0f,6.0f),valorAleatorio(3.0f,6.0f),valorAleatorio(3.0f,6.0f)};
     pos.posicion = {

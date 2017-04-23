@@ -7,6 +7,7 @@ static std::array<std::string, ControladorModelos::NUM_MODELOS> ficheros{
         "Recursos/Modelos/asteroide.obj",
         "Recursos/Modelos/nave2.obj",
         "Recursos/Modelos/disparo.obj",
+        "Recursos/Modelos/esfera.obj",
 };
 
 static std::array<Modelo, ControladorModelos::NUM_MODELOS> modelos;

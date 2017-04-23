@@ -13,7 +13,7 @@ public:
 
     static constexpr float FOV = 70.0f;
     static constexpr float Z_NEAR = 0.001f;
-    static constexpr float Z_FAR = 1024.0f;
+    static constexpr float Z_FAR = 4096.0f;
 };
 
 #endif //AST3ROIDS_VENTANA3D_HPP
