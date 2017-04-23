@@ -3,25 +3,18 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include "Camara.hpp"
 #include "../matematicas.hpp"
 
-inline glm::mat4 matrizRotacion(glm::vec3 rotXYZ){
-    return glm::rotate(rotXYZ.x, glm::vec3(1.0, 0.0, 0.0)) *
-           glm::rotate(rotXYZ.y, glm::vec3(0.0, 1.0, 0.0)) *
-           glm::rotate(rotXYZ.z, glm::vec3(0.0, 0.0, 1.0));
-}
-
-inline glm::vec3 &normalizaRotacion(glm::vec3 &rotacion) {
-    for (int i = 0; i < 3; i++) {
-        rotacion[i] = (float) fmod(rotacion[i], 2 * PI);
-    }
-    return rotacion;
+inline glm::mat4 matrizRotacion(const glm::quat &rotXYZ) {
+    return glm::toMat4(rotXYZ);
 }
 
 struct Posicionamiento {
-    Posicionamiento(const glm::vec3 &pos = glm::vec3(), const glm::vec3 &rot = glm::vec3(),
-                   const glm::vec3 &escala = glm::vec3(1.0f, 1.0f, 1.0f))
+    Posicionamiento(const glm::vec3 &pos = glm::vec3(), const glm::quat &rot = glm::angleAxis(0.0f, glm::vec3{1, 0, 0}),
+                    const glm::vec3 &escala = glm::vec3(1.0f, 1.0f, 1.0f))
             : posicion(pos), rotacion(rot), escala(escala) {}
 
     inline glm::mat4 matrizModelo() const {
@@ -37,8 +30,8 @@ struct Posicionamiento {
     }
 
     glm::vec3 posicion;
-    glm::vec3 rotacion;
     glm::vec3 escala;
+    glm::quat rotacion;
 };
 
 #endif

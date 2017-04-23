@@ -20,9 +20,13 @@ public:
     const float VELOCIDAD_MAX = 0.5f;
 
     glm::vec3 velocidad;
-    glm::vec3 direccion;
+    glm::vec3 dirFrente;
+    glm::vec3 dirArriba;
+    glm::vec3 dirDerecha;
 
-    const glm::vec4 DIRECCION_INICIAL{1.0f, 0.0f, 0.0f, 0.0f};
+    const glm::vec4 DIRECCION_FRENTE_INICIAL{1.0f, 0.0f, 0.0f, 0.0f};
+    const glm::vec4 DIRECCION_ARRIBA_INICIAL{0.0f, 1.0f, 0.0f, 0.0f};
+    const glm::vec4 DIRECCION_DERECHA_INICIAL{0.0f, 0.0f, 1.0f, 0.0f};
 
 private:
     sf::Vector2i ultimaPosicionRaton;

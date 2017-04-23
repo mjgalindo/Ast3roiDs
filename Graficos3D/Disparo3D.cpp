@@ -3,7 +3,7 @@
 #include "../Util3D/ControladorTexturas.hpp"
 #include "../Util3D/ControladorShaders.hpp"
 
-Disparo3D::Disparo3D(glm::vec3 direccion, glm::vec3 posicion, glm::vec3 rotacion) :
+Disparo3D::Disparo3D(glm::vec3 direccion, glm::vec3 posicion, glm::quat rotacion) :
         Elemento3D(ControladorShaders::getShader(ControladorShaders::BRILLO),
                    ControladorTexturas::getTextura(ControladorTexturas::BLANCO)) {
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::DISPARO);

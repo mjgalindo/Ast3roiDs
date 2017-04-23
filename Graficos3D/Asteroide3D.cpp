@@ -16,7 +16,7 @@ Asteroide3D::Asteroide3D(ControladorSonido *controladorSonido) : csonido(control
     };
     float escala = valorAleatorio(0.5f, 2.0f);
     pos.escala = {escala, escala, escala};
-    pos.rotacion = {PI, 0.0f, 0.0f};
+    pos.rotacion = glm::angleAxis((float) PI, glm::vec3{1, 0, 0});
 
     version = TIPO3D_0;
     tamano3D = TAM3D_2;

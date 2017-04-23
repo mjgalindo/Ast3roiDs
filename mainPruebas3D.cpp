@@ -54,7 +54,7 @@ int main() {
     // hacer al principio.
     Ventana3D ventana(sf::VideoMode(WIDTH, HEIGHT), "OpenGL", sf::Style::Close | sf::Style::Titlebar, configuracion,
                       60);
-    ventana.setMouseCursorVisible(false);
+    ventana.setMouseCursorVisible(true);
     ventana.setMouseCursorGrabbed(true);
 
     // Inicializa los modelos 3D y las texturas. Esto objetos solo existe para controlar
@@ -110,13 +110,14 @@ int main() {
         sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
 
         testNave.actualizar(asteroides, {posCursor.x - WIDTH / 2, posCursor.y - HEIGHT / 2});
-        sf::Mouse::setPosition({WIDTH / 2, HEIGHT / 2}, ventana);
+        if (ventana.hasFocus()) sf::Mouse::setPosition({WIDTH / 2, HEIGHT / 2}, ventana);
+
         ovni.actualizar(asteroides);
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = testNave.pos.matrizModelo();
         camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 4.0f, 0.0f, 1.0f));
-        camara.forward = glm::vec3(modeloNave * testNave.DIRECCION_INICIAL);
+        camara.forward = glm::vec3(modeloNave * testNave.DIRECCION_FRENTE_INICIAL);
 
         // Mantiene el vector up de la cámara apuntando hacia arriba
         camara.up = glm::cross(camara.forward, // Implementación tentativa, hasta que no gire bien la nave...
@@ -125,7 +126,6 @@ int main() {
         // Limpia la ventana (no en negro para detectar posibles formas 3D sin color)
         ventana.clear({0.1f, 0.1f, 0.1f});
 
-        cout << "Numero de Asteroides: " << asteroides.size() << endl;
         // Dibuja todos los elementos
         for (auto asteroide : asteroides)
             asteroide.dibujar(ventana, camara);

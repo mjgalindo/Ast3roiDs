@@ -3,7 +3,6 @@
 #include "Ovni3D.hpp"
 #include "../Util3D/ControladorTexturas.hpp"
 #include "../Util3D/ControladorShaders.hpp"
-#include "../ControladorSonido.hpp"
 
 using namespace std;
 using namespace sf;
@@ -15,9 +14,9 @@ Ovni3D::Ovni3D(ControladorSonido *controladorSonido) :
 
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ASTEROIDE);
     velocidad = {5.0f,  5.0f, 5.0f};
-    pos.posicion = {valorAleatorio(-80.0,80.0), valorAleatorio(-80.0,80.0), valorAleatorio(-80.0,80.0)};
+    pos.posicion = {valorAleatorio(-80.0f, 80.0f), valorAleatorio(-80.0f, 80.0f), valorAleatorio(-80.0f, 80.0f)};
     pos.escala = {2.0f, 2.0f, 2.0f};
-    pos.rotacion = {0.0f, -PI / 2, 0.0f};
+    pos.rotacion = glm::angleAxis((float) -PI / 2, glm::vec3{0.0f, 1.0f, 0.0f});
     direccion = glm::vec3(valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f));
     velocidad = VELOCIDAD_INICIAL*direccion;
     csonido->reproducir(ControladorSonido::OVNI_GRANDE,false);

@@ -6,7 +6,7 @@
 
 class Disparo3D : public Elemento3D {
 public:
-    Disparo3D(glm::vec3 direccion, glm::vec3 posicion, glm::vec3 rotacion);
+    Disparo3D(glm::vec3 direccion, glm::vec3 posicion, glm::quat rotacion);
 
     void actualizar();
 
