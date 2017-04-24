@@ -1618,7 +1618,7 @@ Estado tratarJuego3D(Estado estado) {
         nave.actualizar(asteroides, ovni, {posCursor.x - (int) resolucion.x / 2, posCursor.y - (int) resolucion.y / 2});
         if (ventana.hasFocus()) sf::Mouse::setPosition({(int) resolucion.x / 2, (int) resolucion.y / 2}, ventana);
 
-        //ovni.actualizar(asteroides, nave);
+        ovni.actualizar(asteroides, nave);
 
         if (nave.getVidas() < 0) {
             running=false;

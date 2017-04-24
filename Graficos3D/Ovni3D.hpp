@@ -19,6 +19,8 @@ public:
 
     void cambiarEstado(EstadoOvni nuevoEstado);
 
+    glm::vec3 direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v);
+
     const float VELOCIDAD_INICIAL = 5.0f;
     glm::vec3 velocidad;
     glm::vec3 direccion;
@@ -28,6 +30,8 @@ private:
     std::vector<Disparo3D> disparos;
     float limiteMovimiento;
     ControladorSonido *csonido;
+    glm::vec3 ultimaDireccion;
+    std::vector<glm::vec3> direcciones;
 
 };
 
