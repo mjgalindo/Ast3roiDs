@@ -21,8 +21,6 @@ public:
 
     int getVidas();
 
-    const float VELOCIDAD_MAX = 0.5f;
-
     glm::vec3 velocidad;
     glm::vec3 dirFrente;
     glm::vec3 dirArriba;
@@ -33,9 +31,10 @@ public:
     const glm::vec4 DIRECCION_DERECHA_INICIAL{0.0f, 0.0f, 1.0f, 0.0f};
 
     static constexpr float RADIO = 7.6f;
+    static constexpr float ACELERACION = 0.55f;
+    static constexpr float VELOCIDAD_MAX = 15.5f;
 
 private:
-    sf::Vector2i ultimaPosicionRaton;
     std::vector<Disparo3D> disparos;
     ControladorSonido *csonido;
 

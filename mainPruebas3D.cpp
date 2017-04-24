@@ -140,8 +140,8 @@ int main() {
         camara.up = glm::cross(camara.forward, // Implementación tentativa, hasta que no gire bien la nave...
                                glm::vec3(modeloNave * glm::vec4{0.0f, 0.0f, -1.0f, 0.0f}));
 
-        // Limpia la ventana (no en negro para detectar posibles formas 3D sin color)
-        ventana.clear({0.1f, 0.1f, 0.1f});
+        // Limpia la ventana
+        ventana.clear({0.0f, 0.0f, 0.0f});
 
         // Dibuja todos los elementos
         for (const Asteroide3D &asteroide : asteroides)

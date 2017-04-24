@@ -18,7 +18,6 @@ Nave3D::Nave3D(ControladorSonido *controladorSonido, long int *punt, const float
     pos.escala = {0.5f, 0.5f, 0.5f};
     pos.rotacion = glm::angleAxis((float) -PI / 2, glm::vec3{0, 1, 0});
     dirFrente = glm::vec3(DIRECCION_FRENTE_INICIAL);
-    ultimaPosicionRaton = sf::Mouse::getPosition();
     puntuacion = punt;
     limiteMovimiento = limitesMovimiento;
 }
@@ -40,7 +39,10 @@ void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRa
 
     // Acelera
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-        velocidad += dirFrente * 0.1f;
+        velocidad += dirFrente * ACELERACION;
+        if (tamanoVector(velocidad) > VELOCIDAD_MAX) {
+            velocidad = velocidad * 0.98f;
+        }
         csonido->reproducir(ControladorSonido::ACELERAR);
     } else velocidad = velocidad * 0.98f;
 

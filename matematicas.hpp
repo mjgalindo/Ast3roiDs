@@ -41,4 +41,9 @@ static int rad2deg(T radianes) {
     return (int) ((radianes < 0 ? radianes + 2 * PI : radianes) * 180 / PI);
 }
 
+template<typename T>
+static float tamanoVector(T vector3) {
+    return (float) sqrt(pow(vector3.x, 2) + pow(vector3.y, 2) + pow(vector3.z, 2));
+}
+
 #endif //AST3ROIDS_MATEMATICAS_HPP
