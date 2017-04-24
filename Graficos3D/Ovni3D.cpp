@@ -10,9 +10,9 @@ using namespace sf;
 Ovni3D::Ovni3D(ControladorSonido *controladorSonido, float limitesMovimiento) :
         csonido(controladorSonido),
         Elemento3D(ControladorShaders::getShader(ControladorShaders::SIMPLE),
-                   ControladorTexturas::getTextura(ControladorTexturas::VERDE)) {
+                   ControladorTexturas::getTextura(ControladorTexturas::OVNI)) {
 
-    modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ASTEROIDE);
+    modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::OVNI);
     pos.escala = {7.0f, 7.0f, 7.0f};
     pos.rotacion = glm::angleAxis((float) -PI / 2, glm::vec3{0.0f, 1.0f, 0.0f});
     limiteMovimiento = limitesMovimiento;

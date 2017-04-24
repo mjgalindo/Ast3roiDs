@@ -30,12 +30,13 @@ void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRa
     glm::quat cuaternioGirar = glm::angleAxis(-movRaton.x * 0.005f, dirArriba);
     pos.rotacion = glm::quat_cast(
             glm::toMat4(cuaternioGirar) * glm::toMat4(cuaternioInclinar) * glm::toMat4(pos.rotacion));
-
     glm::mat4 modelo = pos.matrizModelo();
 
     dirFrente = glm::vec3(modelo * DIRECCION_FRENTE_INICIAL);
     dirArriba = glm::vec3(modelo * DIRECCION_ARRIBA_INICIAL);
     dirDerecha = glm::vec3(modelo * DIRECCION_DERECHA_INICIAL);
+
+
 
     // Acelera
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {

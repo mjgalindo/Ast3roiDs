@@ -11,7 +11,8 @@ namespace vj {
         for (unsigned int i = 0; i < NUM_SHADERS; i++)
             glAttachShader(programa, shaders[i]);
 
-        glBindAttribLocation(programa, 0, "position");
+
+        (programa, 0, "position");
         glBindAttribLocation(programa, 1, "texCoord");
         glBindAttribLocation(programa, 2, "normal");
 

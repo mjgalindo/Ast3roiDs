@@ -29,6 +29,7 @@ public:
         NAVE,
         DISPARO,
         ESFERA,
+        OVNI,
         NUM_MODELOS
     };
 
