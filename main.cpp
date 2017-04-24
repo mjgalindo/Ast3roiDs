@@ -8,9 +8,7 @@
 #include "Graficos/OvniInteligente.hpp"
 #include "Graficos3D/Asteroide3D.hpp"
 #include "Graficos3D/Nave3D.hpp"
-#include "Graficos3D/Ovni3D.hpp"
 #include "Util3D/Ventana3D.hpp"
-#include "Util3D/ControladorModelos.hpp"
 #include "Util3D/ControladorTexturas.hpp"
 #include "Util3D/ControladorShaders.hpp"
 #include "Graficos3D/Esfera.hpp"
@@ -125,15 +123,19 @@ sf::RenderWindow ventana;
 long int puntuacion;
 
 void inicializaVentana() {
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = configuracionGlobal.antialiasing;
+    sf::ContextSettings configuracion;
+    configuracion.depthBits = 24;
+    configuracion.stencilBits = 8;
+    configuracion.majorVersion = 3;
+    configuracion.minorVersion = 3;
+    configuracion.antialiasingLevel = configuracionGlobal.antialiasing;
 
     if (configuracionGlobal.pantallaCompleta) {
-        ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Fullscreen, settings);
+        ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Fullscreen, configuracion);
         ventana.setMouseCursorVisible(false);
     } else {
         ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Titlebar | sf::Style::Close,
-                       settings);
+                       configuracion);
         ventana.setMouseCursorVisible(true);
     }
     ventana.setFramerateLimit(60);
@@ -344,7 +346,7 @@ Estado tratarMenu(Estado estado) {
                     } else if (event.key.code == sf::Keyboard::Up) {
                         seleccion--;
                         if (seleccion < 0) {
-                            seleccion = opciones.size() - 1;
+                            seleccion = (int) opciones.size() - 1;
                         }
                     } else if (event.key.code == sf::Keyboard::Down) {
                         seleccion++;
@@ -1466,28 +1468,23 @@ Estado tratarCreditos(Estado estado) {
 }
 
 Estado tratarJuego3D(Estado estado) {
+    GLenum status = glewInit();
+    if (status != GLEW_OK) {
+        cerr << "Glew no ha podido inicializarse" << endl;
+    }
 
-    // Crea la ventana. El constructor carga las funciones de OpenGL y llama a glewInit() por lo que esto se debe
-    // hacer al principio.
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = configuracionGlobal.antialiasing;
+    ventana.pushGLStates();
+    ventana.resetGLStates();
 
-    Ventana3D ventana3D(sf::VideoMode(resolucion.x, resolucion.y), "OpenGL", sf::Style::Close | sf::Style::Titlebar, settings,
-                      60);
-    ventana3D.setMouseCursorVisible(false);
-    ventana3D.setMouseCursorGrabbed(true);
-    ventana3D.setKeyRepeatEnabled(false);
-    ventana3D.setVerticalSyncEnabled(true);
-    ventana3D.requestFocus();
-    sf::Image imagen;
-    imagen.loadFromFile("Recursos/Icono.png");
-    ventana3D.setIcon(imagen.getSize().x, imagen.getSize().y, imagen.getPixelsPtr());
+    // Activa test de profundidad para ocluir triangulos que se encuentran detrás de otros.
+    glEnable(GL_DEPTH_TEST);
 
-    // Inicializa los modelos 3D y las texturas. Esto objetos solo existe para controlar
-    // la creacion y destrucción de recursos.
+    // Inicializa los modelos 3D y las texturas. Estos objetos solo existe para controlar
+    // la creacion y destrucción de recursos. Se iniciarán siempre que se empiece a jugar.
     ControladorModelos __controladorModelos;
     ControladorTexturas __controladorTexturas;
     ControladorShaders __controladorShaders;
+
     unique_ptr<ControladorSonido> csonido{new ControladorSonido};
 
     // Inicializa shaders y texturas.
@@ -1508,22 +1505,22 @@ Estado tratarJuego3D(Estado estado) {
     for (int i = 0; i < 10; i++)
         asteroides.emplace_back(csonido.get(), RADIO_ESFERA_JUGABLE);
 
-    Nave3D testNave(csonido.get(), &puntuacion, RADIO_ESFERA_JUGABLE);
+    Nave3D nave(csonido.get(), &puntuacion, RADIO_ESFERA_JUGABLE);
 
     Ovni3D ovni(csonido.get(), RADIO_ESFERA_JUGABLE);
 
-    Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana3D.getSize().x / (float) ventana3D.getSize().y,
+    Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
 
     bool running = true;
 
     while (running) {
         sf::Event event;
-        while (ventana3D.pollEvent(event)) {
+        while (ventana.pollEvent(event)) {
             switch (event.type) {
                 case sf::Event::MouseButtonPressed:
                     if (event.mouseButton.button == sf::Mouse::Left) {
-                        testNave.disparar();
+                        nave.disparar();
                         break;
                     }
                 case sf::Event::KeyPressed:
@@ -1536,7 +1533,7 @@ Estado tratarJuego3D(Estado estado) {
             }
         }
         // Si no se está mirando a la pantalla se pausa el juego
-        if (!ventana3D.hasFocus()) {
+        if (!ventana.hasFocus()) {
             sf::sleep(sf::milliseconds(30));
             continue;
         }
@@ -1544,47 +1541,54 @@ Estado tratarJuego3D(Estado estado) {
         for (Asteroide3D &asteroide : asteroides)
             asteroide.actualizar();
 
-        sf::Vector2i posCursor = sf::Mouse::getPosition(ventana3D);
+        sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
 
-        testNave.actualizar(asteroides, ovni, {posCursor.x - resolucion.x / 2, posCursor.y - resolucion.y / 2});
-        if (ventana3D.hasFocus()) sf::Mouse::setPosition({resolucion.x / 2, resolucion.y / 2}, ventana3D);
+        nave.actualizar(asteroides, ovni, {posCursor.x - (int) resolucion.x / 2, posCursor.y - (int) resolucion.y / 2});
+        if (ventana.hasFocus()) sf::Mouse::setPosition({(int) resolucion.x / 2, (int) resolucion.y / 2}, ventana);
 
-        //ovni.actualizar(asteroides, testNave);
+        //ovni.actualizar(asteroides, nave);
 
-        if(testNave.getVidas()<0){
+        if (nave.getVidas() < 0) {
             //running=false;
         }
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
-        glm::mat4 modeloNave = testNave.pos.matrizModelo();
+        glm::mat4 modeloNave = nave.pos.matrizModelo();
         camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 4.0f, 0.0f, 1.0f));
-        camara.forward = glm::vec3(modeloNave * testNave.DIRECCION_FRENTE_INICIAL);
+        camara.forward = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
 
         // Mantiene el vector up de la cámara apuntando hacia arriba
         camara.up = glm::cross(camara.forward, // Implementación tentativa, hasta que no gire bien la nave...
                                glm::vec3(modeloNave * glm::vec4{0.0f, 0.0f, -1.0f, 0.0f}));
 
         // Limpia la ventana
-        ventana3D.clear({ 0.0f , 0.0f , 0.0f });
+        glClearColor(0.0f, 0.0f, 0.0f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Dibuja todos los elementos
-        for (const Asteroide3D &asteroide : asteroides)
-            asteroide.dibujar(ventana3D, camara);
-
-        // Si la nave está cerca del límite jugable considera si hay que renderizar los asteroides cercanos a su antípoda
-        if (distanciaEuclidea(testNave.pos.posicion, glm::vec3{0, 0, 0}) >=
-            RADIO_ESFERA_JUGABLE - DISTANCIA_RENDER_PELIGRO) {
-            for (Asteroide3D &asteroide : asteroides)
-                asteroide.dibujarSiCercaAntipoda(testNave.pos.posicion, DISTANCIA_RENDER_PELIGRO, ventana3D, camara);
+        for (const Asteroide3D &asteroide : asteroides) {
+            asteroide.dibujar(ventana, camara);
         }
 
-        testNave.dibujar(ventana3D, camara);
-        ovni.dibujar(ventana3D, camara);
-        espacio.dibujar(ventana3D, camara);
-        mallaLimites.dibujar(ventana3D, camara);
+        // Si la nave está cerca del límite jugable considera si hay que renderizar los asteroides cercanos a su antípoda
+        if (distanciaEuclidea(nave.pos.posicion, glm::vec3{0, 0, 0}) >=
+            RADIO_ESFERA_JUGABLE - DISTANCIA_RENDER_PELIGRO) {
+            for (Asteroide3D &asteroide : asteroides) {
+                asteroide.dibujarSiCercaAntipoda(nave.pos.posicion, DISTANCIA_RENDER_PELIGRO, ventana, camara);
+            }
+        }
+        espacio.dibujar(ventana, camara);
+        mallaLimites.dibujar(ventana, camara);
+
+        nave.dibujar(ventana, camara);
+        ovni.dibujar(ventana, camara);
+
         // Muestra el fotograma
-        ventana3D.display();
+        ventana.display();
     }
 
+    // Activa test de profundidad para ocluir triangulos que se encuentran detrás de otros.
+    glDisable(GL_DEPTH_TEST);
+    ventana.popGLStates();
     return GAME_OVER;
 }

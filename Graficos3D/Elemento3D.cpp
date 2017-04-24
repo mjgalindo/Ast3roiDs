@@ -4,7 +4,6 @@
 using namespace std;
 
 void Elemento3D::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Muestra sollo la malla sin rellenar triangulos
     glBindVertexArray(modelo3D.vertexArrayObject);
     glDrawElements(GL_TRIANGLES, modelo3D.numTriangulos, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
