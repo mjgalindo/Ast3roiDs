@@ -121,6 +121,7 @@ sf::RenderWindow ventana;
 
 //Puntuacion
 long int puntuacion;
+bool juego2D = true;
 
 void inicializaVentana() {
     sf::ContextSettings configuracion;
@@ -449,6 +450,8 @@ void comprobarMuerteAsteroides(std::vector<Asteroide> &asteroides) {
 }
 
 Estado tratarJuego(Estado estado) {
+
+    juego2D = true;
 
     puntuacion = 0;
     int vidas_puntuacion = 0;
@@ -797,7 +800,12 @@ Estado tratarGameOver(Estado estado) {
                         }
                     }
                     if (event.key.code == sf::Keyboard::Return) {
-                        ifstream f_puntuaciones("puntuaciones.dat");
+                        ifstream f_puntuaciones;
+                        if (juego2D) {
+                            f_puntuaciones = ifstream("puntuaciones.dat");
+                        } else {
+                            f_puntuaciones = ifstream("puntuaciones3D.dat");
+                        }
                         vector<string> nombres(0);
                         vector<long int> punts(0);
                         string nombre_aux = "";
@@ -840,7 +848,13 @@ Estado tratarGameOver(Estado estado) {
                         }
                         f_puntuaciones.close();
 
-                        ofstream f_puntuaciones_out("puntuaciones.dat");
+                        ofstream f_puntuaciones_out;
+                        if (juego2D) {
+                            f_puntuaciones_out = ofstream("puntuaciones.dat");
+                        }
+                        else{
+                            f_puntuaciones_out = ofstream("puntuaciones3D.dat");
+                        }
                         if (f_puntuaciones_out.good()) {
                             if (nombres.size() != 0) {
                                 for (int i = 0; i < nombres.size(); i++) {
@@ -884,10 +898,13 @@ Estado tratarGameOver(Estado estado) {
 Estado tratarPuntuaciones(Estado estado) {
     sf::Text texto;
     sf::Text opcion1;
+    sf::Text opcion2;
 
     vector<sf::Text> punts(MAX_PUNTS);
+    vector<sf::Text> punts3D(MAX_PUNTS);
 
     ifstream f_puntuaciones("puntuaciones.dat");
+    ifstream f_puntuaciones3D("puntuaciones3D.dat");
     if (f_puntuaciones.good()) {
         string nombre_aux;
         long int puntuacion_aux;
@@ -916,8 +933,36 @@ Estado tratarPuntuaciones(Estado estado) {
     }
     f_puntuaciones.close();
 
-    inicializaTexto(texto, ajustar_h(75u), 1.5);
-    texto.setString("PUNTUACIONES");
+    if (f_puntuaciones3D.good()) {
+        string nombre_aux;
+        long int puntuacion_aux;
+        for (int i = 0; i < MAX_PUNTS && !f_puntuaciones3D.eof(); i++) {
+            f_puntuaciones3D >> nombre_aux;
+            f_puntuaciones3D >> puntuacion_aux;
+
+            string linea = "";
+            linea.append(nombre_aux);
+            linea.append("    ");
+            linea.append(to_string(puntuacion_aux));
+
+            if (nombre_aux.compare("") != 0) {
+                nombre_aux = "";
+                puntuacion_aux = 0;
+
+                sf::Text punt;
+                inicializaTexto(punt, ajustar_h(30u));
+                punt.setString(linea);
+                punt.setPosition({(resolucion.x - punt.getLocalBounds().width) / 2.0f,
+                                  resolucion.y / 3.5f + i * resolucion.y / 14.0f});
+
+                punts3D.push_back(punt);
+            }
+        }
+    }
+    f_puntuaciones3D.close();
+
+    inicializaTexto(texto, ajustar_h(60u), 1.5);
+    texto.setString("PUNTUACIONES ( 2D )");
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
 
     inicializaTexto(opcion1, ajustar_h(30u));
@@ -926,10 +971,16 @@ Estado tratarPuntuaciones(Estado estado) {
     opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - ajustar_w(5),
                                      resolucion.y - opcion1.getLocalBounds().height - ajustar_h(20)));
 
+    inicializaTexto(opcion2, ajustar_h(30u));
+    opcion2.setString("[TAB PARA CAMBIAR MODO]");
+    opcion2.setCharacterSize(ajustar_h(30u));
+    opcion2.setPosition(sf::Vector2f(0,resolucion.y - opcion1.getLocalBounds().height - ajustar_h(20)));
+
     sf::Transform t;
     t.translate({opcion1.getPosition().x - ajustar_w(30), opcion1.getPosition().y + ajustar_h(20u)})
             .scale(ajustar_h(35u), ajustar_w(20u));
 
+    bool mostrar2D = true;
     while (true) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
@@ -941,6 +992,15 @@ Estado tratarPuntuaciones(Estado estado) {
                     if (event.key.code == sf::Keyboard::Return) {
                         return MENU;
                     }
+                    else if (event.key.code == sf::Keyboard::Tab) {
+                        mostrar2D = !mostrar2D;
+                        if(mostrar2D) {
+                            texto.setString("PUNTUACIONES ( 2D )");
+                        }
+                        else{
+                            texto.setString("PUNTUACIONES ( 3D )");
+                        }
+                    }
                 default:
                     break;
             }
@@ -948,10 +1008,19 @@ Estado tratarPuntuaciones(Estado estado) {
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
+            ventana.draw(opcion2);
             ventana.draw(poligono, t);
 
-            for (unsigned int i = 0; i < punts.size(); i++) {
-                ventana.draw(punts[i]);
+
+            if(mostrar2D) {
+                for (unsigned int i = 0; i < punts.size(); i++) {
+                    ventana.draw(punts[i]);
+                }
+            }
+            else{
+                for (unsigned int i = 0; i < punts3D.size(); i++) {
+                    ventana.draw(punts3D[i]);
+                }
             }
 
             ventana.display();
@@ -1468,6 +1537,9 @@ Estado tratarCreditos(Estado estado) {
 }
 
 Estado tratarJuego3D(Estado estado) {
+
+    juego2D = false;
+
     GLenum status = glewInit();
     if (status != GLEW_OK) {
         cerr << "Glew no ha podido inicializarse" << endl;
@@ -1549,7 +1621,7 @@ Estado tratarJuego3D(Estado estado) {
         //ovni.actualizar(asteroides, nave);
 
         if (nave.getVidas() < 0) {
-            //running=false;
+            running=false;
         }
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
