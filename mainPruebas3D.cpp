@@ -104,10 +104,10 @@ int main() {
                         break;
                     }
                 case sf::Event::KeyPressed:
-                    if (event.key.code != sf::Keyboard::Escape) { break; }
-                case sf::Event::Closed:
-                    running = false;
-                    break;
+                    if (event.key.code == sf::Keyboard::Escape) {
+                        running = false;
+                        break;
+                    }
                 default:
                     break;
             }
@@ -126,7 +126,7 @@ int main() {
         testNave.actualizar(asteroides, {posCursor.x - WIDTH / 2, posCursor.y - HEIGHT / 2});
         if (ventana.hasFocus()) sf::Mouse::setPosition({WIDTH / 2, HEIGHT / 2}, ventana);
 
-        //ovni.actualizar(asteroides, testNave);
+        ovni.actualizar(asteroides, testNave);
 
         if(testNave.getVidas()<0){
             //running=false;

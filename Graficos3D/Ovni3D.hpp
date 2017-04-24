@@ -18,11 +18,14 @@ public:
 
     void disparar();
 
+    void cambiarEstado(EstadoOvni nuevoEstado);
+
     const float VELOCIDAD_INICIAL = 5.0f;
     glm::vec3 velocidad;
     glm::vec3 direccion;
 
 private:
+    EstadoOvni estado;
     std::vector<Disparo3D> disparos;
     float limiteMovimiento;
     ControladorSonido *csonido;
