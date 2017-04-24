@@ -111,7 +111,11 @@ int main() {
                     break;
             }
         }
-
+        // Si no se está mirando a la pantalla se pausa el juego
+        if (!ventana.hasFocus()) {
+            sf::sleep(milliseconds(30));
+            continue;
+        }
         // Mueve todos los elementos
         for (Asteroide3D &asteroide : asteroides)
             asteroide.actualizar();
