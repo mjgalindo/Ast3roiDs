@@ -53,8 +53,8 @@ void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRa
 
     //Se comprueba la colision con los asteroides
     for (int i = 0; i < asteroides.size(); i++) {
-        if (colisionEsferaEsfera(pos.posicion, 7.6f * pos.escala.z, asteroides[i].pos.posicion,
-                                 1.0f * asteroides[i].pos.escala.y)) {
+        if (colisionEsferaEsfera(pos.posicion, RADIO * pos.escala.z,
+                                 asteroides[i].pos.posicion, Asteroide3D::RADIO * asteroides[i].pos.escala.y)) {
             //COLISION!!!!!!!!!!!!
             asteroides[i].colisionDetectada(asteroides);
             asteroides.erase(asteroides.begin() + i);
