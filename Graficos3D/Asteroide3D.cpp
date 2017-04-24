@@ -1,6 +1,7 @@
 #include "Asteroide3D.hpp"
 #include "../Util3D/ControladorTexturas.hpp"
 #include "../Util3D/ControladorShaders.hpp"
+#include <glm/gtx/intersect.hpp>
 
 static constexpr std::array<float, 3> ESCALAS = {2.0f, 6.0f, 9.0f};
 
@@ -222,5 +223,24 @@ void Asteroide3D::colisionDetectada(std::vector<Asteroide3D> &asteroides) {
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_1));
             }
             break;
+    }
+}
+
+void Asteroide3D::dibujarSiCercaAntipoda(glm::vec3 puntoCercano, float distancia, sf::RenderTarget &target,
+                                         Camara &camara, sf::RenderStates states) {
+    glm::vec3 dirColisionEsfera = glm::normalize(puntoCercano - glm::vec3{0, 0, 0});
+    glm::vec3 puntoInterseccion, normal;
+    glm::intersectRaySphere(puntoCercano, dirColisionEsfera,
+                            glm::vec3{0, 0, 0}, limiteMovimiento, puntoInterseccion, normal);
+    glm::vec3 antipoda = glm::vec3{0, 0, 0} - puntoInterseccion;
+    if (distanciaEuclidea(pos.posicion, antipoda) < distancia) {
+
+        glm::vec3 posicionReal = pos.posicion;
+        pos.posicion = puntoCercano + (pos.posicion - antipoda);
+
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Muestra sollo la malla sin rellenar triangulos
+        dibujar(target, camara, states);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        pos.posicion = posicionReal;
     }
 }

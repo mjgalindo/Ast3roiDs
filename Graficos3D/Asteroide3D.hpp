@@ -19,6 +19,9 @@ public:
 
     static constexpr float RADIO = 1.0f;
 
+    void dibujarSiCercaAntipoda(glm::vec3 puntoCercano, float distancia, sf::RenderTarget &target, Camara &camara,
+                                sf::RenderStates states = sf::RenderStates::Default);
+
 private:
     static constexpr float VELOCIDAD_MAX = 0.2f;
 

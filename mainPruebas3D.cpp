@@ -76,6 +76,7 @@ int main() {
     Esfera espacio(ControladorTexturas::ESPACIO, {0, 0, 0}, {800, 800, 800});
 
     const float RADIO_ESFERA_JUGABLE = 100.0f;
+    const float DISTANCIA_RENDER_PELIGRO = 60.0f;
     Esfera mallaLimites(ControladorTexturas::BLANCO, {0, 0, 0},
                         {RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE}, true);
 
@@ -146,6 +147,13 @@ int main() {
         // Dibuja todos los elementos
         for (const Asteroide3D &asteroide : asteroides)
             asteroide.dibujar(ventana, camara);
+
+        // Si la nave está cerca del límite jugable considera si hay que renderizar los asteroides cercanos a su antípoda
+        if (distanciaEuclidea(testNave.pos.posicion, glm::vec3{0, 0, 0}) >=
+            RADIO_ESFERA_JUGABLE - DISTANCIA_RENDER_PELIGRO) {
+            for (Asteroide3D &asteroide : asteroides)
+                asteroide.dibujarSiCercaAntipoda(testNave.pos.posicion, DISTANCIA_RENDER_PELIGRO, ventana, camara);
+        }
 
         testNave.dibujar(ventana, camara);
         ovni.dibujar(ventana, camara);
