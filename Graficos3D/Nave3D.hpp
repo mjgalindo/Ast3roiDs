@@ -5,19 +5,20 @@
 #include "../Colisiones.hpp"
 #include "Elemento3D.hpp"
 #include "Asteroide3D.hpp"
+#include "Ovni3D.hpp"
 #include "Disparo3D.hpp"
 
 class Nave3D : public Elemento3D {
 public:
     Nave3D(ControladorSonido *controladorSonido, long int *punt, float limitesMovimiento);
 
-    void actualizar(std::vector<Asteroide3D> &asteroides, sf::Vector2i movRaton);
+    void actualizar(std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::Vector2i movRaton);
 
     void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
 
     void disparar();
 
-    void destruida();
+    void destruir();
 
     int getVidas();
 

@@ -21,6 +21,8 @@ public:
     virtual void
     dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
 
+    virtual void destruir();
+
 protected:
     void predibujado(Camara &camara) const;
 

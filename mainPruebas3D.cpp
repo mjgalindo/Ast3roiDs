@@ -123,10 +123,10 @@ int main() {
 
         sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
 
-        testNave.actualizar(asteroides, {posCursor.x - WIDTH / 2, posCursor.y - HEIGHT / 2});
-        if (ventana.hasFocus()) sf::Mouse::setPosition({WIDTH / 2, HEIGHT / 2}, ventana);
-
         ovni.actualizar(asteroides, testNave);
+
+        testNave.actualizar(asteroides, ovni, {posCursor.x - WIDTH / 2, posCursor.y - HEIGHT / 2});
+        if (ventana.hasFocus()) sf::Mouse::setPosition({WIDTH / 2, HEIGHT / 2}, ventana);
 
         if(testNave.getVidas()<0){
             //running=false;

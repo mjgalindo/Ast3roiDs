@@ -21,3 +21,7 @@ void Elemento3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderSta
     predibujado(camara);
     draw(target, states);
 }
+
+void Elemento3D::destruir() {
+
+}

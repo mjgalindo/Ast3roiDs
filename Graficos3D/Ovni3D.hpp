@@ -7,13 +7,12 @@
 #include "Elemento3D.hpp"
 #include "Asteroide3D.hpp"
 #include "Disparo3D.hpp"
-#include "Nave3D.hpp"
 
 class Ovni3D : public Elemento3D {
 public:
     Ovni3D(ControladorSonido *controladorSonido, float limitesMovimiento);
 
-    void actualizar(std::vector<Asteroide3D> asteroides, Nave3D nave);
+    void actualizar(std::vector<Asteroide3D> &asteroides, Elemento3D &nave);
     void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
 
     void disparar();

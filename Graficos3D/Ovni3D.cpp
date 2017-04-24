@@ -19,7 +19,7 @@ Ovni3D::Ovni3D(ControladorSonido *controladorSonido, float limitesMovimiento) :
     estado = MUERTO;
 }
 
-void Ovni3D::actualizar(std::vector<Asteroide3D> asteroides, Nave3D nave) {
+void Ovni3D::actualizar(std::vector<Asteroide3D> &asteroides, Elemento3D &nave) {
     if(estado == VIVO) {
         pos.posicion += velocidad * (1 / 60.f);
         if (distanciaEuclidea(pos.posicion, glm::vec3{0, 0, 0}) > limiteMovimiento) {
@@ -53,9 +53,9 @@ void Ovni3D::actualizar(std::vector<Asteroide3D> asteroides, Nave3D nave) {
         }
 
         //Se comprueba la colision del ovni con la nave
-        if (colisionEsferaEsfera(pos.posicion, 1.0f, nave.pos.posicion, 7.6f * nave.pos.escala.z)) {
+        if (colisionEsferaEsfera(pos.posicion, 4.8f * pos.escala.y , nave.pos.posicion, 7.6f * nave.pos.escala.z)) {
             //COLISION
-            nave.destruida();
+            nave.destruir();
             cambiarEstado(MUERTO);
         }
     } else if(estado == MUERTO) {
@@ -84,7 +84,7 @@ void Ovni3D::actualizar(std::vector<Asteroide3D> asteroides, Nave3D nave) {
         if (!colisionado &&
             colisionPuntoEsfera(disparos[i].pos.posicion, nave.pos.posicion, 7.6f * nave.pos.escala.z)) {
             //COLISION!!!!!!!!!!!!
-            nave.destruida();
+            nave.destruir();
         }
 
         if (colisionado || disparos[i].estado == DESTRUIDO) {
