@@ -1615,10 +1615,13 @@ Estado tratarJuego3D(Estado estado) {
 
     Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
+
     bool camaraPrimeraPersona = false;
     bool running = true;
 
     int nivel = 1;
+    sf::CircleShape circulo(100);
+    circulo.setPosition(200, 200);
     while (running) {
         if (asteroides.size() == 0) {
             nivel++;
@@ -1734,6 +1737,11 @@ Estado tratarJuego3D(Estado estado) {
         // Muestra el fotograma
         ventana.display();
     }
+
+    if (!configuracionGlobal.pantallaCompleta) {
+        inicializaVentana();
+    }
+
     ventana.setMouseCursorVisible(true);
     ventana.setMouseCursorGrabbed(false);
 
