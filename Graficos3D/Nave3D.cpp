@@ -95,13 +95,15 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
     }
 }
 
-void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states) const {
+void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, bool malla, sf::RenderStates states) const {
     // Dibuja los disparos
     for (const Disparo3D &disparo : disparos)
         disparo.dibujar(target, camara, states);
 
     predibujado(camara);
+    if (malla) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     draw(target, states);
+    if (malla) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void Nave3D::disparar() {

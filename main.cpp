@@ -1571,7 +1571,8 @@ Estado tratarJuego3D(Estado estado) {
 
     // Reinicializa la ventana para evitar modelos transparentes
     inicializaVentana();
-
+    ventana.setMouseCursorVisible(false);
+    ventana.setMouseCursorGrabbed(true);
     GLenum status = glewInit();
     if (status != GLEW_OK) {
         cerr << "Glew no ha podido inicializarse" << endl;
@@ -1682,7 +1683,6 @@ Estado tratarJuego3D(Estado estado) {
             }
         }
 
-
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = nave.pos.matrizModelo();
         if (camaraPrimeraPersona) {
@@ -1715,7 +1715,7 @@ Estado tratarJuego3D(Estado estado) {
         espacio.dibujar(ventana, camara);
         mallaLimites.dibujar(ventana, camara);
 
-        nave.dibujar(ventana, camara);
+        nave.dibujar(ventana, camara, camaraPrimeraPersona);
         ovni.dibujar(ventana, camara);
 
         if (camaraPrimeraPersona) {
@@ -1724,6 +1724,8 @@ Estado tratarJuego3D(Estado estado) {
         // Muestra el fotograma
         ventana.display();
     }
+    ventana.setMouseCursorVisible(true);
+    ventana.setMouseCursorGrabbed(false);
 
     // Activa test de profundidad para ocluir triangulos que se encuentran detrás de otros.
     glDisable(GL_DEPTH_TEST);
