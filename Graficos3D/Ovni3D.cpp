@@ -162,8 +162,8 @@ glm::vec3 Ovni3D::direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v
             }
             for (auto ast = v.begin(); ast != v.end(); ++ast) {
                 ast->actualizar();
-                if (colisionEsferaEsfera(posicionAux, 7.6f * this->pos.escala.z, v[i].pos.posicion,
-                                         1.0f * v[i].pos.escala.y)) {
+                if (colisionEsferaEsfera(posicionAux,
+                                         7.6f * this->pos.escala.z, ast->pos.posicion, 1.0f * ast->pos.escala.y)) {
                     choque = true;
                     break;
                 }

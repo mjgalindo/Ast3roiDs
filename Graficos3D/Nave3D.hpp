@@ -35,8 +35,8 @@ public:
     const glm::vec4 DIRECCION_DERECHA_INICIAL{0.0f, 0.0f, 1.0f, 0.0f};
 
     static constexpr float RADIO = 7.6f;
-    static constexpr float ACELERACION = 0.55f;
-    static constexpr float VELOCIDAD_MAX = 15.5f;
+    static constexpr float ACELERACION = 0.85f;
+    static constexpr float VELOCIDAD_MAX = 30.5f;
 
     sf::Keyboard::Key teclaAcelerar = sf::Keyboard::Space;
 

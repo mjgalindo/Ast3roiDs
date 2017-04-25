@@ -55,7 +55,7 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
 
     //Se comprueba la colision con los asteroides
     for (int i = 0; i < asteroides.size(); i++) {
-        if (asteroides[i].estado != NORMAL && colisionEsferaEsfera(pos.posicion, RADIO * pos.escala.z,
+        if (asteroides[i].estado == NORMAL && colisionEsferaEsfera(pos.posicion, RADIO * pos.escala.z,
                                                                    asteroides[i].pos.posicion,
                                                                    Asteroide3D::RADIO * asteroides[i].pos.escala.y)) {
             // Se destruyen tanto el asteroide como la nave.
