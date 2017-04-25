@@ -1536,6 +1536,35 @@ Estado tratarCreditos(Estado estado) {
     return MENU;
 }
 
+/**
+ * De: https://guidedhacking.com/showthread.php?6588-OpenGL-Draw-a-crosshair
+ * Dibuja una cruz en el centro de la ventana.
+ */
+void dibujaCruz(sf::Vector2u tamVentana) {
+    glPushMatrix();
+    glViewport(0, 0, tamVentana.x, tamVentana.y);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, tamVentana.x, tamVentana.y, 0, -1, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glColor3ub(240, 240, 240);//white
+    glLineWidth(2.0);
+    glBegin(GL_LINES);
+    //horizontal line
+    glVertex2i(tamVentana.x / 2 - 7, tamVentana.y / 2);
+    glVertex2i(tamVentana.x / 2 + 7, tamVentana.y / 2);
+    glEnd();
+    //vertical line
+    glBegin(GL_LINES);
+    glVertex2i(tamVentana.x / 2, tamVentana.y / 2 + 7);
+    glVertex2i(tamVentana.x / 2, tamVentana.y / 2 - 7);
+    glEnd();
+
+    glPopMatrix();
+}
+
 Estado tratarJuego3D(Estado estado) {
 
     juego2D = false;
@@ -1583,7 +1612,7 @@ Estado tratarJuego3D(Estado estado) {
 
     Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
-
+    bool camaraPrimeraPersona = false;
     bool running = true;
 
     while (running) {
@@ -1596,7 +1625,10 @@ Estado tratarJuego3D(Estado estado) {
                         break;
                     }
                 case sf::Event::KeyPressed:
-                    if (event.key.code == configuracionGlobal.disparar) {
+                    if (event.key.code == sf::Keyboard::F) {
+                        camaraPrimeraPersona = !camaraPrimeraPersona;
+                        break;
+                    } else if (event.key.code == configuracionGlobal.disparar) {
                         nave.disparar();
                         break;
                     } else if (event.key.code != sf::Keyboard::Escape) { break; }
@@ -1629,7 +1661,11 @@ Estado tratarJuego3D(Estado estado) {
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = nave.pos.matrizModelo();
-        camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 4.0f, 0.0f, 1.0f));
+        if (camaraPrimeraPersona) {
+            camara.pos = glm::vec3(modeloNave * glm::vec4(2.0f, 2.0f, 0.0f, 1.0f));
+        } else {
+            camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 4.0f, 0.0f, 1.0f));
+        }
         camara.forward = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
 
         // Mantiene el vector up de la cámara apuntando hacia arriba
@@ -1658,6 +1694,9 @@ Estado tratarJuego3D(Estado estado) {
         nave.dibujar(ventana, camara);
         ovni.dibujar(ventana, camara);
 
+        if (camaraPrimeraPersona) {
+            dibujaCruz(ventana.getSize());
+        }
         // Muestra el fotograma
         ventana.display();
     }
