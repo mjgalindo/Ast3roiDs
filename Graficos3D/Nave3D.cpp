@@ -20,6 +20,7 @@ Nave3D::Nave3D(ControladorSonido *controladorSonido, long int *punt, const float
     dirFrente = glm::vec3(DIRECCION_FRENTE_INICIAL);
     puntuacion = punt;
     limiteMovimiento = limitesMovimiento;
+    estado = INVULNERABLE;
 }
 
 void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::Vector2i movRaton) {
