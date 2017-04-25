@@ -1682,7 +1682,6 @@ Estado tratarJuego3D(Estado estado) {
             }
         }
 
-
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = nave.pos.matrizModelo();
         if (camaraPrimeraPersona) {
