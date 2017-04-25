@@ -24,6 +24,8 @@ public:
     void dibujarSiCercaAntipoda(glm::vec3 puntoCercano, float distancia, sf::RenderTarget &target, Camara &camara,
                                 sf::RenderStates states = sf::RenderStates::Default);
 
+    Tamano3D getTamano3D() { return tamano3D; };
+
 private:
     static constexpr float VELOCIDAD_MAX = 0.2f;
     static constexpr int NUM_FRAGMENTOS = 20;
