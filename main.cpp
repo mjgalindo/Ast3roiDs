@@ -1598,12 +1598,12 @@ Estado tratarJuego3D(Estado estado) {
 
     const float RADIO_ESFERA_JUGABLE = 100.0f;
     const float DISTANCIA_RENDER_PELIGRO = 50.0f;
-    Esfera mallaLimites(ControladorTexturas::MULTI, {0, 0, 0},
+    Esfera mallaLimites(ControladorTexturas::BLANCO, {0, 0, 0},
                         {RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE}, true);
 
     // Carga asteroides para ver como se mueve la nave
     vector<Asteroide3D> asteroides;
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 1; i++)
         asteroides.emplace_back(csonido.get(), RADIO_ESFERA_JUGABLE);
 
     Nave3D nave(csonido.get(), &puntuacion, RADIO_ESFERA_JUGABLE);
@@ -1644,20 +1644,29 @@ Estado tratarJuego3D(Estado estado) {
             sf::sleep(sf::milliseconds(30));
             continue;
         }
-        // Mueve todos los elementos
-        for (Asteroide3D &asteroide : asteroides)
-            asteroide.actualizar();
+
+        // Actualiza todos los elementos visibles
 
         sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
 
         nave.actualizar(asteroides, ovni, {posCursor.x - (int) resolucion.x / 2, posCursor.y - (int) resolucion.y / 2});
         if (ventana.hasFocus()) sf::Mouse::setPosition({(int) resolucion.x / 2, (int) resolucion.y / 2}, ventana);
 
-        ovni.actualizar(asteroides, nave);
-
         if (nave.getVidas() < 0) {
             running=false;
         }
+
+        ovni.actualizar(asteroides, nave);
+
+        // Mueve todos los asteroides y elimina los que estén destruidos.
+        for (int i = 0; i < asteroides.size(); ++i) {
+            asteroides[i].actualizar();
+            if (asteroides[i].estado == Elemento3D::DESTRUIDO) {
+                asteroides.erase(asteroides.begin() + i);
+                i--;
+            }
+        }
+
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = nave.pos.matrizModelo();

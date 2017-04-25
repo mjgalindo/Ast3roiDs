@@ -56,13 +56,13 @@ void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::
 
     //Se comprueba la colision con los asteroides
     for (int i = 0; i < asteroides.size(); i++) {
-        if (colisionEsferaEsfera(pos.posicion, RADIO * pos.escala.z,
-                                 asteroides[i].pos.posicion, Asteroide3D::RADIO * asteroides[i].pos.escala.y)) {
-            //COLISION!!!!!!!!!!!!
+        if (asteroides[i].estado != NORMAL && colisionEsferaEsfera(pos.posicion, RADIO * pos.escala.z,
+                                                                   asteroides[i].pos.posicion,
+                                                                   Asteroide3D::RADIO * asteroides[i].pos.escala.y)) {
+            // Se destruyen tanto el asteroide como la nave.
             asteroides[i].colisionDetectada(asteroides);
-            asteroides.erase(asteroides.begin() + i);
-            i--;
             destruir();
+            break;
         }
     }
 
@@ -78,8 +78,6 @@ void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::
                                     1.0f * asteroides[j].pos.escala.y)) {
                 //COLISION!!!!!!!!!!!!
                 asteroides[j].colisionDetectada(asteroides);
-                asteroides.erase(asteroides.begin() + j);
-                j--;
                 colisionado = true;
                 break;
             }
@@ -112,6 +110,7 @@ void Nave3D::disparar() {
 }
 
 void Nave3D::destruir() {
+    pos.posicion = {0, 0, 0};
     vidas--;
 }
 

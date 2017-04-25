@@ -1,7 +1,6 @@
 #include <iostream>
 #include "Graficos3D/Asteroide3D.hpp"
 #include "Graficos3D/Nave3D.hpp"
-#include "Graficos3D/Ovni3D.hpp"
 #include "Util3D/Ventana3D.hpp"
 #include "Util3D/ControladorTexturas.hpp"
 #include "Util3D/ControladorShaders.hpp"
@@ -85,13 +84,13 @@ int main() {
     for (int i = 0; i < 10; i++)
         asteroides.emplace_back(csonido.get(), RADIO_ESFERA_JUGABLE);
 
-    Nave3D testNave(csonido.get(), &puntuacion, RADIO_ESFERA_JUGABLE);
+    Nave3D nave(csonido.get(), &puntuacion, RADIO_ESFERA_JUGABLE);
 
     Ovni3D ovni(csonido.get(), RADIO_ESFERA_JUGABLE);
 
     Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
-
+    bool camaraPrimeraPersona = false;
     bool running = true;
 
     while (running) {
@@ -100,65 +99,93 @@ int main() {
             switch (event.type) {
                 case sf::Event::MouseButtonPressed:
                     if (event.mouseButton.button == sf::Mouse::Left) {
-                        testNave.disparar();
+                        nave.disparar();
                         break;
                     }
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Escape) {
-                        running = false;
+                    if (event.key.code == sf::Keyboard::F) {
+                        camaraPrimeraPersona = !camaraPrimeraPersona;
                         break;
-                    }
+                    } else if (event.key.code == sf::Keyboard::Key::D) {
+                        nave.disparar();
+                        break;
+                    } else if (event.key.code != sf::Keyboard::Escape) { break; }
+                case sf::Event::Closed:
+                    running = false;
+                    break;
                 default:
                     break;
             }
         }
         // Si no se está mirando a la pantalla se pausa el juego
         if (!ventana.hasFocus()) {
-            sf::sleep(milliseconds(30));
+            sf::sleep(sf::milliseconds(30));
             continue;
         }
-        // Mueve todos los elementos
-        for (Asteroide3D &asteroide : asteroides)
-            asteroide.actualizar();
+
+        // Actualiza todos los elementos visibles
 
         sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
 
-        ovni.actualizar(asteroides, testNave);
+        nave.actualizar(asteroides, ovni,
+                        {posCursor.x - (int) ventana.getSize().x / 2, posCursor.y - (int) ventana.getSize().y / 2});
+        if (ventana.hasFocus())
+            sf::Mouse::setPosition({(int) ventana.getSize().x / 2, (int) ventana.getSize().y / 2}, ventana);
 
-        testNave.actualizar(asteroides, ovni, {posCursor.x - WIDTH / 2, posCursor.y - HEIGHT / 2});
-        if (ventana.hasFocus()) sf::Mouse::setPosition({WIDTH / 2, HEIGHT / 2}, ventana);
-
-        if(testNave.getVidas()<0){
-            //running=false;
+        if (nave.getVidas() < 0) {
+            running = false;
         }
 
+        ovni.actualizar(asteroides, nave);
+
+        // Mueve todos los asteroides y elimina los que estén destruidos.
+        for (int i = 0; i < asteroides.size(); ++i) {
+            asteroides[i].actualizar();
+            if (asteroides[i].estado == Elemento3D::DESTRUIDO) {
+                asteroides.erase(asteroides.begin() + i);
+                i--;
+            }
+        }
+
+
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
-        glm::mat4 modeloNave = testNave.pos.matrizModelo();
-        camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 4.0f, 0.0f, 1.0f));
-        camara.forward = glm::vec3(modeloNave * testNave.DIRECCION_FRENTE_INICIAL);
+        glm::mat4 modeloNave = nave.pos.matrizModelo();
+        if (camaraPrimeraPersona) {
+            camara.pos = glm::vec3(modeloNave * glm::vec4(2.0f, 2.0f, 0.0f, 1.0f));
+        } else {
+            camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 4.0f, 0.0f, 1.0f));
+        }
+        camara.forward = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
 
         // Mantiene el vector up de la cámara apuntando hacia arriba
         camara.up = glm::cross(camara.forward, // Implementación tentativa, hasta que no gire bien la nave...
                                glm::vec3(modeloNave * glm::vec4{0.0f, 0.0f, -1.0f, 0.0f}));
 
         // Limpia la ventana
-        ventana.clear({0.0f, 0.0f, 0.0f});
+        glClearColor(0.0f, 0.0f, 0.0f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Dibuja todos los elementos
-        for (const Asteroide3D &asteroide : asteroides)
+        for (const Asteroide3D &asteroide : asteroides) {
             asteroide.dibujar(ventana, camara);
-
-        // Si la nave está cerca del límite jugable considera si hay que renderizar los asteroides cercanos a su antípoda
-        if (distanciaEuclidea(testNave.pos.posicion, glm::vec3{0, 0, 0}) >=
-            RADIO_ESFERA_JUGABLE - DISTANCIA_RENDER_PELIGRO) {
-            for (Asteroide3D &asteroide : asteroides)
-                asteroide.dibujarSiCercaAntipoda(testNave.pos.posicion, DISTANCIA_RENDER_PELIGRO, ventana, camara);
         }
 
-        testNave.dibujar(ventana, camara);
-        ovni.dibujar(ventana, camara);
+        // Si la nave está cerca del límite jugable considera si hay que renderizar los asteroides cercanos a su antípoda
+        if (distanciaEuclidea(nave.pos.posicion, glm::vec3{0, 0, 0}) >=
+            RADIO_ESFERA_JUGABLE - DISTANCIA_RENDER_PELIGRO) {
+            for (Asteroide3D &asteroide : asteroides) {
+                asteroide.dibujarSiCercaAntipoda(nave.pos.posicion, DISTANCIA_RENDER_PELIGRO, ventana, camara);
+            }
+        }
         espacio.dibujar(ventana, camara);
         mallaLimites.dibujar(ventana, camara);
+
+        nave.dibujar(ventana, camara);
+        ovni.dibujar(ventana, camara);
+
+        if (camaraPrimeraPersona) {
+            dibujaCruz(ventana.getSize());
+        }
         // Muestra el fotograma
         ventana.display();
     }
