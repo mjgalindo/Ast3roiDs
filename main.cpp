@@ -1568,7 +1568,7 @@ Estado tratarJuego3D(Estado estado) {
     Esfera espacio(ControladorTexturas::ESPACIO, {0, 0, 0}, {800, 800, 800});
 
     const float RADIO_ESFERA_JUGABLE = 100.0f;
-    const float DISTANCIA_RENDER_PELIGRO = 60.0f;
+    const float DISTANCIA_RENDER_PELIGRO = 50.0f;
     Esfera mallaLimites(ControladorTexturas::BLANCO, {0, 0, 0},
                         {RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE}, true);
 
