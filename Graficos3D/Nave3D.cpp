@@ -39,7 +39,7 @@ void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::
 
 
     // Acelera
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+    if (sf::Keyboard::isKeyPressed(teclaAcelerar)) {
         velocidad += dirFrente * ACELERACION;
         if (tamanoVector(velocidad) > VELOCIDAD_MAX) {
             velocidad = velocidad * 0.98f;

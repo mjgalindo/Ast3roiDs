@@ -35,6 +35,8 @@ public:
     static constexpr float ACELERACION = 0.55f;
     static constexpr float VELOCIDAD_MAX = 15.5f;
 
+    sf::Keyboard::Key teclaAcelerar = sf::Keyboard::Space;
+
 private:
     std::vector<Disparo3D> disparos;
     ControladorSonido *csonido;

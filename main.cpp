@@ -1578,7 +1578,7 @@ Estado tratarJuego3D(Estado estado) {
         asteroides.emplace_back(csonido.get(), RADIO_ESFERA_JUGABLE);
 
     Nave3D nave(csonido.get(), &puntuacion, RADIO_ESFERA_JUGABLE);
-
+    nave.teclaAcelerar = configuracionGlobal.acelerar;
     Ovni3D ovni(csonido.get(), RADIO_ESFERA_JUGABLE);
 
     Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
@@ -1596,7 +1596,10 @@ Estado tratarJuego3D(Estado estado) {
                         break;
                     }
                 case sf::Event::KeyPressed:
-                    if (event.key.code != sf::Keyboard::Escape) { break; }
+                    if (event.key.code == configuracionGlobal.disparar) {
+                        nave.disparar();
+                        break;
+                    } else if (event.key.code != sf::Keyboard::Escape) { break; }
                 case sf::Event::Closed:
                     running = false;
                     break;
