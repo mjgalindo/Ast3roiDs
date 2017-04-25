@@ -1569,13 +1569,13 @@ Estado tratarJuego3D(Estado estado) {
     puntuacion = 0;
     juego2D = false;
 
+    // Reinicializa la ventana para evitar modelos transparentes
+    inicializaVentana();
+
     GLenum status = glewInit();
     if (status != GLEW_OK) {
         cerr << "Glew no ha podido inicializarse" << endl;
     }
-
-    ventana.pushGLStates();
-    ventana.resetGLStates();
 
     // Activa test de profundidad para ocluir triangulos que se encuentran detrás de otros.
     glEnable(GL_DEPTH_TEST);
