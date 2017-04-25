@@ -26,6 +26,9 @@ ControladorSonido::ControladorSonido(float volumen) {
     if (!buffers[OVNI_GRANDE].loadFromFile("Recursos/Sonido/saucerBig.wav")) {
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/saucerBig.wav\"");
     }
+    if (!buffers[HAS_MUERTO].loadFromFile("Recursos/Sonido/dead.wav")) {
+        throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/dead.wav\"");
+    }
 
     for (int i = 0; i < NUM_SONIDOS; i++) {
         reproductores[i].setBuffer(buffers[i]);

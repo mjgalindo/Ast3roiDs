@@ -24,6 +24,7 @@ Nave3D::Nave3D(ControladorSonido *controladorSonido, long int *punt, const float
 }
 
 void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::Vector2i movRaton) {
+    if (estado == INVULNERABLE & reloj.getElapsedTime().asSeconds() > TIEMPO_INVULNERABILIDAD) estado = NORMAL;
     // Aplicar el movimiento del ratón a una rotación utilizando dos cuaternios.
     // X es el eje horizontal, alrededor del cual se inclina la nave (arriba-abajo).
     // Y es el eje vertical, alrededor del cual gira la nave (izquierda-derecha).
@@ -53,15 +54,17 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
         pos.posicion = glm::vec3{0, 0, 0} - pos.posicion;
     }
 
-    //Se comprueba la colision con los asteroides
-    for (int i = 0; i < asteroides.size(); i++) {
-        if (asteroides[i].estado == NORMAL && colisionEsferaEsfera(pos.posicion, RADIO * pos.escala.z,
-                                                                   asteroides[i].pos.posicion,
-                                                                   Asteroide3D::RADIO * asteroides[i].pos.escala.y)) {
-            // Se destruyen tanto el asteroide como la nave.
-            asteroides[i].colisionDetectada(nivel, asteroides);
-            destruir();
-            break;
+    //Se comprueba la colision con los asteroides si la nave no es invulnerable
+    if (estado != INVULNERABLE){
+        for (int i = 0; i < asteroides.size(); i++) {
+            if (asteroides[i].estado == NORMAL && colisionEsferaEsfera(pos.posicion, RADIO * pos.escala.z,
+                                                                       asteroides[i].pos.posicion,
+                                                                       Asteroide3D::RADIO * asteroides[i].pos.escala.y)) {
+                // Se destruyen tanto el asteroide como la nave.
+                asteroides[i].colisionDetectada(nivel, asteroides);
+                destruir();
+                break;
+            }
         }
     }
 
@@ -100,9 +103,9 @@ void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, bool malla, sf::R
         disparo.dibujar(target, camara, states);
 
     predibujado(camara);
-    if (malla) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    if (malla | (estado == INVULNERABLE)) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     draw(target, states);
-    if (malla) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    if (malla | (estado == INVULNERABLE)) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void Nave3D::disparar() {
@@ -113,6 +116,9 @@ void Nave3D::disparar() {
 }
 
 void Nave3D::destruir() {
+    csonido->reproducir(ControladorSonido::HAS_MUERTO);
+    estado = INVULNERABLE;
+    reloj.restart();
     pos.posicion = {0, 0, 0};
     vidas--;
 }

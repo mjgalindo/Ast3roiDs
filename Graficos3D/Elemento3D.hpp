@@ -14,7 +14,7 @@ class Elemento3D : public sf::Drawable {
 public:
     Posicionamiento pos;
     enum Estado3D {
-        NORMAL, EXPLOTANDO, DESTRUIDO
+        NORMAL, EXPLOTANDO, DESTRUIDO, INVULNERABLE
     };
     Estado3D estado = NORMAL;
 

@@ -61,8 +61,8 @@ void Ovni3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Element
             velocidad = VELOCIDAD_INICIAL * direccion;
         }
 
-        //Se comprueba la colision del ovni con la nave
-        if (colisionEsferaEsfera(pos.posicion, 4.8f * pos.escala.y , nave.pos.posicion, 7.6f * nave.pos.escala.z)) {
+        //Se comprueba la colision del ovni con la nave (si procede)
+        if (nave.estado == NORMAL && colisionEsferaEsfera(pos.posicion, 4.8f * pos.escala.y , nave.pos.posicion, 7.6f * nave.pos.escala.z)) {
             //COLISION
             nave.destruir();
             cambiarEstado(MUERTO);

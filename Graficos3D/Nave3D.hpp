@@ -37,6 +37,7 @@ public:
     static constexpr float RADIO = 7.6f;
     static constexpr float ACELERACION = 0.85f;
     static constexpr float VELOCIDAD_MAX = 30.5f;
+    static constexpr float TIEMPO_INVULNERABILIDAD = 4.0f;
 
     sf::Keyboard::Key teclaAcelerar = sf::Keyboard::Space;
 
@@ -52,6 +53,7 @@ private:
     long int *puntuacion;
 
     clock_t cooldown;
+    sf::Clock reloj;
 };
 
 
