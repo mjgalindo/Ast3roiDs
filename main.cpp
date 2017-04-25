@@ -1566,7 +1566,7 @@ void dibujaCruz(sf::Vector2u tamVentana) {
 }
 
 Estado tratarJuego3D(Estado estado) {
-
+    puntuacion = 0;
     juego2D = false;
 
     GLenum status = glewInit();
