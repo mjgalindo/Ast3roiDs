@@ -36,8 +36,6 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
     dirArriba = glm::vec3(modelo * DIRECCION_ARRIBA_INICIAL);
     dirDerecha = glm::vec3(modelo * DIRECCION_DERECHA_INICIAL);
 
-
-
     // Acelera
     if (sf::Keyboard::isKeyPressed(teclaAcelerar)) {
         velocidad += dirFrente * ACELERACION;
@@ -107,8 +105,10 @@ void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, bool malla, sf::R
 }
 
 void Nave3D::disparar() {
-    disparos.emplace_back(dirFrente, pos.posicion, pos.rotacion, limiteMovimiento);
-    csonido->reproducir(ControladorSonido::DISPARO, true);
+    if(disparos.size()<4) {
+        disparos.emplace_back(dirFrente, pos.posicion, pos.rotacion, limiteMovimiento);
+        csonido->reproducir(ControladorSonido::DISPARO, true);
+    }
 }
 
 void Nave3D::destruir() {

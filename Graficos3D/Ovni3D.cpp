@@ -13,7 +13,7 @@ Ovni3D::Ovni3D(ControladorSonido *controladorSonido, float limitesMovimiento) :
                    ControladorTexturas::getTextura(ControladorTexturas::OVNI)) {
 
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::OVNI);
-    pos.escala = {3.0f, 3.0f, 3.0f};
+    pos.escala = {1.0f, 1.0f, 1.0f};
     pos.rotacion = glm::angleAxis((float) -PI / 2, glm::vec3{0.0f, 1.0f, 0.0f});
     limiteMovimiento = limitesMovimiento;
     estado = MUERTO;
