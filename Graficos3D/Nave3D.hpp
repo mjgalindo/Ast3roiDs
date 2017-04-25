@@ -25,6 +25,8 @@ public:
 
     void hiperespacio();
 
+    void vidaExtra() { vidas++; };
+
     glm::vec3 velocidad;
     glm::vec3 dirFrente;
     glm::vec3 dirArriba;

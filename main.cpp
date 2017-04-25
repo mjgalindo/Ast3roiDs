@@ -1567,6 +1567,7 @@ void dibujaCruz(sf::Vector2u tamVentana) {
 
 Estado tratarJuego3D(Estado estado) {
     puntuacion = 0;
+    int vidas_puntuacion = 0;
     juego2D = false;
 
     // Reinicializa la ventana para evitar modelos transparentes
@@ -1672,7 +1673,13 @@ Estado tratarJuego3D(Estado estado) {
         if (ventana.hasFocus()) sf::Mouse::setPosition({(int) resolucion.x / 2, (int) resolucion.y / 2}, ventana);
 
         if (nave.getVidas() < 0) {
-            running=false;
+            running = false;
+        }
+
+        if (puntuacion - vidas_puntuacion >= 10000) {
+            vidas_puntuacion += 10000;
+            nave.vidaExtra();
+            csonido.reproducir(ControladorSonido::VIDA_EXTRA);
         }
 
         ovni.actualizar(nivel, asteroides, nave);
