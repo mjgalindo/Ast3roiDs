@@ -20,7 +20,6 @@ Nave3D::Nave3D(ControladorSonido *controladorSonido, long int *punt, const float
     dirFrente = glm::vec3(DIRECCION_FRENTE_INICIAL);
     puntuacion = punt;
     limiteMovimiento = limitesMovimiento;
-    cooldown = clock();
 }
 
 void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::Vector2i movRaton) {
@@ -127,20 +126,14 @@ int Nave3D::getVidas() {
     return vidas;
 }
 
-void Nave3D::hiperespacio(float radio){
-    double tiempo = (clock() - cooldown) / (double) CLOCKS_PER_SEC;
-    if (tiempo > 2) {
-        cooldown = clock();
-        float x = valorAleatorio(0, radio);
-        float y = valorAleatorio(0, radio);
-        float z = valorAleatorio(0, radio);
-        while(pow(x,2)+pow(y,2)+pow(z,2)>=pow(radio,2)){
-            valorAleatorio(0, radio);
-            valorAleatorio(0, radio);
-            valorAleatorio(0, radio);
-        }
-
-        pos.posicion = {x,y,z};
+void Nave3D::hiperespacio() {
+    if (relojCooldown.getElapsedTime().asSeconds() > 2) {
+        relojCooldown.restart();
+        pos.posicion = glm::normalize(glm::vec3{
+                valorAleatorio(-1, 1),
+                valorAleatorio(-1, 1),
+                valorAleatorio(-1, 1),
+        }) * valorAleatorio(-limiteMovimiento, limiteMovimiento);
 
         if (valorAleatorio() < 0.4) {
             destruir();

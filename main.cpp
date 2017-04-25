@@ -1648,7 +1648,7 @@ Estado tratarJuego3D(Estado estado) {
                         nave.disparar();
                         break;
                     } else if(event.key.code == configuracionGlobal.hiperespacio){
-                        nave.hiperespacio(RADIO_ESFERA_JUGABLE);
+                        nave.hiperespacio();
                         break;
                     } else if (event.key.code != sf::Keyboard::Escape) { break; }
                 case sf::Event::Closed:
