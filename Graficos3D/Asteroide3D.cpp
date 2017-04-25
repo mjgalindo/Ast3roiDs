@@ -7,7 +7,7 @@ static constexpr std::array<float, 3> ESCALAS = {2.0f, 6.0f, 9.0f};
 
 Asteroide3D::Asteroide3D(ControladorSonido *controladorSonido, float limitesMovimiento) :
         csonido(controladorSonido), Elemento3D(ControladorShaders::getShader(ControladorShaders::SIMPLE),
-                                               ControladorTexturas::getTextura(ControladorTexturas::BLANCO)) {
+                                               ControladorTexturas::getTextura(ControladorTexturas::ROCA)) {
 
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ASTEROIDE);
     velocidad = {
@@ -45,7 +45,7 @@ Asteroide3D::Asteroide3D(ControladorSonido *controladorSonido, float limitesMovi
                          Tipo3D tipo, Tamano3D tam3D) :
         csonido(controladorSonido),
         Elemento3D(ControladorShaders::getShader(ControladorShaders::SIMPLE),
-                   ControladorTexturas::getTextura(ControladorTexturas::BLANCO)) {
+                   ControladorTexturas::getTextura(ControladorTexturas::ROCA)) {
     modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ASTEROIDE);
     velocidad = vel;
     pos.posicion = posicion;

@@ -12,6 +12,7 @@ public:
         NAVE,
         ESPACIO,
         MULTI,
+        ROCA,
         NUM_TEXTURAS
     };
 
