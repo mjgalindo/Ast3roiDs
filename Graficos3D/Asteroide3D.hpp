@@ -17,7 +17,7 @@ public:
 
     void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
 
-    void colisionDetectada(std::vector<Asteroide3D> &asteroides);
+    void colisionDetectada(int nivel, std::vector<Asteroide3D> &asteroides);
 
     static constexpr float RADIO = 1.0f;
 

@@ -27,7 +27,7 @@ Ovni3D::Ovni3D(ControladorSonido *controladorSonido, float limitesMovimiento) :
                    glm::vec3(1.0f,-1.0f,-1.0f),glm::vec3(-1.0f,1.0f,-1.0f),glm::vec3(-1.0f,-1.0f,1.0f)};
 }
 
-void Ovni3D::actualizar(std::vector<Asteroide3D> &asteroides, Elemento3D &nave) {
+void Ovni3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Elemento3D &nave) {
     if(estado == VIVO) {
         velocidad = direccionSegura(pos.posicion,asteroides) * VELOCIDAD_INICIAL;
         pos.posicion += velocidad * (1 / 60.f);
@@ -44,7 +44,7 @@ void Ovni3D::actualizar(std::vector<Asteroide3D> &asteroides, Elemento3D &nave) 
             if (colisionEsferaEsfera(this->pos.posicion, 7.6f * this->pos.escala.z, asteroides[i].pos.posicion,
                                      1.0f * asteroides[i].pos.escala.y)) {
                 //COLISION!!!!!!!!!!!!
-                asteroides[i].colisionDetectada(asteroides);
+                asteroides[i].colisionDetectada(nivel, asteroides);
                 asteroides.erase(asteroides.begin() + i);
                 i--;
                 cambiarEstado(MUERTO);
@@ -82,7 +82,7 @@ void Ovni3D::actualizar(std::vector<Asteroide3D> &asteroides, Elemento3D &nave) 
             if (colisionPuntoEsfera(disparos[i].pos.posicion, asteroides[j].pos.posicion,
                                     1.0f * asteroides[j].pos.escala.y)) {
                 //COLISION!!!!!!!!!!!!
-                asteroides[j].colisionDetectada(asteroides);
+                asteroides[j].colisionDetectada(nivel,asteroides);
                 asteroides.erase(asteroides.begin() + j);
                 j--;
                 colisionado = true;

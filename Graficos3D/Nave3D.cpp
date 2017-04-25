@@ -22,7 +22,7 @@ Nave3D::Nave3D(ControladorSonido *controladorSonido, long int *punt, const float
     limiteMovimiento = limitesMovimiento;
 }
 
-void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::Vector2i movRaton) {
+void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::Vector2i movRaton) {
     // Aplicar el movimiento del ratón a una rotación utilizando dos cuaternios.
     // X es el eje horizontal, alrededor del cual se inclina la nave (arriba-abajo).
     // Y es el eje vertical, alrededor del cual gira la nave (izquierda-derecha).
@@ -60,7 +60,7 @@ void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::
                                                                    asteroides[i].pos.posicion,
                                                                    Asteroide3D::RADIO * asteroides[i].pos.escala.y)) {
             // Se destruyen tanto el asteroide como la nave.
-            asteroides[i].colisionDetectada(asteroides);
+            asteroides[i].colisionDetectada(nivel, asteroides);
             destruir();
             break;
         }
@@ -77,7 +77,7 @@ void Nave3D::actualizar(std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::
             if (colisionPuntoEsfera(disparos[i].pos.posicion, asteroides[j].pos.posicion,
                                     1.0f * asteroides[j].pos.escala.y)) {
                 //COLISION!!!!!!!!!!!!
-                asteroides[j].colisionDetectada(asteroides);
+                asteroides[j].colisionDetectada(nivel, asteroides);
                 colisionado = true;
                 break;
             }

@@ -1603,7 +1603,8 @@ Estado tratarJuego3D(Estado estado) {
 
     // Carga asteroides para ver como se mueve la nave
     vector<Asteroide3D> asteroides;
-    for (int i = 0; i < 1; i++)
+    int numeroDeAsteroides = 4;
+    for (int i = 0; i < numeroDeAsteroides; i++)
         asteroides.emplace_back(csonido.get(), RADIO_ESFERA_JUGABLE);
 
     Nave3D nave(csonido.get(), &puntuacion, RADIO_ESFERA_JUGABLE);
@@ -1615,7 +1616,21 @@ Estado tratarJuego3D(Estado estado) {
     bool camaraPrimeraPersona = false;
     bool running = true;
 
+    int nivel = 1;
     while (running) {
+        if (asteroides.size() == 0) {
+            nivel++;
+            if (numeroDeAsteroides > 12) {
+                numeroDeAsteroides = 12;
+            }
+            else{
+                numeroDeAsteroides+=2;
+            }
+
+            for(int i=0 ; i<numeroDeAsteroides ; i++){
+                asteroides.emplace_back(csonido.get(), RADIO_ESFERA_JUGABLE);
+            }
+        }
         sf::Event event;
         while (ventana.pollEvent(event)) {
             switch (event.type) {
@@ -1649,14 +1664,14 @@ Estado tratarJuego3D(Estado estado) {
 
         sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
 
-        nave.actualizar(asteroides, ovni, {posCursor.x - (int) resolucion.x / 2, posCursor.y - (int) resolucion.y / 2});
+        nave.actualizar(nivel, asteroides, ovni, {posCursor.x - (int) resolucion.x / 2, posCursor.y - (int) resolucion.y / 2});
         if (ventana.hasFocus()) sf::Mouse::setPosition({(int) resolucion.x / 2, (int) resolucion.y / 2}, ventana);
 
         if (nave.getVidas() < 0) {
             running=false;
         }
 
-        ovni.actualizar(asteroides, nave);
+        ovni.actualizar(nivel, asteroides, nave);
 
         // Mueve todos los asteroides y elimina los que estén destruidos.
         for (int i = 0; i < asteroides.size(); ++i) {
