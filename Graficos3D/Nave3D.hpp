@@ -12,7 +12,7 @@ class Nave3D : public Elemento3D {
 public:
     Nave3D(ControladorSonido *controladorSonido, long int *punt, float limitesMovimiento);
 
-    void actualizar(std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::Vector2i movRaton);
+    void actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::Vector2i movRaton);
 
     void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
 
