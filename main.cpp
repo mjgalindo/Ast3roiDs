@@ -1679,7 +1679,7 @@ Estado tratarJuego3D(Estado estado) {
         if (puntuacion - vidas_puntuacion >= 10000) {
             vidas_puntuacion += 10000;
             nave.vidaExtra();
-            csonido.reproducir(ControladorSonido::VIDA_EXTRA);
+            csonido->reproducir(ControladorSonido::VIDA_EXTRA);
         }
 
         ovni.actualizar(nivel, asteroides, nave);
