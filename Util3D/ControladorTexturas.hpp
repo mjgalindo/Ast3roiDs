@@ -11,6 +11,7 @@ public:
         OVNI,
         NAVE,
         ESPACIO,
+        MULTI,
         NUM_TEXTURAS
     };
 
