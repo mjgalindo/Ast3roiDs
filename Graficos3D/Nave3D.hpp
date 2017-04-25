@@ -23,6 +23,8 @@ public:
 
     int getVidas();
 
+    void hiperespacio(float radio);
+
     glm::vec3 velocidad;
     glm::vec3 dirFrente;
     glm::vec3 dirArriba;
@@ -48,6 +50,8 @@ private:
     int vidas = 5;
     //Puntuacion
     long int *puntuacion;
+
+    clock_t cooldown;
 };
 
 
