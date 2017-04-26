@@ -1620,8 +1620,7 @@ Estado tratarJuego3D(Estado estado) {
     bool running = true;
 
     int nivel = 1;
-    sf::CircleShape circulo(100);
-    circulo.setPosition(200, 200);
+
     while (running) {
         if (asteroides.size() == 0) {
             nivel++;
@@ -1645,7 +1644,7 @@ Estado tratarJuego3D(Estado estado) {
                         break;
                     }
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::F) {
+                    if (event.key.code == sf::Keyboard::F1) {
                         camaraPrimeraPersona = !camaraPrimeraPersona;
                         break;
                     } else if (event.key.code == configuracionGlobal.disparar) {
