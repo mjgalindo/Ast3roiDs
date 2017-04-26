@@ -1616,10 +1616,14 @@ Estado tratarJuego3D(Estado estado) {
     Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
 
-    bool camaraPrimeraPersona = false;
     bool running = true;
 
     int nivel = 1;
+
+    enum TipoCamara {
+        SIGUIENDO_DETRAS, PRIMERA_PERSONA, LIBRE, SIGUIENDO_LIBRE, BUSCA_NAVE, DESDE_ARRIBA
+    };
+    TipoCamara posCamara = SIGUIENDO_DETRAS;
 
     while (running) {
         if (asteroides.size() == 0) {
@@ -1645,7 +1649,22 @@ Estado tratarJuego3D(Estado estado) {
                     }
                 case sf::Event::KeyPressed:
                     if (event.key.code == sf::Keyboard::F1) {
-                        camaraPrimeraPersona = !camaraPrimeraPersona;
+                        posCamara = SIGUIENDO_DETRAS;
+                        break;
+                    } else if (event.key.code == sf::Keyboard::F2) {
+                        posCamara = PRIMERA_PERSONA;
+                        break;
+                    } else if (event.key.code == sf::Keyboard::F3) {
+                        posCamara = LIBRE;
+                        break;
+                    } else if (event.key.code == sf::Keyboard::F4) {
+                        posCamara = SIGUIENDO_LIBRE;
+                        break;
+                    } else if (event.key.code == sf::Keyboard::F5) {
+                        posCamara = DESDE_ARRIBA;
+                        camara.pos = {0.0f, RADIO_ESFERA_JUGABLE * 2.4f, 0.0f};
+                        camara.forward = {0.0f, -1.0f, 0.0f};
+                        camara.up = {1.0f, 0.0f, 0.0f};
                         break;
                     } else if (event.key.code == configuracionGlobal.disparar) {
                         nave.disparar();
@@ -1668,45 +1687,62 @@ Estado tratarJuego3D(Estado estado) {
         }
 
         // Actualiza todos los elementos visibles
-
-        sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
-
-        nave.actualizar(nivel, asteroides, ovni, {posCursor.x - (int) resolucion.x / 2, posCursor.y - (int) resolucion.y / 2});
-        if (ventana.hasFocus()) sf::Mouse::setPosition({(int) resolucion.x / 2, (int) resolucion.y / 2}, ventana);
-
-        if (nave.getVidas() < 0) {
-            running = false;
+        sf::Vector2i avanceCursor;
+        {
+            sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
+            avanceCursor = {posCursor.x - (int) resolucion.x / 2, posCursor.y - (int) resolucion.y / 2};
+            if (ventana.hasFocus()) sf::Mouse::setPosition({(int) resolucion.x / 2, (int) resolucion.y / 2}, ventana);
         }
 
-        if (puntuacion - vidas_puntuacion >= 10000) {
-            vidas_puntuacion += 10000;
-            nave.vidaExtra();
-            csonido->reproducir(ControladorSonido::VIDA_EXTRA);
-        }
+        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LAlt)) {
+            nave.actualizar(nivel, asteroides, ovni, avanceCursor);
 
-        ovni.actualizar(nivel, asteroides, nave);
+            if (nave.getVidas() < 0) {
+                running = false;
+            }
 
-        // Mueve todos los asteroides y elimina los que estén destruidos.
-        for (int i = 0; i < asteroides.size(); ++i) {
-            asteroides[i].actualizar();
-            if (asteroides[i].estado == Elemento3D::DESTRUIDO) {
-                asteroides.erase(asteroides.begin() + i);
-                i--;
+            if (puntuacion - vidas_puntuacion >= 10000) {
+                vidas_puntuacion += 10000;
+                nave.vidaExtra();
+                csonido->reproducir(ControladorSonido::VIDA_EXTRA);
+            }
+
+            ovni.actualizar(nivel, asteroides, nave);
+
+            // Mueve todos los asteroides y elimina los que estén destruidos.
+            for (int i = 0; i < asteroides.size(); ++i) {
+                asteroides[i].actualizar();
+                if (asteroides[i].estado == Elemento3D::DESTRUIDO) {
+                    asteroides.erase(asteroides.begin() + i);
+                    i--;
+                }
             }
         }
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = nave.pos.matrizModelo();
-        if (camaraPrimeraPersona) {
-            camara.pos = glm::vec3(modeloNave * glm::vec4(2.0f, 2.0f, 0.0f, 1.0f));
-        } else {
-            camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 4.0f, 0.0f, 1.0f));
+        switch (posCamara) {
+            case PRIMERA_PERSONA:
+                camara.pos = glm::vec3(modeloNave * glm::vec4(2.0f, 2.0f, 0.0f, 1.0f));
+                camara.forward = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
+                camara.up = glm::cross(camara.forward, glm::vec3(modeloNave * glm::vec4{0.0f, 0.0f, -1.0f, 0.0f}));
+                break;
+            case SIGUIENDO_DETRAS:
+                camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 4.0f, 0.0f, 1.0f));
+                camara.forward = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
+                camara.up = glm::cross(camara.forward, glm::vec3(modeloNave * glm::vec4{0.0f, 0.0f, -1.0f, 0.0f}));
+                break;
+            case LIBRE:
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LAlt)) {
+                    camara.actualizar(glm::vec2{avanceCursor.x, avanceCursor.y});
+                }
+                break;
+            case SIGUIENDO_LIBRE:
+                camara.forward = nave.pos.posicion - camara.pos;
+                break;
         }
-        camara.forward = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
 
         // Mantiene el vector up de la cámara apuntando hacia arriba
-        camara.up = glm::cross(camara.forward, // Implementación tentativa, hasta que no gire bien la nave...
-                               glm::vec3(modeloNave * glm::vec4{0.0f, 0.0f, -1.0f, 0.0f}));
 
         // Limpia la ventana
         glClearColor(0.0f, 0.0f, 0.0f, 1.f);
@@ -1727,10 +1763,10 @@ Estado tratarJuego3D(Estado estado) {
         espacio.dibujar(ventana, camara);
         mallaLimites.dibujar(ventana, camara);
 
-        nave.dibujar(ventana, camara, camaraPrimeraPersona);
+        nave.dibujar(ventana, camara, posCamara == PRIMERA_PERSONA);
         ovni.dibujar(ventana, camara);
 
-        if (camaraPrimeraPersona) {
+        if (posCamara == PRIMERA_PERSONA) {
             dibujaCruz(ventana.getSize());
         }
         // Muestra el fotograma

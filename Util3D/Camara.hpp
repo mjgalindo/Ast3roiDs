@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include <SFML/Graphics.hpp>
 
 struct Camara
 {
@@ -20,11 +21,23 @@ public:
         return projection * glm::lookAt(pos, pos + forward, up);
     }
 
+    void actualizar(glm::vec2 avanceCursor) {
+        glm::quat cuaternioGirar = glm::angleAxis(-avanceCursor.y * 0.005f, up);
+        glm::quat cuaternioInclinar = glm::angleAxis(-avanceCursor.x * 0.005f, glm::cross(up, forward));
+        auto transformacion = glm::toMat4(cuaternioGirar) * glm::toMat4(cuaternioInclinar);
+        up = glm::vec3{transformacion * glm::vec4{up.x, up.y, up.z, 0.0f}};
+        forward = glm::vec3{transformacion * glm::vec4{forward.x, forward.y, forward.z, 0.0f}};
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
+            pos = pos + forward * 0.5f;
+        }
+    }
+
     glm::mat4 projection;
     glm::vec3 pos;
     glm::vec3 forward;
     glm::vec3 up;
 
+    static constexpr glm::vec3 UP_BASE = {0.0f, 1.0f, 0.0f};
     static constexpr glm::vec3 FORWARD_BASE = {0.0f, 0.0f, 1.0f};
 };
 #endif //AST3ROIDS_CAMARA_HPP_HPP
