@@ -22,8 +22,8 @@ public:
     }
 
     void actualizar(glm::vec2 avanceCursor) {
-        glm::quat cuaternioGirar = glm::angleAxis(-avanceCursor.y * 0.005f, up);
-        glm::quat cuaternioInclinar = glm::angleAxis(-avanceCursor.x * 0.005f, glm::cross(up, forward));
+        glm::quat cuaternioGirar = glm::angleAxis(-avanceCursor.x * 0.005f, up);
+        glm::quat cuaternioInclinar = glm::angleAxis(-avanceCursor.y * 0.005f, glm::cross(up, forward));
         auto transformacion = glm::toMat4(cuaternioGirar) * glm::toMat4(cuaternioInclinar);
         up = glm::vec3{transformacion * glm::vec4{up.x, up.y, up.z, 0.0f}};
         forward = glm::vec3{transformacion * glm::vec4{forward.x, forward.y, forward.z, 0.0f}};

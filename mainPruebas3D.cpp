@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Graficos3D/Asteroide3D.hpp"
 #include "Graficos3D/Nave3D.hpp"
+#include "Graficos3D/Ovni3D.hpp"
 #include "Util3D/Ventana3D.hpp"
 #include "Util3D/ControladorTexturas.hpp"
 #include "Util3D/ControladorShaders.hpp"
@@ -43,6 +44,23 @@ void dibujaCruz(sf::Vector2u tamVentana) {
     glPopMatrix();
 }
 
+sf::Font fuenteAsteroids;/*
+inline void inicializaTexto(sf::Text &texto, unsigned int tamanoFuente, double grosorLinea = 0.3) {
+
+    FT_Library ft;
+
+    if(FT_Init_FreeType(&ft)) {
+        fprintf(stderr, "Could not init freetype library\n");
+        return 1;
+    }
+    FT_Face face;
+
+    if(FT_New_Face(ft, "Recursos/Fuentes/atari.ttf", 0, &face)) {
+        fprintf(stderr, "Could not open font\n");
+        return 1;
+    }
+    FT_Set_Pixel_Sizes(face, 0, 48);
+}*/
 int main() {
     // Configura la ventana
     sf::ContextSettings configuracion;
@@ -92,7 +110,7 @@ int main() {
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
     bool camaraPrimeraPersona = false;
     bool running = true;
-
+    int nivel =1;
     while (running) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
@@ -127,7 +145,7 @@ int main() {
 
         sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
 
-        nave.actualizar(asteroides, ovni,
+        nave.actualizar(nivel,asteroides, ovni,
                         {posCursor.x - (int) ventana.getSize().x / 2, posCursor.y - (int) ventana.getSize().y / 2});
         if (ventana.hasFocus())
             sf::Mouse::setPosition({(int) ventana.getSize().x / 2, (int) ventana.getSize().y / 2}, ventana);
@@ -136,7 +154,7 @@ int main() {
             running = false;
         }
 
-        ovni.actualizar(asteroides, nave);
+        ovni.actualizar(nivel,asteroides, nave);
 
         // Mueve todos los asteroides y elimina los que estén destruidos.
         for (int i = 0; i < asteroides.size(); ++i) {
