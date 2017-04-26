@@ -21,7 +21,7 @@ public:
 
     glm::vec3 direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v);
 
-    const float VELOCIDAD_INICIAL = 5.0f;
+    const float VELOCIDAD_INICIAL = 20.0f;
     glm::vec3 velocidad;
     glm::vec3 direccion;
 

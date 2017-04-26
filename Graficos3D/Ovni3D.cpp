@@ -51,14 +51,8 @@ void Ovni3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Element
             }
         }
 
-        if (valorAleatorio() <= 0.01) {
+        if (valorAleatorio() <= 0.01 && estado == VIVO) {
             disparar();
-        }
-
-        if (valorAleatorio() <= 0.001) {
-            direccion = glm::vec3(valorAleatorio(-1.0f, 1.0f), valorAleatorio(-1.0f, 1.0f),
-                                  valorAleatorio(-1.0f, 1.0f));
-            velocidad = VELOCIDAD_INICIAL * direccion;
         }
     } else if(estado == MUERTO) {
         if(valorAleatorio() <= 0.005) {
@@ -117,7 +111,11 @@ void Ovni3D::disparar() {
 void Ovni3D::cambiarEstado(EstadoOvni nuevoEstado) {
     estado = nuevoEstado;
     if(estado == VIVO) {
-        pos.posicion = {valorAleatorio(-80.0f, 80.0f), valorAleatorio(-80.0f, 80.0f), valorAleatorio(-80.0f, 80.0f)};
+        pos.posicion = {
+                valorAleatorio(0.8f * -limiteMovimiento, 0.8f * limiteMovimiento),
+                valorAleatorio(0.8f * -limiteMovimiento, 0.8f * limiteMovimiento),
+                valorAleatorio(0.8f * -limiteMovimiento, 0.8f * limiteMovimiento),
+        };
         direccion = glm::vec3(valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f));
         ultimaDireccion = direccion;
         velocidad = VELOCIDAD_INICIAL*direccion;
@@ -129,15 +127,15 @@ void Ovni3D::cambiarEstado(EstadoOvni nuevoEstado) {
 
 glm::vec3 Ovni3D::direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v) {
     float vMax = VELOCIDAD_INICIAL;
-    float radioPeligro = 20.0f;
+    float radioPeligro = 60.0f;
     vector<glm::vec3> direccionesSeguras;
     vector<glm::vec3> posiciones;
-    for (auto ast = v.begin(); ast != v.end(); ++ast) {
-        posiciones.push_back(ast->pos.posicion);
+    for (int i = 0; i < v.size(); i++) {
+        posiciones.push_back(v.at(i).pos.posicion);
     }
     glm::vec3 posicionAux, velocidadAux;
     for (unsigned long long i = 0; i < direcciones.size(); i++) {
-        posicion = posicionAux;
+        posicionAux = posicion;
         velocidadAux = direcciones.at(i)*vMax;
         bool choque = false;
         float distanciaRecorrida = 0.0f;
@@ -153,10 +151,10 @@ glm::vec3 Ovni3D::direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v
                     posicionAux.z = (abs(posicionAux.z) - 0.1f) * posicionAux.z / abs(posicionAux.z);
                 }
             }
-            for (auto ast = v.begin(); ast != v.end(); ++ast) {
-                ast->actualizar();
+            for (int j = 0; j < v.size(); j++) {
+                v.at(j).actualizar();
                 if (colisionEsferaEsfera(posicionAux,
-                                         7.6f * this->pos.escala.z, ast->pos.posicion, 1.0f * ast->pos.escala.y)) {
+                                         7.6f * pos.escala.z, v.at(j).pos.posicion, 1.0f * v.at(j).pos.escala.y)) {
                     choque = true;
                     break;
                 }
@@ -164,19 +162,19 @@ glm::vec3 Ovni3D::direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v
             distanciaRecorrida += vMax;
         }
         if (!choque) {
-            if (direcciones[i] == ultimaDireccion) {
+            if (direcciones.at(i) == ultimaDireccion) {
                 return ultimaDireccion;
             }
-            direccionesSeguras.push_back(direcciones[i]);
+            direccionesSeguras.push_back((direcciones.at(i)));
         }
         for (int j = 0; j < posiciones.size(); j++) {
-            v[j].pos.posicion=posiciones[j];
+            v.at(j).pos.posicion=posiciones.at(j);
         }
     }
     if (direccionesSeguras.size() == 0) {
         return ultimaDireccion;
     }
-    int elegido = enteroAleatorio(0, direccionesSeguras.size());
-    ultimaDireccion = direccionesSeguras[elegido];
-    return direccionesSeguras[elegido];
+    int elegido = enteroAleatorio(0, direccionesSeguras.size()-1);
+    ultimaDireccion = direccionesSeguras.at(elegido);
+    return direccionesSeguras.at(elegido);
 }
