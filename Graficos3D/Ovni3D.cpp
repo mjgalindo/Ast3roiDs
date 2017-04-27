@@ -126,7 +126,6 @@ void Ovni3D::cambiarEstado(EstadoOvni nuevoEstado) {
 }
 
 glm::vec3 Ovni3D::direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v) {
-    dirs = 0;
     float vMax = VELOCIDAD_INICIAL;
     float radioPeligro = 20.0f;
     vector<glm::vec3> direccionesSeguras;
