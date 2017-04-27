@@ -30,7 +30,6 @@ private:
     std::vector<Disparo3D> disparos;
     float limiteMovimiento;
     ControladorSonido *csonido;
-    glm::vec3 ultimaDireccion;
     std::vector<glm::vec3> direcciones;
 
 };

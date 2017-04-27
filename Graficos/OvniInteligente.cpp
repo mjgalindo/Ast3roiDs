@@ -508,7 +508,7 @@ double OvniInteligente::direccionSegura(sf::CircleShape ovni, sf::Vector2f posic
     if (direccionesSeguras.size() == 0) {
         return ultimaDireccion;
     }
-    int elegido = enteroAleatorio(0, direccionesSeguras.size());
+    int elegido = enteroAleatorio(0, direccionesSeguras.size()-1);
     ultimaDireccion = direccionesSeguras[elegido];
     return direccionesSeguras[elegido];
 }
