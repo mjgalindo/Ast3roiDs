@@ -1769,6 +1769,32 @@ Estado tratarJuego3D(Estado estado) {
         if (posCamara == PRIMERA_PERSONA) {
             dibujaCruz(ventana.getSize());
         }
+
+        // store the state
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        ventana.pushGLStates();
+
+        // Se dibuja la puntuacion
+        sf::Text puntuacionText;
+        inicializaTexto(puntuacionText, ajustar_h(50u), 1.5);
+        string puntuacionesStr = "PUNTUACION: ";
+        puntuacionesStr.append(std::to_string(puntuacion));
+        puntuacionText.setString(puntuacionesStr);
+        puntuacionText.setPosition({0.0f,0.0f});
+        ventana.draw(puntuacionText);
+
+        sf::Text vidasText;
+        inicializaTexto(vidasText, ajustar_h(50u), 1.5);
+        string vidasStr = "VIDAS: ";
+        vidasStr.append(std::to_string(nave.getVidas()));
+        vidasText.setString(vidasStr);
+        vidasText.setPosition({0.0f,ajustar_h(55u)});
+        ventana.draw(vidasText);
+
+        // restore the state
+        ventana.popGLStates();
+
         // Muestra el fotograma
         ventana.display();
     }
