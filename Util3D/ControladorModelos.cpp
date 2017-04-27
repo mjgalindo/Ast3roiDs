@@ -1,4 +1,6 @@
 #include <tiny_obj_loader.h>
+#include <iostream>
+#include <fstream>
 #include "ControladorModelos.hpp"
 
 using namespace std;
@@ -41,27 +43,75 @@ void replica(const tinyobj::attrib_t &atrib, const tinyobj::shape_t &figura, vec
     }
 }
 
-void ControladorModelos::cargaMalla(TipoModelo tipo) {
-    tinyobj::attrib_t atrib;
-    std::vector<tinyobj::shape_t> figuras;
-    std::vector<tinyobj::material_t> materiales;
+static unsigned int parseaObj(string fichero, vector<int>& indices,
+                     vector<float>& vertices, vector<float>& normales, vector<float>& texturas){
+    ifstream fich(fichero);
+    if (!fich.is_open()) throw invalid_argument("Fichero: " + fichero + " no encontrado o no disponible.");
 
-    std::string err;
-    // Carga el fichero .obj de la malla elegida
-    bool ret = tinyobj::LoadObj(&atrib, &figuras, &materiales, &err, ficheros[tipo].c_str(), ruta_obj.c_str(), true);
-    if (!ret) {
-        throw std::invalid_argument(err);
+    unsigned int numTriangulos = 0;
+
+    vector<float> t_vertices, t_normales, t_texturas;
+
+    indices.clear();
+    vertices.clear();
+    normales.clear();
+    texturas.clear();
+
+    string tipoLinea;
+    array<int, 9> ids;
+    float x, y, z;
+    int indiceActual = 1;
+
+    while (fich.good()){
+        fich >> tipoLinea;
+        if (tipoLinea == "v") {
+            fich >> x >> y >> z;
+            t_vertices.push_back(x);
+            t_vertices.push_back(y);
+            t_vertices.push_back(z);
+        }
+        else if (tipoLinea == "vn") {
+            fich >> x >> y >> z;
+            t_normales.push_back(x);
+            t_normales.push_back(y);
+            t_normales.push_back(z);
+        }
+        else if (tipoLinea == "vt") {
+            fich >> x >> y;
+            t_texturas.push_back(x);
+            t_texturas.push_back(y);
+        }
+        else if (tipoLinea == "f"){
+            numTriangulos++;
+            for (int i = 0; i < ids.size(); ++i){
+                fich >> ids[i];
+                fich.get();
+            }
+            for (int i = 0; i < 3; i++){
+                vertices.push_back(t_vertices[ids[i*3] * 3]);
+                vertices.push_back(t_vertices[ids[i*3] * 3+1]);
+                vertices.push_back(t_vertices[ids[i*3] * 3+2]);
+
+                texturas.push_back(t_texturas[ids[i*3+1] * 2]);
+                texturas.push_back(t_texturas[ids[i*3+1] * 2+1]);
+
+                normales.push_back(t_normales[ids[i*3+2] * 3]);
+                normales.push_back(t_normales[ids[i*3+2] * 3+1]);
+                normales.push_back(t_normales[ids[i*3+2] * 3+2]);
+
+                indices.push_back(indiceActual++);
+            }
+        }
     }
-    if (figuras.size() > 1)
-        throw invalid_argument("Hay mas de una figura en el fichero.obj y no es posible saber cual cargar.");
 
-    vector<float> normales;
-    vector<float> ctextura;
+    return numTriangulos;
+}
+
+void ControladorModelos::cargaMalla(TipoModelo tipo) {
     vector<int> indices;
+    vector<float> vertices, normales, ctextura;
 
-    replica(atrib, figuras[0], normales, ctextura, indices);
-
-    modelos[tipo].numTriangulos = (unsigned int) figuras[0].mesh.indices.size();
+    modelos[tipo].numTriangulos = parseaObj(ficheros[tipo], indices, vertices, normales, ctextura);
 
     glGenVertexArrays(1, &modelos[tipo].vertexArrayObject);
     glBindVertexArray(modelos[tipo].vertexArrayObject);
@@ -69,7 +119,7 @@ void ControladorModelos::cargaMalla(TipoModelo tipo) {
     glGenBuffers(Modelo::NUM_BUFFERS, modelos[tipo].vertexArrayBuffers);
 
     glBindBuffer(GL_ARRAY_BUFFER, modelos[tipo].vertexArrayBuffers[Modelo::POSITION_VB]);
-    glBufferData(GL_ARRAY_BUFFER, atrib.vertices.size() * sizeof(atrib.vertices[0]), &atrib.vertices[0],
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), &vertices[0],
                  GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
 
@@ -90,6 +140,11 @@ void ControladorModelos::cargaMalla(TipoModelo tipo) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), &indices[0], GL_STATIC_DRAW);
 
     glBindVertexArray(0);
+    //std::cout << ficheros[(int)tipo] << '\n';
+    //for (int i = 0; i < ctextura.size(); i+=2){
+    //    std::cout << ctextura[i] << ' '  << ctextura[i+1] << '\n';
+    //}
+    //std::cout << "\n\n\n\n";
 }
 
 ControladorModelos::ControladorModelos() {

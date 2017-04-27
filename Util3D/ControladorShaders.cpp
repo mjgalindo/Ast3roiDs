@@ -5,7 +5,8 @@ using namespace std;
 static array<unique_ptr<vj::Shader>, ControladorShaders::NUM_SHADERS> shaders;
 static array<string, ControladorShaders::NUM_SHADERS> ficheros {
         "Recursos/Shaders/shaderBasico",
-        "Recursos/Shaders/shaderBrillante"
+        "Recursos/Shaders/shaderBrillante",
+        "Recursos/Shaders/shaderCilindrico",
 };
 
 ControladorShaders::ControladorShaders() {

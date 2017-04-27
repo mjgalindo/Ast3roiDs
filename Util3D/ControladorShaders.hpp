@@ -9,6 +9,7 @@ public:
     enum TipoShader {
         SIMPLE = 0,
         BRILLO,
+        CILINDRICO,
         NUM_SHADERS
     };
 
