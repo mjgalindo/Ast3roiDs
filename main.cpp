@@ -1596,11 +1596,11 @@ Estado tratarJuego3D(Estado estado) {
     ControladorShaders::getShader(ControladorShaders::BRILLO)->bind();
     ControladorShaders::getShader(ControladorShaders::BRILLO)->setDireccionLuz({0.0f, -0.75f, 0.25f});
 
-    Esfera espacio(ControladorTexturas::ESPACIO, {0, 0, 0}, {800, 800, 800});
+    Esfera espacio(ControladorTexturas::ESPACIO, ControladorShaders::BRILLO, {0, 0, 0}, {800, 800, 800});
 
     const float RADIO_ESFERA_JUGABLE = 100.0f;
     const float DISTANCIA_RENDER_PELIGRO = 50.0f;
-    Esfera mallaLimites(ControladorTexturas::BLANCO, {0, 0, 0},
+    Esfera mallaLimites(ControladorTexturas::BLANCO, ControladorShaders::BRILLO, {0, 0, 0},
                         {RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE}, true);
 
     // Carga asteroides para ver como se mueve la nave
@@ -1806,7 +1806,6 @@ Estado tratarJuego3D(Estado estado) {
     ventana.setMouseCursorVisible(true);
     ventana.setMouseCursorGrabbed(false);
 
-    // Activa test de profundidad para ocluir triangulos que se encuentran detrás de otros.
     glDisable(GL_DEPTH_TEST);
     ventana.popGLStates();
     return GAME_OVER;

@@ -2,7 +2,6 @@
 #define AST3ROIDS_MALLA_HPP
 
 #include <string>
-#include <tiny_obj_loader.h>
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
 #include "../Util3D/Posicionamiento.hpp"

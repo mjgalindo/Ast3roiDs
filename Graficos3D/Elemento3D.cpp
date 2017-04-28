@@ -1,4 +1,3 @@
-#include <tiny_obj_loader.h>
 #include "Elemento3D.hpp"
 
 using namespace std;

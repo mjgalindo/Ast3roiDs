@@ -1,6 +1,6 @@
-#include <tiny_obj_loader.h>
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "ControladorModelos.hpp"
 
 using namespace std;
@@ -14,34 +14,6 @@ static std::array<std::string, ControladorModelos::NUM_MODELOS> ficheros{
 };
 
 static std::array<Modelo, ControladorModelos::NUM_MODELOS> modelos;
-
-static string ruta_obj = "Recursos/Modelos/";
-
-/**
- * Replica las normales y coordenadas uv definidas en atrib para que haya el mismo numero de normales que de
- * vertices y que se puedan indexar con los mismos valores.
- */
-void replica(const tinyobj::attrib_t &atrib, const tinyobj::shape_t &figura, vector<float> &normales,
-             vector<float> &ctextura, vector<int> &indices) {
-    normales.resize(atrib.vertices.size());
-    ctextura.resize(atrib.vertices.size());
-    indices.resize(figura.mesh.indices.size());
-    for (unsigned int i = 0; i < figura.mesh.indices.size(); i++) {
-        normales[figura.mesh.indices[i].vertex_index * 3] = atrib.normals[figura.mesh.indices[i].normal_index * 3];
-        normales[figura.mesh.indices[i].vertex_index * 3 + 1] =
-                atrib.normals[figura.mesh.indices[i].normal_index * 3 + 1];
-        normales[figura.mesh.indices[i].vertex_index * 3 + 2] =
-                atrib.normals[figura.mesh.indices[i].normal_index * 3 + 2];
-        if (figura.mesh.indices[i].texcoord_index != -1) {
-            ctextura[figura.mesh.indices[i].vertex_index * 2] =
-                    atrib.texcoords[figura.mesh.indices[i].texcoord_index * 2];
-            ctextura[figura.mesh.indices[i].vertex_index * 2 + 1] =
-                    atrib.texcoords[figura.mesh.indices[i].texcoord_index * 2 + 1];
-        }
-
-        indices[i] = figura.mesh.indices[i].vertex_index;
-    }
-}
 
 static unsigned int parseaObj(string fichero, vector<int>& indices,
                      vector<float>& vertices, vector<float>& normales, vector<float>& texturas){
@@ -60,7 +32,7 @@ static unsigned int parseaObj(string fichero, vector<int>& indices,
     string tipoLinea;
     array<int, 9> ids;
     float x, y, z;
-    int indiceActual = 1;
+    int indiceActual = 0;
 
     while (fich.good()){
         fich >> tipoLinea;
@@ -82,22 +54,22 @@ static unsigned int parseaObj(string fichero, vector<int>& indices,
             t_texturas.push_back(y);
         }
         else if (tipoLinea == "f"){
-            numTriangulos++;
+            numTriangulos += 3;
             for (int i = 0; i < ids.size(); ++i){
                 fich >> ids[i];
                 fich.get();
             }
-            for (int i = 0; i < 3; i++){
-                vertices.push_back(t_vertices[ids[i*3] * 3]);
-                vertices.push_back(t_vertices[ids[i*3] * 3+1]);
-                vertices.push_back(t_vertices[ids[i*3] * 3+2]);
+            for (int i = 0; i < 3; i++) {
+                vertices.push_back(t_vertices[(ids[i * 3] - 1) * 3]);
+                vertices.push_back(t_vertices[(ids[i * 3] - 1) * 3 + 1]);
+                vertices.push_back(t_vertices[(ids[i * 3] - 1) * 3 + 2]);
 
-                texturas.push_back(t_texturas[ids[i*3+1] * 2]);
-                texturas.push_back(t_texturas[ids[i*3+1] * 2+1]);
+                texturas.push_back(t_texturas[(ids[i * 3 + 1] - 1) * 2]);
+                texturas.push_back(t_texturas[(ids[i * 3 + 1] - 1) * 2 + 1]);
 
-                normales.push_back(t_normales[ids[i*3+2] * 3]);
-                normales.push_back(t_normales[ids[i*3+2] * 3+1]);
-                normales.push_back(t_normales[ids[i*3+2] * 3+2]);
+                normales.push_back(t_normales[(ids[i * 3 + 2] - 1) * 3]);
+                normales.push_back(t_normales[(ids[i * 3 + 2] - 1) * 3 + 1]);
+                normales.push_back(t_normales[(ids[i * 3 + 2] - 1) * 3 + 2]);
 
                 indices.push_back(indiceActual++);
             }
@@ -140,11 +112,6 @@ void ControladorModelos::cargaMalla(TipoModelo tipo) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), &indices[0], GL_STATIC_DRAW);
 
     glBindVertexArray(0);
-    //std::cout << ficheros[(int)tipo] << '\n';
-    //for (int i = 0; i < ctextura.size(); i+=2){
-    //    std::cout << ctextura[i] << ' '  << ctextura[i+1] << '\n';
-    //}
-    //std::cout << "\n\n\n\n";
 }
 
 ControladorModelos::ControladorModelos() {
