@@ -1789,7 +1789,7 @@ Estado tratarJuego3D(Estado estado) {
         string vidasStr = "VIDAS: ";
         vidasStr.append(std::to_string(nave.getVidas()));
         vidasText.setString(vidasStr);
-        vidasText.setPosition({0.0f,ajustar_h(55u)});
+        vidasText.setPosition({0.0f, ajustar_h(55.0f)});
         ventana.draw(vidasText);
 
         // restore the state
@@ -1799,14 +1799,11 @@ Estado tratarJuego3D(Estado estado) {
         ventana.display();
     }
 
-    if (!configuracionGlobal.pantallaCompleta) {
-        inicializaVentana();
-    }
+    inicializaVentana();
 
     ventana.setMouseCursorVisible(true);
     ventana.setMouseCursorGrabbed(false);
 
     glDisable(GL_DEPTH_TEST);
-    ventana.popGLStates();
     return GAME_OVER;
 }
