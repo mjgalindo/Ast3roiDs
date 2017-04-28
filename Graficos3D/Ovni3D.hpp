@@ -18,6 +18,7 @@ public:
     void disparar();
 
     void cambiarEstado(EstadoOvni nuevoEstado);
+    EstadoOvni getEstado(){ return estado; }
 
     glm::vec3 direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v);
 
