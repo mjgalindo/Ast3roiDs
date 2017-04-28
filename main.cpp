@@ -1667,9 +1667,11 @@ Estado tratarJuego3D(Estado estado) {
                         break;
                     } else if (event.key.code == sf::Keyboard::F5) {
                         posCamara = DESDE_ARRIBA;
+                        /**
                         camara.pos = {0.0f, RADIO_ESFERA_JUGABLE * 2.4f, 0.0f};
                         camara.forward = {0.0f, -1.0f, 0.0f};
                         camara.up = {1.0f, 0.0f, 0.0f};
+                         */
                         break;
                     } else if (event.key.code == configuracionGlobal.disparar) {
                         nave.disparar();
@@ -1745,6 +1747,13 @@ Estado tratarJuego3D(Estado estado) {
             case SIGUIENDO_LIBRE:
                 camara.forward = nave.pos.posicion - camara.pos;
                 break;
+            case DESDE_ARRIBA:
+                camara.pos = glm::vec3(modeloNave * glm::vec4(2.0f, 222.0f, 0.0f, 1.0f));
+                glm::vec4 dir = {-nave.DIRECCION_ARRIBA_INICIAL.x, -nave.DIRECCION_ARRIBA_INICIAL.y,
+                                 -nave.DIRECCION_ARRIBA_INICIAL.z, -nave.DIRECCION_ARRIBA_INICIAL.w};
+                camara.forward = glm::vec3(modeloNave * dir);
+                camara.up = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
+                break;
         }
 
         // Mantiene el vector up de la cámara apuntando hacia arriba
@@ -1766,7 +1775,7 @@ Estado tratarJuego3D(Estado estado) {
             }
         }
         espacio.dibujar(ventana, camara);
-        mallaLimites.dibujar(ventana, camara);
+        if(posCamara != DESDE_ARRIBA) mallaLimites.dibujar(ventana, camara);
 
         nave.dibujar(ventana, camara, posCamara == PRIMERA_PERSONA);
         ovni.dibujar(ventana, camara);
