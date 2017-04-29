@@ -15,9 +15,12 @@ void Elemento3D::predibujado(Camara &camara) const {
     shader->actualizar(pos, camara);
 }
 
-void Elemento3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states) const {
+void Elemento3D::dibujar(sf::RenderTarget &target, Camara &camara, bool rellenado, sf::RenderStates states) const {
+    if (rellenado) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    else glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     predibujado(camara);
     draw(target, states);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void Elemento3D::destruir() {

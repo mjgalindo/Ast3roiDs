@@ -31,6 +31,7 @@ struct Configuracion {
     unsigned int volumen;
     unsigned int antialiasing;
     int colorId;
+    bool alambre;
     array<sf::Color, 4u> COLORES = {sf::Color::White, sf::Color::Red, sf::Color::Green, sf::Color::Cyan};
 
     sf::Keyboard::Key girar_izquierda = sf::Keyboard::Left;
@@ -51,6 +52,7 @@ struct Configuracion {
         acelerar = sf::Keyboard::A;
         disparar = sf::Keyboard::D;
         hiperespacio = sf::Keyboard::Space;
+        alambre = false;
     }
 
     sf::Color color() {
@@ -1050,10 +1052,10 @@ Estado tratarOpciones(Estado estado) {
     }
 
     enum Opcion {
-        RESOLUCION = 0, PANTALLA_COMPLETA = 1, VOLUMEN = 2, ANTIALIASING = 3, COLOR = 4, VOLVER = 5
+        RESOLUCION = 0, PANTALLA_COMPLETA = 1, VOLUMEN = 2, ANTIALIASING = 3, COLOR = 4, ALAMBRE = 5, VOLVER = 6
     };
 
-    static constexpr int OPCIONES = 6;
+    static constexpr int OPCIONES = 7;
 
     array<tuple<string, string>, OPCIONES> textos{
             make_tuple("RESOLUCION", ""),
@@ -1061,6 +1063,7 @@ Estado tratarOpciones(Estado estado) {
             make_tuple("VOLUMEN", ""),
             make_tuple("ANTIALIASING", ""),
             make_tuple("COLOR", ""),
+            make_tuple("ALAMBRE", ""),
             make_tuple("VOLVER", "")
     };
     array<tuple<sf::Text, sf::Text>, OPCIONES> opciones;
@@ -1123,6 +1126,10 @@ Estado tratarOpciones(Estado estado) {
                             case COLOR:
                                 configuracionGlobal.colorId = (int) ((configuracionGlobal.colorId - 1) %
                                                                      configuracionGlobal.COLORES.size());
+                                break;
+                            case ALAMBRE:
+                                configuracionGlobal.alambre = !configuracionGlobal.alambre;
+                                break;
                             default:
                                 break;
                         }
@@ -1148,6 +1155,10 @@ Estado tratarOpciones(Estado estado) {
                             case COLOR:
                                 configuracionGlobal.colorId = (int) ((configuracionGlobal.colorId + 1) %
                                                                      configuracionGlobal.COLORES.size());
+                                break;
+                            case ALAMBRE:
+                                configuracionGlobal.alambre = !configuracionGlobal.alambre;
+                                break;
                             default:
                                 break;
                         }
@@ -1163,6 +1174,7 @@ Estado tratarOpciones(Estado estado) {
         get<1>(textos[ANTIALIASING]) = to_string(configuracionGlobal.antialiasing);
         get<1>(textos[VOLUMEN]) = to_string(configuracionGlobal.volumen);
         get<1>(textos[COLOR]) = configuracionGlobal.colorString();
+        get<1>(textos[ALAMBRE]) = configuracionGlobal.alambre ? "SI" : "NO";
         for (unsigned int i = 0; i < OPCIONES; i++) {
             get<0>(opciones[i]).setString(get<0>(textos[i]));
             get<1>(opciones[i]).setString(get<1>(textos[i]));
@@ -1392,7 +1404,7 @@ Configuracion leeConfiguracion() {
     unsigned int resVertical = 0;
     int gir_izq, gir_der, acel, disp, hiper;
     fichConfig >> resVertical >> retVal.pantallaCompleta >> retVal.volumen >> retVal.antialiasing >> retVal.colorId
-               >> gir_izq >> gir_der >> acel >> disp >> hiper;
+               >> gir_izq >> gir_der >> acel >> disp >> hiper >> retVal.alambre;
     if (gir_izq != 0) {
         retVal.girar_izquierda = (sf::Keyboard::Key) gir_izq;
     }
@@ -1417,7 +1429,7 @@ void escribeConfiguracion(Configuracion config) {
     fichConfig << config.resolucion.y << ' ' << config.pantallaCompleta << ' ' << config.volumen << ' '
                << config.antialiasing << ' ' << config.colorId << ' ' << config.girar_izquierda << ' '
                << config.girar_derecha << ' ' << config.acelerar << ' ' << config.disparar << ' '
-               << config.hiperespacio;
+               << config.hiperespacio << ' ' << config.alambre;
 }
 
 string keyToString(sf::Keyboard::Key k) {
@@ -1626,10 +1638,11 @@ Estado tratarJuego3D(Estado estado) {
     };
     TipoCamara posCamara = SIGUIENDO_DETRAS;
 
-    Minimapa minimapaXY({resolucion.x - 200, resolucion.y - 400}, { 200 , 200 }, true, true, false);
+    Minimapa minimapaXY({resolucion.x - 200.f, resolucion.y - 400.f}, { 200 , 200 }, true, true, false);
     minimapaXY.setElementos3D(&nave, &ovni, &asteroides, RADIO_ESFERA_JUGABLE);
-    Minimapa minimapaYZ({resolucion.x - 200, resolucion.y - 200}, { 200 , 200 }, false, true, true);
+    Minimapa minimapaYZ({resolucion.x - 200.f, resolucion.y - 200.f}, { 200 , 200 }, false, true, true);
     minimapaYZ.setElementos3D(&nave, &ovni, &asteroides, RADIO_ESFERA_JUGABLE);
+
     while (running) {
         if (asteroides.size() == 0) {
             nivel++;
@@ -1764,7 +1777,7 @@ Estado tratarJuego3D(Estado estado) {
 
         // Dibuja todos los elementos
         for (const Asteroide3D &asteroide : asteroides) {
-            asteroide.dibujar(ventana, camara);
+            asteroide.dibujar(ventana, camara, configuracionGlobal.alambre);
         }
 
         // Si la nave está cerca del límite jugable considera si hay que renderizar los asteroides cercanos a su antípoda
@@ -1774,11 +1787,11 @@ Estado tratarJuego3D(Estado estado) {
                 asteroide.dibujarSiCercaAntipoda(nave.pos.posicion, DISTANCIA_RENDER_PELIGRO, ventana, camara);
             }
         }
-        espacio.dibujar(ventana, camara);
-        if(posCamara != DESDE_ARRIBA) mallaLimites.dibujar(ventana, camara);
+        espacio.dibujar(ventana, camara, true);
+        if(posCamara != DESDE_ARRIBA) mallaLimites.dibujar(ventana, camara, false);
 
-        nave.dibujar(ventana, camara, posCamara == PRIMERA_PERSONA);
-        ovni.dibujar(ventana, camara);
+        nave.dibujar(ventana, camara, configuracionGlobal.alambre | posCamara == PRIMERA_PERSONA);
+        ovni.dibujar(ventana, camara, configuracionGlobal.alambre);
 
         if (posCamara == PRIMERA_PERSONA) {
             dibujaCruz(ventana.getSize());
@@ -1808,15 +1821,17 @@ Estado tratarJuego3D(Estado estado) {
         sf::Text idMapaXY;
         inicializaTexto(idMapaXY, ajustar_h(20u), 1.0);
         idMapaXY.setString("X Y");
-        idMapaXY.setPosition({resolucion.x - 100 - idMapaXY.getLocalBounds().width/2.0, resolucion.y - 300 - idMapaXY.getLocalBounds().height/2.0});
-        idMapaXY.setFillColor(sf::Color(0.0,50.0,50.0,70));
+        idMapaXY.setPosition({resolucion.x - 100 - idMapaXY.getLocalBounds().width/2.0f,
+                              resolucion.y - 300 - idMapaXY.getLocalBounds().height/2.0f});
+        idMapaXY.setFillColor(sf::Color(0,50,50,70));
         ventana.draw(idMapaXY);
         ventana.draw(minimapaXY);
         sf::Text idMapaYZ;
         inicializaTexto(idMapaYZ, ajustar_h(20u), 1.0);
         idMapaYZ.setString("Y Z");
-        idMapaYZ.setPosition({resolucion.x - 100 - idMapaYZ.getLocalBounds().width/2.0, resolucion.y - 100 - idMapaYZ.getLocalBounds().height/2.0});
-        idMapaYZ.setFillColor(sf::Color(0.0,50.0,50.0,70));
+        idMapaYZ.setPosition({resolucion.x - 100 - idMapaYZ.getLocalBounds().width/2.0f,
+                              resolucion.y - 100 - idMapaYZ.getLocalBounds().height/2.0f});
+        idMapaYZ.setFillColor(sf::Color(0,50,50,70));
         ventana.draw(idMapaYZ);
         ventana.draw(minimapaYZ);
 

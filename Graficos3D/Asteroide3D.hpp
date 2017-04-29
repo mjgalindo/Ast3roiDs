@@ -15,7 +15,8 @@ public:
 
     void actualizar();
 
-    void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
+    void dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar = true,
+                 sf::RenderStates states = sf::RenderStates::Default) const;
 
     void colisionDetectada(int nivel, std::vector<Asteroide3D> &asteroides);
 

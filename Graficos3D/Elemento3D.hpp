@@ -17,8 +17,8 @@ public:
     };
     Estado3D estado = NORMAL;
 
-    virtual void
-    dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
+    virtual void dibujar(sf::RenderTarget &target, Camara &camara, bool rellenado = true,
+                         sf::RenderStates states = sf::RenderStates::Default) const;
 
     virtual void destruir();
 
@@ -34,6 +34,5 @@ protected:
     vj::Textura *textura;
     Modelo modelo3D;
 };
-
 
 #endif //AST3ROIDS_MALLA_HPP

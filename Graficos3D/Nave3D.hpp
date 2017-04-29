@@ -14,7 +14,7 @@ public:
 
     void actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::Vector2i movRaton);
 
-    void dibujar(sf::RenderTarget &target, Camara &camara, bool malla = false,
+    void dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar = true,
                  sf::RenderStates states = sf::RenderStates::Default) const;
 
     void disparar();

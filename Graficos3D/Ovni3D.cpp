@@ -42,10 +42,10 @@ void Ovni3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Element
         }
         //Se comprueba la colision con los asteroides
         for (int i = 0; i < asteroides.size(); i++) {
-            if (asteroides.at(i).estado == NORMAL && colisionEsferaEsfera(pos.posicion, 7.6f * pos.escala.z, asteroides.at(i).pos.posicion,
-                                     Asteroide3D::RADIO * asteroides.at(i).pos.escala.y)) {
+            if (asteroides[i].estado == NORMAL && colisionEsferaEsfera(pos.posicion, 7.6f * pos.escala.z, asteroides[i].pos.posicion,
+                                     Asteroide3D::RADIO * asteroides[i].pos.escala.y)) {
                 //COLISION!!!!!!!!!!!!
-                asteroides.at(i).colisionDetectada(nivel, asteroides);
+                asteroides[i].colisionDetectada(nivel, asteroides);
                 asteroides.erase(asteroides.begin() + i);
                 i--;
                 cambiarEstado(MUERTO);
@@ -93,14 +93,14 @@ void Ovni3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Element
 
 }
 
-void Ovni3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states) const {
+void Ovni3D::dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar, sf::RenderStates states) const {
     if(estado == VIVO) {
         predibujado(camara);
         draw(target, states);
     }
     // Dibuja los disparos
     for (const Disparo3D &disparo : disparos)
-        disparo.dibujar(target, camara, states);
+        disparo.dibujar(target, camara, rellenar, states);
 }
 
 void Ovni3D::disparar() {
@@ -117,7 +117,7 @@ void Ovni3D::cambiarEstado(EstadoOvni nuevoEstado) {
                 valorAleatorio(0.8f * -limiteMovimiento, 0.8f * limiteMovimiento),
                 valorAleatorio(0.8f * -limiteMovimiento, 0.8f * limiteMovimiento),
         };
-        direccion = direcciones.at(enteroAleatorio(0,direcciones.size()-1));
+        direccion = direcciones[enteroAleatorio(0, (int)direcciones.size()-1)];
         velocidad = VELOCIDAD_INICIAL*direccion;
         csonido->reproducir(ControladorSonido::OVNI_GRANDE,false);
     } else if(estado == MUERTO) {
@@ -131,12 +131,12 @@ glm::vec3 Ovni3D::direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v
     vector<glm::vec3> direccionesSeguras;
     vector<glm::vec3> posiciones;
     for (int i = 0; i < v.size(); i++) {
-        posiciones.push_back(v.at(i).pos.posicion);
+        posiciones.push_back(v[i].pos.posicion);
     }
     glm::vec3 posicionAux, velocidadAux;
     for (unsigned long long i = 0; i < direcciones.size(); i++) {
         posicionAux = posicion;
-        velocidadAux = direcciones.at(i)*vMax;
+        velocidadAux = direcciones[i]*vMax;
         bool choque = false;
         float distanciaRecorrida = 0.0f;
         while (distanciaRecorrida < radioPeligro && !choque) {
@@ -152,9 +152,9 @@ glm::vec3 Ovni3D::direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v
                 }
             }
             for (int j = 0; j < v.size(); j++) {
-                v.at(j).actualizar();
-                if ((v.at(j).estado == NORMAL && colisionEsferaEsfera(posicionAux, 7.6f * pos.escala.z, v.at(j).pos.posicion,
-                                                                               Asteroide3D::RADIO * v.at(j).pos.escala.y))) {
+                v[j].actualizar();
+                if ((v[j].estado == NORMAL && colisionEsferaEsfera(posicionAux, 7.6f * pos.escala.z, v[j].pos.posicion,
+                                                                               Asteroide3D::RADIO * v[j].pos.escala.y))) {
                     choque = true;
                     break;
                 }
@@ -162,18 +162,18 @@ glm::vec3 Ovni3D::direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v
             distanciaRecorrida += vMax/60.0f;
         }
         if (!choque) {
-            if (direcciones.at(i) == direccion) {
+            if (direcciones[i] == direccion) {
                 return direccion;
             }
-            direccionesSeguras.push_back((direcciones.at(i)));
+            direccionesSeguras.push_back((direcciones[i]));
         }
         for (int j = 0; j < posiciones.size(); j++) {
-            v.at(j).pos.posicion=posiciones.at(j);
+            v[j].pos.posicion=posiciones[j];
         }
     }
     if (direccionesSeguras.size() == 0) {
         return direccion;
     }
-    int elegido = enteroAleatorio(0, direccionesSeguras.size()-1);
-    return direccionesSeguras.at(elegido);
+    int elegido = enteroAleatorio(0,(int)direccionesSeguras.size()-1);
+    return direccionesSeguras[elegido];
 }

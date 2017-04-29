@@ -110,67 +110,67 @@ void Asteroide3D::colisionDetectada(int nivel, std::vector<Asteroide3D> &asteroi
             csonido->reproducir(ControladorSonido::EXP_1, true);
             if (aleatorio < 2) {
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_0));
 
             } else if (aleatorio < 14) {
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_0));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_0));
             } else if (aleatorio < 18) {
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_0));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_0));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_0));
             } else {
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_0));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_0));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_0));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_0));
             }
@@ -179,66 +179,66 @@ void Asteroide3D::colisionDetectada(int nivel, std::vector<Asteroide3D> &asteroi
             csonido->reproducir(ControladorSonido::EXP_2, true);
             if (aleatorio < 2) {
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_1));
             } else if (aleatorio < 14) {
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_1));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_1));
             } else if (aleatorio < 18) {
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_1));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_1));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_1));
             } else {
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_1));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_1));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_1));
                 asteroides.push_back(Asteroide3D(csonido, limiteMovimiento, this->pos.posicion,
-                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f)),
-                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0+(float)nivel/20.0f))},
+                                                 {velocidad.x + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.y + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f)),
+                                                  velocidad.z + valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX * (1.0f+(float)nivel/20.0f))},
                                                  rotacionAleatoria(),
                                                  (Tipo3D) enteroAleatorio(0, 2), TAM3D_1));
             }
@@ -262,18 +262,17 @@ void Asteroide3D::dibujarSiCercaAntipoda(glm::vec3 puntoCercano, float distancia
         pos.posicion = puntoCercano + (pos.posicion - antipoda);
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Muestra sollo la malla sin rellenar triangulos
-        dibujar(target, camara, states);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        dibujar(target, camara, false, states);
         pos.posicion = posicionReal;
     }
 }
 
-void Asteroide3D::dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states) const {
+void Asteroide3D::dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar, sf::RenderStates states) const {
     if (estado == EXPLOTANDO) {
         for (int i = 0; i < NUM_FRAGMENTOS; i++) {
-            fragmentosExplosion[i].dibujar(target, camara, states);
+            fragmentosExplosion[i].dibujar(target, camara, rellenar, states);
         }
     } else {
-        Elemento3D::dibujar(target, camara, states);
+        Elemento3D::dibujar(target, camara, rellenar, states);
     }
 }

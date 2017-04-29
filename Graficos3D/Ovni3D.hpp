@@ -13,7 +13,8 @@ public:
     Ovni3D(ControladorSonido *controladorSonido, float limitesMovimiento);
 
     void actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Elemento3D &nave);
-    void dibujar(sf::RenderTarget &target, Camara &camara, sf::RenderStates states = sf::RenderStates::Default) const;
+    void dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar = true,
+                 sf::RenderStates states = sf::RenderStates::Default) const;
 
     void disparar();
 

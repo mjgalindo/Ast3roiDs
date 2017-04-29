@@ -184,7 +184,7 @@ int main() {
 
         // Dibuja todos los elementos
         for (const Asteroide3D &asteroide : asteroides) {
-            asteroide.dibujar(ventana, camara);
+            asteroide.dibujar(ventana, camara, false, RenderStates());
         }
 
         // Si la nave está cerca del límite jugable considera si hay que renderizar los asteroides cercanos a su antípoda
@@ -194,11 +194,11 @@ int main() {
                 asteroide.dibujarSiCercaAntipoda(nave.pos.posicion, DISTANCIA_RENDER_PELIGRO, ventana, camara);
             }
         }
-        espacio.dibujar(ventana, camara);
-        mallaLimites.dibujar(ventana, camara);
+        espacio.dibujar(ventana, camara, false, RenderStates());
+        mallaLimites.dibujar(ventana, camara, false, RenderStates());
 
-        nave.dibujar(ventana, camara);
-        ovni.dibujar(ventana, camara);
+        nave.dibujar(ventana, camara, false, RenderStates());
+        ovni.dibujar(ventana, camara, false, RenderStates());
 
         if (camaraPrimeraPersona) {
             dibujaCruz(ventana.getSize());
