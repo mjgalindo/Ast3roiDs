@@ -94,8 +94,8 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
 
             for(unsigned int i=0 ; i<disparos.size() ; i++){
                 sf::CircleShape disparito(dimensiones.x / 200.0);
-                disparito.setPosition(posicion.x + (disparos[i].pos.posicion.x + radio) / (2 * radio) * dimensiones.x,
-                                      posicion.y + (disparos[i].pos.posicion.y + radio) / (2 * radio) * dimensiones.y);
+                disparito.setPosition(posicion.x + (disparos[i].pos.posicion.y + radio) / (2 * radio) * dimensiones.x,
+                                      posicion.y + (disparos[i].pos.posicion.z + radio) / (2 * radio) * dimensiones.y);
                 disparito.setFillColor(sf::Color::Yellow);
 
                 target.draw(disparito);
@@ -142,7 +142,7 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
             for(unsigned int i=0 ; i<disparos.size() ; i++){
                 sf::CircleShape disparito(dimensiones.x / 200.0);
                 disparito.setPosition(posicion.x + (disparos[i].pos.posicion.x + radio) / (2 * radio) * dimensiones.x,
-                                      posicion.y + (disparos[i].pos.posicion.y + radio) / (2 * radio) * dimensiones.y);
+                                      posicion.y + (disparos[i].pos.posicion.z + radio) / (2 * radio) * dimensiones.y);
                 disparito.setFillColor(sf::Color::Yellow);
 
                 target.draw(disparito);
