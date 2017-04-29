@@ -1626,9 +1626,9 @@ Estado tratarJuego3D(Estado estado) {
     };
     TipoCamara posCamara = SIGUIENDO_DETRAS;
 
-    Minimapa minimapaXY({resolucion.x - 200, resolucion.y - 400}, { 200 , 200 }, true, true, false);
+    Minimapa minimapaXY({resolucion.x - ajustar_h(200), resolucion.y - ajustar_h(200)*2.0}, { ajustar_h(200) , ajustar_h(200) }, true, true, false);
     minimapaXY.setElementos3D(&nave, &ovni, &asteroides, RADIO_ESFERA_JUGABLE);
-    Minimapa minimapaYZ({resolucion.x - 200, resolucion.y - 200}, { 200 , 200 }, false, true, true);
+    Minimapa minimapaYZ({resolucion.x - ajustar_h(200), resolucion.y - ajustar_h(200)}, { ajustar_h(200) , ajustar_h(200) }, false, true, true);
     minimapaYZ.setElementos3D(&nave, &ovni, &asteroides, RADIO_ESFERA_JUGABLE);
     while (running) {
         if (asteroides.size() == 0) {
@@ -1808,14 +1808,14 @@ Estado tratarJuego3D(Estado estado) {
         sf::Text idMapaXY;
         inicializaTexto(idMapaXY, ajustar_h(20u), 1.0);
         idMapaXY.setString("X Y");
-        idMapaXY.setPosition({resolucion.x - 100 - idMapaXY.getLocalBounds().width/2.0, resolucion.y - 300 - idMapaXY.getLocalBounds().height/2.0});
+        idMapaXY.setPosition({resolucion.x - ajustar_h(200)/2.0 - idMapaXY.getLocalBounds().width/2.0, resolucion.y - ajustar_h(200)*2.0 + ajustar_h(200)/2.0 - idMapaXY.getLocalBounds().height/2.0});
         idMapaXY.setFillColor(sf::Color(0.0,50.0,50.0,70));
         ventana.draw(idMapaXY);
         ventana.draw(minimapaXY);
         sf::Text idMapaYZ;
         inicializaTexto(idMapaYZ, ajustar_h(20u), 1.0);
         idMapaYZ.setString("Y Z");
-        idMapaYZ.setPosition({resolucion.x - 100 - idMapaYZ.getLocalBounds().width/2.0, resolucion.y - 100 - idMapaYZ.getLocalBounds().height/2.0});
+        idMapaYZ.setPosition({resolucion.x - ajustar_h(200)/2.0 - idMapaYZ.getLocalBounds().width/2.0, resolucion.y - ajustar_h(200)/2.0 - idMapaYZ.getLocalBounds().height/2.0});
         idMapaYZ.setFillColor(sf::Color(0.0,50.0,50.0,70));
         ventana.draw(idMapaYZ);
         ventana.draw(minimapaYZ);

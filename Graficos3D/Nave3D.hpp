@@ -27,6 +27,8 @@ public:
 
     void vidaExtra() { vidas++; };
 
+    std::vector<Disparo3D> getDisparos() { return disparos; };
+
     glm::vec3 velocidad;
     glm::vec3 dirFrente;
     glm::vec3 dirArriba;
