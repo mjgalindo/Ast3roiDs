@@ -974,8 +974,8 @@ Estado tratarPuntuaciones(Estado estado) {
 
     inicializaTexto(opcion2, ajustar_h(30u));
     opcion2.setString("[TAB PARA CAMBIAR MODO]");
-    opcion2.setCharacterSize(ajustar_h(30u));
-    opcion2.setPosition(sf::Vector2f(0,resolucion.y - opcion1.getLocalBounds().height - ajustar_h(20)));
+    opcion2.setCharacterSize(ajustar_h(25u));
+    opcion2.setPosition(sf::Vector2f(0,resolucion.y - opcion2.getLocalBounds().height - ajustar_h(5)));
 
     sf::Transform t;
     t.translate({opcion1.getPosition().x - ajustar_w(30), opcion1.getPosition().y + ajustar_h(20u)})
