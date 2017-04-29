@@ -52,6 +52,7 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
     if (distanciaEuclidea(pos.posicion, glm::vec3{0, 0, 0}) > limiteMovimiento) {
         // Mover la nave al lugar opuesto en el que se encuentra.
         pos.posicion = glm::vec3{0, 0, 0} - pos.posicion;
+        csonido->reproducir(ControladorSonido::TELETRANSPORTE);
     }
 
     //Se comprueba la colision con los asteroides y el ovni si la nave no es invulnerable

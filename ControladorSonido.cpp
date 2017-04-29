@@ -29,6 +29,9 @@ ControladorSonido::ControladorSonido(float volumen) {
     if (!buffers[HAS_MUERTO].loadFromFile("Recursos/Sonido/dead.wav")) {
         throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/dead.wav\"");
     }
+    if (!buffers[TELETRANSPORTE].loadFromFile("Recursos/Sonido/teleport.wav")) {
+        throw std::invalid_argument("No se pudo encontrar el fichero \"Recursos/Sonido/teleport.wav\"");
+    }
 
     for (int i = 0; i < NUM_SONIDOS; i++) {
         reproductores[i].setBuffer(buffers[i]);
@@ -37,6 +40,8 @@ ControladorSonido::ControladorSonido(float volumen) {
     reproductores[ACELERAR].setVolume(volumenBase * 1.4f);
     reproductores[OVNI_PEQUENO].setLoop(true);
     reproductores[OVNI_GRANDE].setLoop(true);
+    reproductores[OVNI_PEQUENO].setVolume(volumenBase * 0.1f);
+    reproductores[OVNI_GRANDE].setVolume(volumenBase * 0.1f);
 }
 
 sf::SoundBuffer ControladorSonido::buffer(Sonido sonido) {
@@ -58,4 +63,6 @@ void ControladorSonido::setVolumen(float nuevoVolumen) {
         reproductores[i].setVolume(volumenBase);
     }
     reproductores[ACELERAR].setVolume(volumenBase * 1.5f);
+    reproductores[OVNI_PEQUENO].setVolume(volumenBase * 0.1f);
+    reproductores[OVNI_GRANDE].setVolume(volumenBase * 0.1f);
 }
