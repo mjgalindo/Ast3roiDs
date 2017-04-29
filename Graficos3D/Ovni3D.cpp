@@ -95,8 +95,7 @@ void Ovni3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Element
 
 void Ovni3D::dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar, sf::RenderStates states) const {
     if(estado == VIVO) {
-        predibujado(camara);
-        draw(target, states);
+        Elemento3D::dibujar(target, camara, rellenar, states);
     }
     // Dibuja los disparos
     for (const Disparo3D &disparo : disparos)

@@ -976,8 +976,8 @@ Estado tratarPuntuaciones(Estado estado) {
 
     inicializaTexto(opcion2, ajustar_h(30u));
     opcion2.setString("[TAB PARA CAMBIAR MODO]");
-    opcion2.setCharacterSize(ajustar_h(30u));
-    opcion2.setPosition(sf::Vector2f(0,resolucion.y - opcion1.getLocalBounds().height - ajustar_h(20)));
+    opcion2.setCharacterSize(ajustar_h(25u));
+    opcion2.setPosition(sf::Vector2f(0,resolucion.y - opcion2.getLocalBounds().height - ajustar_h(5)));
 
     sf::Transform t;
     t.translate({opcion1.getPosition().x - ajustar_w(30), opcion1.getPosition().y + ajustar_h(20u)})
@@ -1638,9 +1638,11 @@ Estado tratarJuego3D(Estado estado) {
     };
     TipoCamara posCamara = SIGUIENDO_DETRAS;
 
-    Minimapa minimapaXY({resolucion.x - 200.f, resolucion.y - 400.f}, { 200 , 200 }, true, true, false);
+    Minimapa minimapaXY({resolucion.x - ajustar_h(200.0f), resolucion.y - ajustar_h(200.0f) * 2.0f},
+                        {ajustar_h(200u), ajustar_h(200u)}, true, true, false);
     minimapaXY.setElementos3D(&nave, &ovni, &asteroides, RADIO_ESFERA_JUGABLE);
-    Minimapa minimapaYZ({resolucion.x - 200.f, resolucion.y - 200.f}, { 200 , 200 }, false, true, true);
+    Minimapa minimapaYZ({resolucion.x - ajustar_h(200.0f), resolucion.y - ajustar_h(200.0f)},
+                        {ajustar_h(200u), ajustar_h(200u)}, false, true, true);
     minimapaYZ.setElementos3D(&nave, &ovni, &asteroides, RADIO_ESFERA_JUGABLE);
 
     while (running) {
@@ -1821,17 +1823,19 @@ Estado tratarJuego3D(Estado estado) {
         sf::Text idMapaXY;
         inicializaTexto(idMapaXY, ajustar_h(20u), 1.0);
         idMapaXY.setString("X Y");
-        idMapaXY.setPosition({resolucion.x - 100 - idMapaXY.getLocalBounds().width/2.0f,
-                              resolucion.y - 300 - idMapaXY.getLocalBounds().height/2.0f});
-        idMapaXY.setFillColor(sf::Color(0,50,50,70));
+        idMapaXY.setPosition({resolucion.x - ajustar_h(200) / 2.0f - idMapaXY.getLocalBounds().width / 2.0f,
+                              resolucion.y - ajustar_h(200) * 2.0f + ajustar_h(200) / 2.0f -
+                              idMapaXY.getLocalBounds().height / 2.0f});
+        idMapaXY.setFillColor(sf::Color(0, 50, 50, 70));
+
         ventana.draw(idMapaXY);
         ventana.draw(minimapaXY);
         sf::Text idMapaYZ;
         inicializaTexto(idMapaYZ, ajustar_h(20u), 1.0);
         idMapaYZ.setString("Y Z");
-        idMapaYZ.setPosition({resolucion.x - 100 - idMapaYZ.getLocalBounds().width/2.0f,
-                              resolucion.y - 100 - idMapaYZ.getLocalBounds().height/2.0f});
-        idMapaYZ.setFillColor(sf::Color(0,50,50,70));
+        idMapaYZ.setPosition({resolucion.x - ajustar_h(200) / 2.0f - idMapaYZ.getLocalBounds().width / 2.0f,
+                              resolucion.y - ajustar_h(200) / 2.0f - idMapaYZ.getLocalBounds().height / 2.0f});
+        idMapaYZ.setFillColor(sf::Color(0, 50, 50, 70));
         ventana.draw(idMapaYZ);
         ventana.draw(minimapaYZ);
 

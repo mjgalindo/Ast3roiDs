@@ -43,6 +43,17 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
 
             target.draw(navecita);
 
+            std::vector<Disparo3D> disparos = nave->getDisparos();
+
+            for(unsigned int i=0 ; i<disparos.size() ; i++){
+                sf::CircleShape disparito(dimensiones.x / 200.0);
+                disparito.setPosition(posicion.x + (disparos[i].pos.posicion.x + radio) / (2 * radio) * dimensiones.x,
+                                     posicion.y + (disparos[i].pos.posicion.y + radio) / (2 * radio) * dimensiones.y);
+                disparito.setFillColor(sf::Color::Yellow);
+
+                target.draw(disparito);
+            }
+
             if(!ovni->getEstado()==MUERTO) {
                 sf::CircleShape ovnicito(dimensiones.x / 50.0);
                 ovnicito.setPosition(posicion.x + (ovni->pos.posicion.x + radio) / (2 * radio) * dimensiones.x,
@@ -79,6 +90,17 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
 
             target.draw(navecita);
 
+            std::vector<Disparo3D> disparos = nave->getDisparos();
+
+            for(unsigned int i=0 ; i<disparos.size() ; i++){
+                sf::CircleShape disparito(dimensiones.x / 200.0);
+                disparito.setPosition(posicion.x + (disparos[i].pos.posicion.x + radio) / (2 * radio) * dimensiones.x,
+                                      posicion.y + (disparos[i].pos.posicion.y + radio) / (2 * radio) * dimensiones.y);
+                disparito.setFillColor(sf::Color::Yellow);
+
+                target.draw(disparito);
+            }
+
             if(!ovni->getEstado()==MUERTO) {
                 sf::CircleShape ovnicito(dimensiones.x / 50.0);
                 ovnicito.setPosition(posicion.x + (ovni->pos.posicion.y + radio) / (2 * radio) * dimensiones.x,
@@ -114,6 +136,17 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
             navecita.setFillColor(sf::Color::Yellow);
 
             target.draw(navecita);
+
+            std::vector<Disparo3D> disparos = nave->getDisparos();
+
+            for(unsigned int i=0 ; i<disparos.size() ; i++){
+                sf::CircleShape disparito(dimensiones.x / 200.0);
+                disparito.setPosition(posicion.x + (disparos[i].pos.posicion.x + radio) / (2 * radio) * dimensiones.x,
+                                      posicion.y + (disparos[i].pos.posicion.y + radio) / (2 * radio) * dimensiones.y);
+                disparito.setFillColor(sf::Color::Yellow);
+
+                target.draw(disparito);
+            }
 
             if(!ovni->getEstado()==MUERTO) {
                 sf::CircleShape ovnicito(dimensiones.x / 50.0);
