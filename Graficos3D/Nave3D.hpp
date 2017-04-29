@@ -7,6 +7,7 @@
 #include "Asteroide3D.hpp"
 #include "Ovni3D.hpp"
 #include "Disparo3D.hpp"
+#include "../Estados.hpp"
 
 class Nave3D : public Elemento3D {
 public:
