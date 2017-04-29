@@ -52,7 +52,6 @@ struct Configuracion {
         acelerar = sf::Keyboard::A;
         disparar = sf::Keyboard::D;
         hiperespacio = sf::Keyboard::Space;
-        alambre = false;
     }
 
     sf::Color color() {
@@ -1638,6 +1637,17 @@ Estado tratarJuego3D(Estado estado) {
     };
     TipoCamara posCamara = SIGUIENDO_DETRAS;
 
+    sf::Texture texture;
+    if (!texture.loadFromFile("Recursos/ui_vidas.png"))
+    {
+        cout << "Error al carcar ui_vidas.png" <<endl;
+    }
+    sf::Texture texture2;
+    if (!texture2.loadFromFile("Recursos/ui_puntos.png"))
+    {
+        cout << "Error al carcar ui_puntuacion.png" <<endl;
+    }
+
     Minimapa minimapaXY({resolucion.x - ajustar_h(200.0f), resolucion.y - ajustar_h(200.0f) * 2.0f},
                         {ajustar_h(200u), ajustar_h(200u)}, true, true, false);
     minimapaXY.setElementos3D(&nave, &ovni, &asteroides, RADIO_ESFERA_JUGABLE);
@@ -1805,21 +1815,42 @@ Estado tratarJuego3D(Estado estado) {
         ventana.pushGLStates();
 
         // Se dibuja la puntuacion
+        sf::Sprite marco_puntuacion;
+        marco_puntuacion.setTexture(texture2);
+        float escaladoHorizontal = 0.20f;
+        int p = puntuacion;
+        int i;
+        for(i =0; p>0;i++){
+            p = p/10;
+        }
+        if ( i>4) escaladoHorizontal = 0.20+0.025*(i-4);
+        marco_puntuacion.scale({ajustar_w(escaladoHorizontal), ajustar_h(0.2f)});
+        marco_puntuacion.setPosition(ajustar_w(1.0f),ajustar_h(1.0f));
+        ventana.draw(marco_puntuacion);
+
         sf::Text puntuacionText;
-        inicializaTexto(puntuacionText, ajustar_h(50u), 1.5);
-        string puntuacionesStr = "PUNTUACION: ";
+        inicializaTexto(puntuacionText, ajustar_h(35u), 1.5);
+        string puntuacionesStr = "P: ";
         puntuacionesStr.append(std::to_string(puntuacion));
         puntuacionText.setString(puntuacionesStr);
-        puntuacionText.setPosition({0.0f,0.0f});
+        puntuacionText.setPosition({ajustar_w(12.0f),ajustar_h(12.0f)});
         ventana.draw(puntuacionText);
 
+        //Se dibuja la vida
+
+        sf::Sprite marco_vidas;
+        marco_vidas.setTexture(texture);
+        marco_vidas.scale({ajustar_w(0.15f), ajustar_h(0.20)});
+        marco_vidas.setPosition({ajustar_w(3.0f), ajustar_h(55.0f)});
+        ventana.draw(marco_vidas);
         sf::Text vidasText;
-        inicializaTexto(vidasText, ajustar_h(50u), 1.5);
-        string vidasStr = "VIDAS: ";
+        inicializaTexto(vidasText, ajustar_h(35u), 1.5);
+        string vidasStr = "  ";
         vidasStr.append(std::to_string(nave.getVidas()));
         vidasText.setString(vidasStr);
-        vidasText.setPosition({0.0f, ajustar_h(55.0f)});
+        vidasText.setPosition({ajustar_w(5.0f), ajustar_h(65.0f)});
         ventana.draw(vidasText);
+
         sf::Text idMapaXY;
         inicializaTexto(idMapaXY, ajustar_h(20u), 1.0);
         idMapaXY.setString("X Y");
