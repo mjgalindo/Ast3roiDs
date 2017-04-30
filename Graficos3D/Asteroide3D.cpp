@@ -260,7 +260,9 @@ void Asteroide3D::dibujarSiCercaAntipoda(glm::vec3 puntoCercano, float distancia
 
         glm::vec3 posicionReal = pos.posicion;
         pos.posicion = puntoCercano + (pos.posicion - antipoda);
-
+        if (distanciaEuclidea(pos.posicion, glm::vec3{0,0,0}) < limiteMovimiento ) {
+            pos.posicion = puntoInterseccion - pos.posicion;
+        }
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Muestra sollo la malla sin rellenar triangulos
         dibujar(target, camara, false, states);
         pos.posicion = posicionReal;
