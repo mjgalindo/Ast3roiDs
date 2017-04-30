@@ -1789,7 +1789,7 @@ Estado tratarJuego3D(Estado estado) {
 
         // Dibuja todos los elementos
         for (const Asteroide3D &asteroide : asteroides) {
-            asteroide.dibujar(ventana, camara, configuracionGlobal.alambre);
+            asteroide.dibujar(ventana, camara, !configuracionGlobal.alambre);
         }
 
         // Si la nave está cerca del límite jugable considera si hay que renderizar los asteroides cercanos a su antípoda
@@ -1802,8 +1802,8 @@ Estado tratarJuego3D(Estado estado) {
         espacio.dibujar(ventana, camara, true);
         if(posCamara != DESDE_ARRIBA) mallaLimites.dibujar(ventana, camara, false);
 
-        nave.dibujar(ventana, camara, configuracionGlobal.alambre | posCamara == PRIMERA_PERSONA);
-        ovni.dibujar(ventana, camara, configuracionGlobal.alambre);
+        nave.dibujar(ventana, camara, !configuracionGlobal.alambre && posCamara != PRIMERA_PERSONA);
+        ovni.dibujar(ventana, camara, !configuracionGlobal.alambre);
 
         if (posCamara == PRIMERA_PERSONA) {
             dibujaCruz(ventana.getSize());
@@ -1840,7 +1840,7 @@ Estado tratarJuego3D(Estado estado) {
 
         sf::Sprite marco_vidas;
         marco_vidas.setTexture(texture);
-        marco_vidas.scale({ajustar_w(0.15f), ajustar_h(0.20)});
+        marco_vidas.scale({ajustar_w(0.15f), ajustar_h(0.20f)});
         marco_vidas.setPosition({ajustar_w(3.0f), ajustar_h(55.0f)});
         ventana.draw(marco_vidas);
         sf::Text vidasText;

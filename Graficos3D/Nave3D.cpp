@@ -143,8 +143,8 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
 void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar, sf::RenderStates states) const {
     // Dibuja los disparos
     for (const Disparo3D &disparo : disparos)
-        disparo.dibujar(target, camara, false, states);
-    Elemento3D::dibujar(target, camara, rellenar | estado != INVULNERABLE, states);
+        disparo.dibujar(target, camara, rellenar, states);
+    Elemento3D::dibujar(target, camara, rellenar && estado != INVULNERABLE, states);
 }
 
 void Nave3D::disparar() {
