@@ -1661,7 +1661,41 @@ Estado tratarJuego3D(Estado estado) {
                         {ajustar_h(200u), ajustar_h(200u)}, false, true, true);
     minimapaYZ.setElementos3D(&nave, ovni, &asteroides, RADIO_ESFERA_JUGABLE);
 
+
+    //UI pausar
+    sf::RectangleShape cuadroSalir1({ajustar_w(420.0f), ajustar_h(220.0f)});
+    sf::RectangleShape cuadroSalir2({ajustar_w(400.0f), ajustar_h(200.0f)});
+    cuadroSalir1.setFillColor(configuracionGlobal.color());
+    cuadroSalir1.setPosition(configuracionGlobal.resolucion.x / 2.0f - cuadroSalir1.getSize().x / 2.0f,
+                             configuracionGlobal.resolucion.y / 2.0f - cuadroSalir1.getSize().y / 2.0f);
+    cuadroSalir2.setFillColor(sf::Color::Black);
+    cuadroSalir2.setPosition(configuracionGlobal.resolucion.x / 2.0f - cuadroSalir2.getSize().x / 2.0f,
+                             configuracionGlobal.resolucion.y / 2.0f - cuadroSalir2.getSize().y / 2.0f);
+    sf::Text textoSalir;
+    inicializaTexto(textoSalir, ajustar_h(30u));
+    textoSalir.setString("SALIR?");
+    textoSalir.setPosition(configuracionGlobal.resolucion.x / 2.0f - textoSalir.getLocalBounds().width / 2.0f,
+                           configuracionGlobal.resolucion.y / 2.0f - ajustar_h(60u));
+
+    sf::Text opcionSi;
+    inicializaTexto(opcionSi, ajustar_h(30u));
+    opcionSi.setString("SI");
+    opcionSi.setPosition(
+            configuracionGlobal.resolucion.x / 2.0f - ajustar_w(60u) - opcionSi.getLocalBounds().width / 2.0f,
+            configuracionGlobal.resolucion.y / 2.0f + ajustar_h(30u));
+    sf::Text opcionNo;
+    inicializaTexto(opcionNo, ajustar_h(30u));
+    opcionNo.setString("NO");
+    opcionNo.setPosition(
+            configuracionGlobal.resolucion.x / 2.0f + ajustar_w(60u) - opcionNo.getLocalBounds().width / 2.0f,
+            configuracionGlobal.resolucion.y / 2.0f + ajustar_h(30u));
+    bool pausarJuego = false;
+    enum OpcionSalir {
+        SI, NO
+    };
+    OpcionSalir seleccionSalir = NO;
     while (running) {
+        if (pausarJuego)
         if (asteroides.size() == 0) {
             nivel++;
 
@@ -1692,36 +1726,42 @@ Estado tratarJuego3D(Estado estado) {
                         break;
                     }
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::F1) {
+                    if (event.key.code == sf::Keyboard::F1 && !pausarJuego) {
                         posCamara = SIGUIENDO_DETRAS;
                         break;
-                    } else if (event.key.code == sf::Keyboard::F2) {
+                    } else if (event.key.code == sf::Keyboard::F2 && !pausarJuego) {
                         posCamara = PRIMERA_PERSONA;
                         break;
-                    } else if (event.key.code == sf::Keyboard::F3) {
+                    } else if (event.key.code == sf::Keyboard::F3 && !pausarJuego) {
                         posCamara = LIBRE;
                         break;
-                    } else if (event.key.code == sf::Keyboard::F4) {
+                    } else if (event.key.code == sf::Keyboard::F4 && !pausarJuego) {
                         posCamara = SIGUIENDO_LIBRE;
                         break;
-                    } else if (event.key.code == sf::Keyboard::F5) {
+                    } else if (event.key.code == sf::Keyboard::F5 && !pausarJuego) {
                         posCamara = DESDE_ARRIBA;
-                        /**
-                        camara.pos = {0.0f, RADIO_ESFERA_JUGABLE * 2.4f, 0.0f};
-                        camara.forward = {0.0f, -1.0f, 0.0f};
-                        camara.up = {1.0f, 0.0f, 0.0f};
-                         */
                         break;
-                    } else if (event.key.code == configuracionGlobal.disparar) {
+                    } else if (event.key.code == configuracionGlobal.disparar && !pausarJuego) {
                         nave.disparar();
                         break;
-                    } else if(event.key.code == configuracionGlobal.hiperespacio){
+                    } else if(event.key.code == configuracionGlobal.hiperespacio && !pausarJuego){
                         nave.hiperespacio();
                         break;
-                    } else if (event.key.code != sf::Keyboard::Escape) { break; }
-                case sf::Event::Closed:
-                    running = false;
-                    break;
+                    } else if (event.key.code == sf::Keyboard::Escape) {
+                        pausarJuego = !pausarJuego;
+                    } else if (pausarJuego and event.key.code == sf::Keyboard::Return) {
+                        if (seleccionSalir == NO) {
+                            // Continuar jugando
+                            pausarJuego = false;
+                        } else {
+                            // Salir del juego
+                            running = false;
+                        }
+                    } else if (pausarJuego and event.key.code == sf::Keyboard::Left) {
+                        seleccionSalir = SI;
+                    } else if (pausarJuego and event.key.code == sf::Keyboard::Right) {
+                        seleccionSalir = NO;
+                    }
                 default:
                     break;
             }
@@ -1740,7 +1780,8 @@ Estado tratarJuego3D(Estado estado) {
             if (ventana.hasFocus()) sf::Mouse::setPosition({(int) resolucion.x / 2, (int) resolucion.y / 2}, ventana);
         }
 
-        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LAlt)) {
+        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LAlt) && !pausarJuego) {
+
             nave.actualizar(nivel, asteroides, *ovni, avanceCursor);
 
             if (nave.getVidas() < 0) {
@@ -1898,6 +1939,24 @@ Estado tratarJuego3D(Estado estado) {
         ventana.draw(idMapaYZ);
         ventana.draw(minimapaYZ);
 
+        if(pausarJuego){
+            sf::Transform tPausa;
+            if (seleccionSalir == SI) {
+                tPausa.translate({opcionSi.getPosition().x - ajustar_w(30), opcionSi.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+
+            } else {
+                tPausa.translate({opcionNo.getPosition().x - ajustar_w(30), opcionNo.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+            }
+            ventana.draw(cuadroSalir1);
+            ventana.draw(cuadroSalir2);
+            ventana.draw(textoSalir);
+            ventana.draw(opcionSi);
+            ventana.draw(opcionNo);
+            ventana.draw(poligono, tPausa);
+            ventana.display();
+        }
         // restore the state
         ventana.popGLStates();
 
