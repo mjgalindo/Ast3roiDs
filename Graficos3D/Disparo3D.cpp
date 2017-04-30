@@ -16,6 +16,11 @@ Disparo3D::Disparo3D(glm::vec3 direccion, glm::vec3 posicion, glm::quat rotacion
     posicionInicial = posicion;
 }
 
+void Disparo3D::cambioDisparoEsferico() {
+    modelo3D = ControladorModelos::getModelo(ControladorModelos::TipoModelo::ESFERA);
+    pos.escala = { 0.3f, 0.3f, 0.3f };
+}
+
 void Disparo3D::actualizar() {
     pos.posicion = pos.posicion + velocidad;
     if ((pos.posicion.x != pos.posicion.x) | (pos.posicion.y != pos.posicion.y) | (pos.posicion.z != pos.posicion.z)){

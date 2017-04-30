@@ -9,6 +9,7 @@ public:
     Disparo3D(glm::vec3 direccion, glm::vec3 posicion, glm::quat rotacion, float limitesMovimiento);
 
     void actualizar();
+    void cambioDisparoEsferico();
 
     static constexpr float VELOCIDAD_BASE = 3.0f;
     static constexpr float DISTANCIA_MAX = 230.0f;
