@@ -131,6 +131,7 @@ void Ovni3D::cambiarEstado(EstadoOvni nuevoEstado) {
         velocidad = VELOCIDAD_INICIAL*direccion;
         csonido->reproducir(sonidoOvni,false);
     } else if(estado == MUERTO) {
+        csonido->reproducir(ControladorSonido::EXP_2);
         csonido->detener(sonidoOvni);
     }
 }
