@@ -1663,12 +1663,12 @@ Estado tratarJuego3D(Estado estado) {
 
 
     //UI pausar
-    sf::RectangleShape cuadroSalir1({ajustar_w(420.0f), ajustar_h(220.0f)});
-    sf::RectangleShape cuadroSalir2({ajustar_w(400.0f), ajustar_h(200.0f)});
-    cuadroSalir1.setFillColor(configuracionGlobal.color());
+    sf::RectangleShape cuadroSalir1({ajustar_w(370.0f), ajustar_h(220.0f)});
+    sf::RectangleShape cuadroSalir2({ajustar_w(355.0f), ajustar_h(200.0f)});
+    cuadroSalir1.setFillColor(sf::Color(80,80,80,150));
     cuadroSalir1.setPosition(configuracionGlobal.resolucion.x / 2.0f - cuadroSalir1.getSize().x / 2.0f,
                              configuracionGlobal.resolucion.y / 2.0f - cuadroSalir1.getSize().y / 2.0f);
-    cuadroSalir2.setFillColor(sf::Color::Black);
+    cuadroSalir2.setFillColor(sf::Color(0,100,100,100));
     cuadroSalir2.setPosition(configuracionGlobal.resolucion.x / 2.0f - cuadroSalir2.getSize().x / 2.0f,
                              configuracionGlobal.resolucion.y / 2.0f - cuadroSalir2.getSize().y / 2.0f);
     sf::Text textoSalir;
