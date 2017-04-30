@@ -1739,7 +1739,7 @@ Estado tratarJuego3D(Estado estado) {
                 csonido->reproducir(ControladorSonido::VIDA_EXTRA);
             }
 
-            //ovni.actualizar(nivel, asteroides, nave);
+            ovni.actualizar(nivel, asteroides, nave);
 
             // Mueve todos los asteroides y elimina los que estén destruidos.
             for (int i = 0; i < asteroides.size(); ++i) {
@@ -1823,7 +1823,7 @@ Estado tratarJuego3D(Estado estado) {
         for(i =0; p>0;i++){
             p = p/10;
         }
-        if ( i>4) escaladoHorizontal = 0.20+0.025*(i-4);
+        if ( i>4) escaladoHorizontal = 0.20f+0.025f*(i-4);
         marco_puntuacion.scale({ajustar_w(escaladoHorizontal), ajustar_h(0.2f)});
         marco_puntuacion.setPosition(ajustar_w(1.0f),ajustar_h(1.0f));
         ventana.draw(marco_puntuacion);
