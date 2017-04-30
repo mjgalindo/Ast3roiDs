@@ -112,7 +112,8 @@ void Ovni3D::dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar, sf
 }
 
 void Ovni3D::disparar() {
-    disparos.emplace_back(direccion, pos.posicion, pos.rotacion, limiteMovimiento);
+    glm::vec3 dirDisp = glm::normalize(glm::vec3(valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f),valorAleatorio(-1.0f,1.0f)));
+    disparos.emplace_back(dirDisp, pos.posicion, pos.rotacion, limiteMovimiento);
 
     csonido->reproducir(ControladorSonido::DISPARO,true);
 }
