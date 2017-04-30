@@ -89,7 +89,6 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
         }
     }
 
-    cout << disparos.size() << '\n';
     // Actualiza los disparos de la nave
     for (int i = 0; i < disparos.size(); i++) {
         disparos[i].actualizar();
