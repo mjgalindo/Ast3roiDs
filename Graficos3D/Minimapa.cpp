@@ -38,7 +38,7 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
 
         if(ejeX && ejeY){
             sf::CircleShape navecita(dimensiones.x/50.0f);
-            navecita.setPosition(posicion.x+(nave->pos.posicion.x+radio)/(2*radio)*dimensiones.x-dimensiones.x/50.0, posicion.y+(nave->pos.posicion.y+radio)/(2*radio)*dimensiones.y-dimensiones.x/50.0);
+            navecita.setPosition(posicion.x+(nave->pos.posicion.x+radio)/(2*radio)*dimensiones.x-dimensiones.x/50.0f, posicion.y+(nave->pos.posicion.y+radio)/(2*radio)*dimensiones.y-dimensiones.x/50.0f);
             navecita.setFillColor(sf::Color::Yellow);
 
             target.draw(navecita);
@@ -47,8 +47,8 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
 
             for(unsigned int i=0 ; i<disparos.size() ; i++){
                 sf::CircleShape disparito(dimensiones.x / 200.0f);
-                disparito.setPosition(posicion.x + (disparos[i].pos.posicion.x + radio) / (2 * radio) * dimensiones.x-dimensiones.x/200.0,
-                                     posicion.y + (disparos[i].pos.posicion.y + radio) / (2 * radio) * dimensiones.y-dimensiones.x/200.0);
+                disparito.setPosition(posicion.x + (disparos[i].pos.posicion.x + radio) / (2 * radio) * dimensiones.x-dimensiones.x/200.0f,
+                                     posicion.y + (disparos[i].pos.posicion.y + radio) / (2 * radio) * dimensiones.y-dimensiones.x/200.0f);
                 disparito.setFillColor(sf::Color::Yellow);
 
                 target.draw(disparito);
@@ -56,8 +56,8 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
 
             if(!ovni->getEstado()==MUERTO) {
                 sf::CircleShape ovnicito(dimensiones.x / 50.0f);
-                ovnicito.setPosition(posicion.x + (ovni->pos.posicion.x + radio) / (2 * radio) * dimensiones.x-dimensiones.x/50.0,
-                                     posicion.y + (ovni->pos.posicion.y + radio) / (2 * radio) * dimensiones.y-dimensiones.x/50.0);
+                ovnicito.setPosition(posicion.x + (ovni->pos.posicion.x + radio) / (2 * radio) * dimensiones.x-dimensiones.x/50.0f,
+                                     posicion.y + (ovni->pos.posicion.y + radio) / (2 * radio) * dimensiones.y-dimensiones.x/50.0f);
                 ovnicito.setFillColor(sf::Color::Green);
 
                 target.draw(ovnicito);
@@ -86,7 +86,7 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
         }
         else if(ejeY && ejeZ){
             sf::CircleShape navecita(dimensiones.x/50.0f);
-            navecita.setPosition(posicion.x+(nave->pos.posicion.y+radio)/(2*radio)*dimensiones.x-dimensiones.x/50.0, posicion.y+(nave->pos.posicion.z+radio)/(2*radio)*dimensiones.y-dimensiones.x/50.0);
+            navecita.setPosition(posicion.x+(nave->pos.posicion.y+radio)/(2*radio)*dimensiones.x-dimensiones.x/50.0f, posicion.y+(nave->pos.posicion.z+radio)/(2*radio)*dimensiones.y-dimensiones.x/50.0f);
             navecita.setFillColor(sf::Color::Yellow);
 
             target.draw(navecita);
@@ -95,8 +95,8 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
 
             for(unsigned int i=0 ; i<disparos.size() ; i++){
                 sf::CircleShape disparito(dimensiones.x / 200.0f);
-                disparito.setPosition(posicion.x + (disparos[i].pos.posicion.y + radio) / (2 * radio) * dimensiones.x-dimensiones.x/200.0,
-                                      posicion.y + (disparos[i].pos.posicion.z + radio) / (2 * radio) * dimensiones.y-dimensiones.x/200.0);
+                disparito.setPosition(posicion.x + (disparos[i].pos.posicion.y + radio) / (2 * radio) * dimensiones.x-dimensiones.x/200.0f,
+                                      posicion.y + (disparos[i].pos.posicion.z + radio) / (2 * radio) * dimensiones.y-dimensiones.x/200.0f);
                 disparito.setFillColor(sf::Color::Yellow);
 
                 target.draw(disparito);
@@ -104,8 +104,8 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
 
             if(!ovni->getEstado()==MUERTO) {
                 sf::CircleShape ovnicito(dimensiones.x / 50.0f);
-                ovnicito.setPosition(posicion.x + (ovni->pos.posicion.y + radio) / (2 * radio) * dimensiones.x-dimensiones.x/50.0,
-                                     posicion.y + (ovni->pos.posicion.z + radio) / (2 * radio) * dimensiones.y-dimensiones.x/50.0);
+                ovnicito.setPosition(posicion.x + (ovni->pos.posicion.y + radio) / (2 * radio) * dimensiones.x-dimensiones.x/50.0f,
+                                     posicion.y + (ovni->pos.posicion.z + radio) / (2 * radio) * dimensiones.y-dimensiones.x/50.0f);
                 ovnicito.setFillColor(sf::Color::Green);
 
                 target.draw(ovnicito);
@@ -134,8 +134,8 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
         }
         else if(ejeX && ejeZ){
             sf::CircleShape navecita(dimensiones.x/50.0f);
-            navecita.setPosition(posicion.x+(nave->pos.posicion.x+radio)/(2*radio)*dimensiones.x-dimensiones.x/50.0,
-                                 posicion.y+(nave->pos.posicion.z+radio)/(2*radio)*dimensiones.y-dimensiones.x/50.0);
+            navecita.setPosition(posicion.x+(nave->pos.posicion.x+radio)/(2*radio)*dimensiones.x-dimensiones.x/50.0f,
+                                 posicion.y+(nave->pos.posicion.z+radio)/(2*radio)*dimensiones.y-dimensiones.x/50.0f);
             navecita.setFillColor(sf::Color::Yellow);
 
             target.draw(navecita);
@@ -144,8 +144,8 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
 
             for(unsigned int i=0 ; i<disparos.size() ; i++){
                 sf::CircleShape disparito(dimensiones.x / 200.0f);
-                disparito.setPosition(posicion.x + (disparos[i].pos.posicion.x + radio) / (2 * radio) * dimensiones.x-dimensiones.x/50.0,
-                                      posicion.y + (disparos[i].pos.posicion.z + radio) / (2 * radio) * dimensiones.y-dimensiones.x/50.0);
+                disparito.setPosition(posicion.x + (disparos[i].pos.posicion.x + radio) / (2 * radio) * dimensiones.x-dimensiones.x/200.0f,
+                                      posicion.y + (disparos[i].pos.posicion.z + radio) / (2 * radio) * dimensiones.y-dimensiones.x/200.0f);
                 disparito.setFillColor(sf::Color::Yellow);
 
                 target.draw(disparito);
@@ -153,8 +153,8 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
 
             if(!ovni->getEstado()==MUERTO) {
                 sf::CircleShape ovnicito(dimensiones.x / 50.0f);
-                ovnicito.setPosition(posicion.x + (ovni->pos.posicion.x + radio) / (2 * radio) * dimensiones.x-dimensiones.x/50.0,
-                                     posicion.y + (ovni->pos.posicion.z + radio) / (2 * radio) * dimensiones.y-dimensiones.x/50.0);
+                ovnicito.setPosition(posicion.x + (ovni->pos.posicion.x + radio) / (2 * radio) * dimensiones.x-dimensiones.x/50.0f,
+                                     posicion.y + (ovni->pos.posicion.z + radio) / (2 * radio) * dimensiones.y-dimensiones.x/50.0f);
                 ovnicito.setFillColor(sf::Color::Green);
 
                 target.draw(ovnicito);
