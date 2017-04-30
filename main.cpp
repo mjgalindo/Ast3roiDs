@@ -1617,7 +1617,7 @@ Estado tratarJuego3D(Estado estado) {
 
     // Carga asteroides para ver como se mueve la nave
     vector<Asteroide3D> asteroides;
-    int numeroDeAsteroides = 4;
+    int numeroDeAsteroides = 6;
     for (int i = 0; i < numeroDeAsteroides; i++)
         asteroides.emplace_back(csonido.get(), RADIO_ESFERA_JUGABLE);
 
@@ -1672,8 +1672,8 @@ Estado tratarJuego3D(Estado estado) {
                 probabilidadOvniTon -= 0.05;
             }
 
-            if (numeroDeAsteroides > 12) {
-                numeroDeAsteroides = 12;
+            if (numeroDeAsteroides > 18) {
+                numeroDeAsteroides = 18;
             }
             else{
                 numeroDeAsteroides+=2;
