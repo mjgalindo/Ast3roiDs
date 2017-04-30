@@ -73,6 +73,8 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
                     case TAM3D_2:
                         *puntuacion += 100;
                         break;
+                    default:
+                        break;
                 }
                 destruir();
                 break;
@@ -87,17 +89,24 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
         }
     }
 
+    cout << disparos.size() << '\n';
     // Actualiza los disparos de la nave
     for (int i = 0; i < disparos.size(); i++) {
         disparos[i].actualizar();
-
-        bool colisionado = false;
+        // Si el disparo ha alcanzado el final de su trayectoria se borra y
+        // se continua con el siguiente
+        if (disparos[i].estado == DESTRUIDO){
+            disparos.erase(disparos.begin() + i);
+            i--;
+            continue;
+        }
 
         //Se comprueba la colision de los disparos con los asteroides
         for (int j = 0; j < asteroides.size(); j++) {
-            if (colisionPuntoEsfera(disparos[i].pos.posicion, asteroides[j].pos.posicion,
-                                    1.0f * asteroides[j].pos.escala.y)) {
-                //COLISION!!!!!!!!!!!!
+            if (asteroides[j].estado == NORMAL &&
+                    colisionPuntoEsfera(disparos[i].pos.posicion,
+                                        asteroides[j].pos.posicion, 1.0f * asteroides[j].pos.escala.y)) {
+                // Colision disparo-asteroide
                 asteroides[j].colisionDetectada(nivel, asteroides);
                 switch(asteroides[j].getTamano3D()){
                     case TAM3D_0:
@@ -109,20 +118,22 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
                     case TAM3D_2:
                         *puntuacion += 100;
                         break;
+                    default:
+                        break;
                 }
-                colisionado = true;
+                disparos[i].estado = DESTRUIDO;
                 break;
             }
         }
 
         //Se comprueba la colision de los disparos con el ovni
-        if(!colisionado && ovni.getEstado()==VIVO && colisionPuntoEsfera(disparos[i].pos.posicion, ovni.pos.posicion, 7.6f*ovni.pos.escala.z)){
-            colisionado = true;
+        if(disparos[i].estado != DESTRUIDO && ovni.getEstado()==VIVO && colisionPuntoEsfera(disparos[i].pos.posicion, ovni.pos.posicion, 7.6f*ovni.pos.escala.z)){
+            disparos[i].estado = DESTRUIDO;
             *puntuacion += 1000;
             ovni.cambiarEstado(EstadoOvni::MUERTO);
         }
 
-        if (colisionado || disparos[i].estado == DESTRUIDO) {
+        if (disparos[i].estado == DESTRUIDO) {
             disparos.erase(disparos.begin() + i);
             i--;
         }
@@ -132,8 +143,8 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
 void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar, sf::RenderStates states) const {
     // Dibuja los disparos
     for (const Disparo3D &disparo : disparos)
-        disparo.dibujar(target, camara, false, states);
-    Elemento3D::dibujar(target, camara, rellenar | estado != INVULNERABLE, states);
+        disparo.dibujar(target, camara, rellenar, states);
+    Elemento3D::dibujar(target, camara, rellenar && estado != INVULNERABLE, states);
 }
 
 void Nave3D::disparar() {

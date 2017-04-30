@@ -18,6 +18,12 @@ Disparo3D::Disparo3D(glm::vec3 direccion, glm::vec3 posicion, glm::quat rotacion
 
 void Disparo3D::actualizar() {
     pos.posicion = pos.posicion + velocidad;
+    if ((pos.posicion.x != pos.posicion.x) | (pos.posicion.y != pos.posicion.y) | (pos.posicion.z != pos.posicion.z)){
+        // Pueden suceder errores de coma flotante que causaran que alguno de los valores de posición tenga un valor no
+        // válido. En tal caso se destruye el disparo.
+        estado = DESTRUIDO;
+        return;
+    }
     if (distanciaEuclidea(pos.posicion, glm::vec3{0, 0, 0}) > limiteMovimiento) {
         distanciaRestante = distanciaRestante - distanciaEuclidea(pos.posicion, posicionInicial);
         posicionInicial = pos.posicion;
