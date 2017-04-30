@@ -1739,7 +1739,7 @@ Estado tratarJuego3D(Estado estado) {
                 csonido->reproducir(ControladorSonido::VIDA_EXTRA);
             }
 
-            ovni.actualizar(nivel, asteroides, nave);
+            //ovni.actualizar(nivel, asteroides, nave);
 
             // Mueve todos los asteroides y elimina los que estén destruidos.
             for (int i = 0; i < asteroides.size(); ++i) {

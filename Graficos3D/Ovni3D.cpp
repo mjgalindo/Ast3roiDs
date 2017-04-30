@@ -60,31 +60,37 @@ void Ovni3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Element
             cambiarEstado(VIVO);
         }
     }
-    bool colisionado = false;
+
     // Actualiza los disparos del ovni
     for (int i = 0; i < disparos.size(); i++) {
         disparos[i].actualizar();
+        // Si el disparo ha alcanzado el final de su trayectoria se borra y
+        // se continua con el siguiente
+        if (disparos[i].estado == DESTRUIDO){
+            disparos.erase(disparos.begin() + i);
+            i--;
+            continue;
+        }
 
         //Se comprueba la colision de los disparos con los asteroides
         for (int j = 0; j < asteroides.size(); j++) {
-            if (colisionPuntoEsfera(disparos[i].pos.posicion, asteroides[j].pos.posicion,
-                                    1.0f * asteroides[j].pos.escala.y)) {
-                //COLISION!!!!!!!!!!!!
-                asteroides[j].colisionDetectada(nivel,asteroides);
-                asteroides.erase(asteroides.begin() + j);
-                j--;
-                colisionado = true;
+            if (asteroides[j].estado == NORMAL &&
+                colisionPuntoEsfera(disparos[i].pos.posicion,
+                                    asteroides[j].pos.posicion, 1.0f * asteroides[j].pos.escala.y)) {
+                // Colision disparo-asteroide
+                asteroides[j].colisionDetectada(nivel, asteroides);
+                disparos[i].estado = DESTRUIDO;
                 break;
             }
         }
+
         //Se comprueba la colision de los disparos con la nave
-        if (!colisionado &&
-            colisionPuntoEsfera(disparos[i].pos.posicion, nave.pos.posicion, 7.6f * nave.pos.escala.z)) {
-            //COLISION!!!!!!!!!!!!
+        if(disparos[i].estado != DESTRUIDO && nave.estado == NORMAL && colisionPuntoEsfera(disparos[i].pos.posicion, nave.pos.posicion, 7.6f*nave.pos.escala.z)){
+            disparos[i].estado = DESTRUIDO;
             nave.destruir();
         }
 
-        if (colisionado || disparos[i].estado == DESTRUIDO) {
+        if (disparos[i].estado == DESTRUIDO) {
             disparos.erase(disparos.begin() + i);
             i--;
         }
