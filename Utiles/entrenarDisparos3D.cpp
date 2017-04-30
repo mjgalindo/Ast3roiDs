@@ -3,24 +3,19 @@
 #include "../Graficos3D/Elemento3D.hpp"
 #include "../Graficos3D/Nave3D.hpp"
 #include "../Util3D/Ventana3D.hpp"
-#include "../neural/include/neural/Network.h"
-#include "../Graficos3D/Ovni3D.hpp"
 
 #define WIDTH 800
 #define HEIGHT 600
 
 using namespace std;
 
-double radioTonto = 15;     //Radio del ovni tonto
-double radioInteligente = 3*radioTonto/4;       //Radio del ovni inteligente
+float limiteMovimiento = 100;
 
-//PARAMETROS QUE USARA LA RED
-double radio = radioInteligente;        //Radio que empleara la red
 
-double ratioAprendizaje = 0.6;      //Ratio de aprendizaje de la red
+double ratioAprendizaje = 0.7;      //Ratio de aprendizaje de la red
 
 string fichero = "disparo3D.nnet";
-bool leer = false;
+bool leer = true;
 
 // Inicializa una red neuronal nueva
 neural::Network red(3, 3, {12});
@@ -37,9 +32,9 @@ int main() {
 
     ControladorSonido csonido;
 
-    Nave3D nave(&csonido,&puntuacion);
+    Nave3D nave(&csonido,&puntuacion, limiteMovimiento);
 
-    Ovni3D sustitutoOvni(&csonido);
+    Ovni3D sustitutoOvni(&csonido, limiteMovimiento);
 
 
     if (leer) {
@@ -81,16 +76,22 @@ int main() {
         };
 
         vector<double> salida = red.run(entradasRed);
-        glm::vec3 direccion = glm::vec3(salida.at(0), salida.at(1), salida.at(2));
-        Disparo3D disparo(direccion, sustitutoOvni.pos.posicion,glm::vec3(0.0f,0.0f,0.0f)); //FALTA LA ROTACION
+        glm::vec3 direccion = glm::normalize(glm::vec3(salida.at(0), salida.at(1), salida.at(2)));
+
+        Disparo3D disparo(direccion, sustitutoOvni.pos.posicion,glm::vec3(0.0f,0.0f,0.0f),limiteMovimiento); //FALTA LA ROTACION
         bool acertado = false;
         while (!acertado && disparo.estado != Elemento3D::Estado3D::DESTRUIDO) {
             disparo.actualizar();
-            if (colisionPuntoEsfera(disparo.pos.posicion,nave.pos.posicion,7.6f * nave.pos.escala.z)) {
+            if (colisionPuntoEsfera(disparo.pos.posicion,nave.pos.posicion,38.0f * nave.pos.escala.z)) {
                 acertado = true;
             }
         }
-        glm::vec3 dirReal = (nave.pos.posicion - sustitutoOvni.pos.posicion);
+        glm::vec3 dirReal = glm::normalize((nave.pos.posicion - sustitutoOvni.pos.posicion));
+
+        /*if(dirReal.x * direccion.x > 0.0f && dirReal.y * direccion.y > 0.0f && dirReal.z * direccion.z > 0.0f) {
+            acertado = true;
+        }*/
+
         if (!acertado) {
             red.trainSingle(entradasRed, {dirReal.x, dirReal.y, dirReal.z}, ratioAprendizaje);
             cout << aciertos << " " << disparos << " Fallo" << endl;
@@ -99,8 +100,16 @@ int main() {
             cout << aciertos << " " << disparos << " Acierto" << endl;
             disparos = 0;
         }
-        sustitutoOvni.pos.posicion={valorAleatorio(-80.0f, 80.0f), valorAleatorio(-80.0f, 80.0f), valorAleatorio(-80.0f, 80.0f)};
-        nave.pos.posicion={valorAleatorio(-80.0f, 80.0f), valorAleatorio(-80.0f, 80.0f), valorAleatorio(-80.0f, 80.0f)};
+        sustitutoOvni.pos.posicion={
+                valorAleatorio(0.8f * -limiteMovimiento, 0.8f * limiteMovimiento),
+                valorAleatorio(0.8f * -limiteMovimiento, 0.8f * limiteMovimiento),
+                valorAleatorio(0.8f * -limiteMovimiento, 0.8f * limiteMovimiento),
+        };
+        nave.pos.posicion={
+                valorAleatorio(0.8f * -limiteMovimiento, 0.8f * limiteMovimiento),
+                valorAleatorio(0.8f * -limiteMovimiento, 0.8f * limiteMovimiento),
+                valorAleatorio(0.8f * -limiteMovimiento, 0.8f * limiteMovimiento),
+        };
         disparos++;
     }
 }

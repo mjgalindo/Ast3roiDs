@@ -25,12 +25,15 @@ Ovni3D::Ovni3D(ControladorSonido *controladorSonido, float limitesMovimiento) :
                    glm::vec3(-1.0f,0.0f,0.0f),glm::vec3(0.0f,-1.0f,0.0f),glm::vec3(0.0f,0.0f,-1.0f),
                    glm::vec3(1.0f,-1.0f,1.0f),glm::vec3(-1.0f,1.0f,1.0f),glm::vec3(1.0f,1.0f,-1.0f),
                    glm::vec3(1.0f,-1.0f,-1.0f),glm::vec3(-1.0f,1.0f,-1.0f),glm::vec3(-1.0f,-1.0f,1.0f)};
+    sonidoOvni = ControladorSonido::OVNI_GRANDE;
 }
 
 void Ovni3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Elemento3D &nave) {
     if(estado == VIVO) {
-        direccion = direccionSegura(pos.posicion,asteroides);
-        velocidad = direccion * VELOCIDAD_INICIAL;
+        if(valorAleatorio(0.0f,1.0f)) {
+            direccion = direccionSegura(pos.posicion,asteroides);
+            velocidad = direccion * VELOCIDAD_INICIAL;
+        }
         pos.posicion += velocidad * (1 / 60.f);
         if (distanciaEuclidea(pos.posicion, glm::vec3{0, 0, 0}) > limiteMovimiento) {
             pos.posicion = glm::vec3{0, 0, 0} - pos.posicion;
@@ -124,9 +127,9 @@ void Ovni3D::cambiarEstado(EstadoOvni nuevoEstado) {
         };
         direccion = direcciones[enteroAleatorio(0, (int)direcciones.size()-1)];
         velocidad = VELOCIDAD_INICIAL*direccion;
-        csonido->reproducir(ControladorSonido::OVNI_GRANDE,false);
+        csonido->reproducir(sonidoOvni,false);
     } else if(estado == MUERTO) {
-        csonido->detener(ControladorSonido::OVNI_GRANDE);
+        csonido->detener(sonidoOvni);
     }
 }
 
@@ -181,4 +184,8 @@ glm::vec3 Ovni3D::direccionSegura(glm::vec3 posicion, std::vector<Asteroide3D> v
     }
     int elegido = enteroAleatorio(0,(int)direccionesSeguras.size()-1);
     return direccionesSeguras[elegido];
+}
+
+int Ovni3D::getPuntuacion() const {
+    return 200;
 }

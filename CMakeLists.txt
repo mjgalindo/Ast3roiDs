@@ -42,7 +42,7 @@ set(FUENTES_2D
 		Graficos/Ovni.cpp
 		Graficos/Ovni.hpp
 		constantesGlobales.hpp
-		Graficos/OvniInteligente.cpp)
+		Graficos/OvniInteligente.cpp Graficos3D/OvniInteligente3D.cpp Graficos3D/OvniInteligente3D.hpp)
 
 set(PRUEBA3D prueba3D)
 set(FUENTES_3D

@@ -41,4 +41,4 @@ target_link_libraries(entrenar ${SFML_LIBRARIES})
 target_link_libraries(entrenar neural)
 
 
-target_link_libraries(entrenar3D ${SFML_LIBRARIES}  ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} tinyobjloader neural)
+target_link_libraries(entrenar3D ${SFML_LIBRARIES}  ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} neural)

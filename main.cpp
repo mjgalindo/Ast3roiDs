@@ -1623,7 +1623,13 @@ Estado tratarJuego3D(Estado estado) {
 
     Nave3D nave(csonido.get(), &puntuacion, RADIO_ESFERA_JUGABLE);
     nave.teclaAcelerar = configuracionGlobal.acelerar;
-    Ovni3D ovni(csonido.get(), RADIO_ESFERA_JUGABLE);
+    Ovni3D ovniTonto(csonido.get(), RADIO_ESFERA_JUGABLE);
+    OvniInteligente3D ovniListo(csonido.get(), RADIO_ESFERA_JUGABLE);
+
+    Ovni3D *ovni = &ovniTonto;
+    bool ovniElegido = false;
+    float probabilidadOvniInt = 0.1;
+    float probabilidadOvniTon = 0.5;
 
     Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
                   Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
@@ -1650,14 +1656,22 @@ Estado tratarJuego3D(Estado estado) {
 
     Minimapa minimapaXY({resolucion.x - ajustar_h(200.0f), resolucion.y - ajustar_h(200.0f) * 2.0f},
                         {ajustar_h(200u), ajustar_h(200u)}, true, true, false);
-    minimapaXY.setElementos3D(&nave, &ovni, &asteroides, RADIO_ESFERA_JUGABLE);
+    minimapaXY.setElementos3D(&nave, ovni, &asteroides, RADIO_ESFERA_JUGABLE);
     Minimapa minimapaYZ({resolucion.x - ajustar_h(200.0f), resolucion.y - ajustar_h(200.0f)},
                         {ajustar_h(200u), ajustar_h(200u)}, false, true, true);
-    minimapaYZ.setElementos3D(&nave, &ovni, &asteroides, RADIO_ESFERA_JUGABLE);
+    minimapaYZ.setElementos3D(&nave, ovni, &asteroides, RADIO_ESFERA_JUGABLE);
 
     while (running) {
         if (asteroides.size() == 0) {
             nivel++;
+
+            if (probabilidadOvniInt < 0.5) {
+                probabilidadOvniInt += 0.05;
+            }
+            if (probabilidadOvniTon > 0.1) {
+                probabilidadOvniTon -= 0.05;
+            }
+
             if (numeroDeAsteroides > 12) {
                 numeroDeAsteroides = 12;
             }
@@ -1727,7 +1741,7 @@ Estado tratarJuego3D(Estado estado) {
         }
 
         if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LAlt)) {
-            nave.actualizar(nivel, asteroides, ovni, avanceCursor);
+            nave.actualizar(nivel, asteroides, *ovni, avanceCursor);
 
             if (nave.getVidas() < 0) {
                 running = false;
@@ -1739,7 +1753,17 @@ Estado tratarJuego3D(Estado estado) {
                 csonido->reproducir(ControladorSonido::VIDA_EXTRA);
             }
 
-            ovni.actualizar(nivel, asteroides, nave);
+            if (ovni->getEstado() == MUERTO && !ovniElegido) {
+                ovniElegido = true;
+                float va = valorAleatorio(0.0, 1.0);
+                if (va < probabilidadOvniInt) {
+                    ovni = &ovniListo;
+                } else if (va < probabilidadOvniInt + probabilidadOvniTon) {
+                    ovni = &ovniTonto;
+                }
+            }
+
+            ovni->actualizar(nivel, asteroides, nave);
 
             // Mueve todos los asteroides y elimina los que estén destruidos.
             for (int i = 0; i < asteroides.size(); ++i) {
@@ -1748,6 +1772,10 @@ Estado tratarJuego3D(Estado estado) {
                     asteroides.erase(asteroides.begin() + i);
                     i--;
                 }
+            }
+
+            if(ovni->getEstado() == EstadoOvni::VIVO) {
+                ovniElegido = false;
             }
         }
 
@@ -1803,7 +1831,7 @@ Estado tratarJuego3D(Estado estado) {
         if(posCamara != DESDE_ARRIBA) mallaLimites.dibujar(ventana, camara, false);
 
         nave.dibujar(ventana, camara, !configuracionGlobal.alambre && posCamara != PRIMERA_PERSONA);
-        ovni.dibujar(ventana, camara, !configuracionGlobal.alambre);
+        ovni->dibujar(ventana, camara, !configuracionGlobal.alambre);
 
         if (posCamara == PRIMERA_PERSONA) {
             dibujaCruz(ventana.getSize());

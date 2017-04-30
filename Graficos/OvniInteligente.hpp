@@ -11,7 +11,6 @@ private:
 
     vector<double> contexto;
     int ocultas = 0;
-    shared_ptr<neural::Layer> capaOculta;     //Capa oculta de la red
 
 public:
 
@@ -24,10 +23,6 @@ public:
     virtual int getPuntuacion() const;
 
     double output2RadiansDisparo(std::vector<double> output);
-
-    double output2RadiansMover(std::vector<double> output);
-
-    std::vector<Asteroide *> asteroideMasCercano(sf::Vector2f posicion, std::vector<Asteroide> asteroides);
 
     void mover(std::vector<Asteroide> &astds, Triangular &nave);
 

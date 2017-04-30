@@ -5,7 +5,7 @@
 #include "../Colisiones.hpp"
 #include "Elemento3D.hpp"
 #include "Asteroide3D.hpp"
-#include "Ovni3D.hpp"
+#include "OvniInteligente3D.hpp"
 #include "Disparo3D.hpp"
 #include "../Estados.hpp"
 
