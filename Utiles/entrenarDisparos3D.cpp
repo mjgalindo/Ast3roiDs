@@ -17,8 +17,8 @@ double ratioAprendizaje = 0.6;      //Ratio de aprendizaje de la red
 float radioNave = 7.6f;
 float dispAcierto = radioNave * 2.0f;
 
-string fichero = "disparo3Dv13.nnet";
-bool leer = true;
+string fichero = "disparo3D.nnet";
+bool leer = false;
 
 // Inicializa una red neuronal nueva
 neural::Network red(3, 3, {9});
