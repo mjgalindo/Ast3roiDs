@@ -54,7 +54,7 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
                 target.draw(disparito);
             }
 
-            if(!ovni->getEstado()==MUERTO) {
+            if(ovni->getEstado()!=MUERTO) {
                 sf::CircleShape ovnicito(dimensiones.x / 50.0f);
                 ovnicito.setPosition(posicion.x + (ovni->pos.posicion.x + radio) / (2 * radio) * dimensiones.x-dimensiones.x/50.0f,
                                      posicion.y + (ovni->pos.posicion.y + radio) / (2 * radio) * dimensiones.y-dimensiones.x/50.0f);
@@ -102,7 +102,7 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
                 target.draw(disparito);
             }
 
-            if(!ovni->getEstado()==MUERTO) {
+            if(ovni->getEstado()!=MUERTO) {
                 sf::CircleShape ovnicito(dimensiones.x / 50.0f);
                 ovnicito.setPosition(posicion.x + (ovni->pos.posicion.y + radio) / (2 * radio) * dimensiones.x-dimensiones.x/50.0f,
                                      posicion.y + (ovni->pos.posicion.z + radio) / (2 * radio) * dimensiones.y-dimensiones.x/50.0f);
@@ -151,7 +151,7 @@ void Minimapa::draw(sf::RenderTarget &target, sf::RenderStates states) const{
                 target.draw(disparito);
             }
 
-            if(!ovni->getEstado()==MUERTO) {
+            if(ovni->getEstado()!=MUERTO) {
                 sf::CircleShape ovnicito(dimensiones.x / 50.0f);
                 ovnicito.setPosition(posicion.x + (ovni->pos.posicion.x + radio) / (2 * radio) * dimensiones.x-dimensiones.x/50.0f,
                                      posicion.y + (ovni->pos.posicion.z + radio) / (2 * radio) * dimensiones.y-dimensiones.x/50.0f);
