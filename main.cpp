@@ -1837,7 +1837,7 @@ Estado tratarJuego3D(Estado estado) {
                 camara.up = glm::cross(camara.forward, glm::vec3(modeloNave * glm::vec4{0.0f, 0.0f, -1.0f, 0.0f}));
                 break;
             case SIGUIENDO_DETRAS:
-                camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 4.0f, 0.0f, 1.0f));
+                camara.pos = glm::vec3(modeloNave * glm::vec4(-20.0f-tamanoVector(nave.velocidad)/2, 4.0f, 0.0f, 1.0f));
                 camara.forward = glm::vec3(glm::toMat4(nave.pos.rotacion) * nave.DIRECCION_FRENTE_INICIAL);
                 camara.up = glm::cross(camara.forward, glm::vec3(modeloNave * glm::vec4{0.0f, 0.0f, -1.0f, 0.0f}));
                 break;

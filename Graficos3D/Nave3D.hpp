@@ -8,6 +8,7 @@
 #include "OvniInteligente3D.hpp"
 #include "Disparo3D.hpp"
 #include "../Estados.hpp"
+#include "Fuego.hpp"
 
 class Nave3D : public Elemento3D {
 public:
@@ -57,6 +58,7 @@ private:
     //Puntuacion
     long int *puntuacion;
 
+    Fuego fuego;
     sf::Clock relojCooldown;
     sf::Clock reloj;
 };

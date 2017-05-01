@@ -30,6 +30,7 @@ public:
         DISPARO,
         ESFERA,
         OVNI,
+        FUEGO,
         NUM_MODELOS
     };
 

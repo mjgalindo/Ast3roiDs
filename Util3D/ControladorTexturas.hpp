@@ -13,6 +13,7 @@ public:
         ESPACIO,
         MULTI,
         ROCA,
+        FUEGO,
         NUM_TEXTURAS
     };
 

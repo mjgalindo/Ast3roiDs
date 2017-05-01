@@ -10,6 +10,7 @@ static array<string, ControladorTexturas::NUM_TEXTURAS> ficheros {
         "Recursos/Texturas/espacio2.jpg",
         "Recursos/Texturas/multi.png",
         "Recursos/Texturas/roca.jpg",
+        "Recursos/Texturas/fuego_UV.png"
 };
 
 ControladorTexturas::ControladorTexturas() {

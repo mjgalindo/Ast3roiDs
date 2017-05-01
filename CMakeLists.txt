@@ -42,7 +42,7 @@ set(FUENTES_2D
 		Graficos/Ovni.cpp
 		Graficos/Ovni.hpp
 		constantesGlobales.hpp
-		Graficos/OvniInteligente.cpp Graficos3D/OvniInteligente3D.cpp Graficos3D/OvniInteligente3D.hpp)
+		Graficos/OvniInteligente.cpp Graficos3D/OvniInteligente3D.cpp Graficos3D/OvniInteligente3D.hpp Graficos3D/fuego.cpp)
 
 set(PRUEBA3D prueba3D)
 set(FUENTES_3D
@@ -73,7 +73,7 @@ set(FUENTES_3D
 		Util3D/ControladorTexturas.cpp
 		Util3D/ControladorTexturas.hpp
 		Util3D/ControladorShaders.cpp
-		Util3D/ControladorShaders.hpp)
+		Util3D/ControladorShaders.hpp Graficos3D/Fuego.hpp Graficos3D/Fuego.cpp)
 
 set(SFML_ROOT "C:/Program Files (x86)/SFML")
 

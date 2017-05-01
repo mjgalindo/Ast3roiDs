@@ -21,6 +21,8 @@ Nave3D::Nave3D(ControladorSonido *controladorSonido, long int *punt, const float
     puntuacion = punt;
     limiteMovimiento = limitesMovimiento;
     estado = INVULNERABLE;
+
+    fuego = Fuego();
 }
 
 void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D &ovni, sf::Vector2i movRaton) {
@@ -54,6 +56,8 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
         pos.posicion = glm::vec3{0, 0, 0} - pos.posicion;
         csonido->reproducir(ControladorSonido::TELETRANSPORTE);
     }
+
+    fuego.actualizar(pos);
 
     //Se comprueba la colision con los asteroides y el ovni si la nave no es invulnerable
     if (estado != INVULNERABLE){
@@ -144,6 +148,9 @@ void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar, sf
     for (const Disparo3D &disparo : disparos)
         disparo.dibujar(target, camara, rellenar, states);
     Elemento3D::dibujar(target, camara, rellenar && estado != INVULNERABLE, states);
+    if(sf::Keyboard::isKeyPressed(teclaAcelerar)) {
+        fuego.dibujar(target, camara, rellenar && estado != INVULNERABLE, states);
+    }
 }
 
 void Nave3D::disparar() {
