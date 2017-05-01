@@ -7,10 +7,10 @@ using namespace std;
 
 static std::array<std::string, ControladorModelos::NUM_MODELOS> ficheros{
         "Recursos/Modelos/asteroide.obj",
-        "Recursos/Modelos/nave2.obj",
+        "Recursos/Modelos/nave3_2.obj",
         "Recursos/Modelos/disparo.obj",
         "Recursos/Modelos/esfera2.obj",
-        "Recursos/Modelos/ovni.obj"
+        "Recursos/Modelos/ovni_2.obj"
 };
 
 static std::array<Modelo, ControladorModelos::NUM_MODELOS> modelos;
