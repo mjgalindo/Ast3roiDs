@@ -1721,7 +1721,7 @@ Estado tratarJuego3D(Estado estado) {
         while (ventana.pollEvent(event)) {
             switch (event.type) {
                 case sf::Event::MouseButtonPressed:
-                    if (event.mouseButton.button == sf::Mouse::Left) {
+                    if (event.mouseButton.button == sf::Mouse::Left && !pausarJuego) {
                         nave.disparar();
                         break;
                     }
