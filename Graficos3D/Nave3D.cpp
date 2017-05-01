@@ -30,8 +30,8 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
     // Y es el eje vertical, alrededor del cual gira la nave (izquierda-derecha).
     glm::quat cuaternioInclinar = glm::angleAxis(-movRaton.y * 0.005f, dirDerecha);
     glm::quat cuaternioGirar = glm::angleAxis(-movRaton.x * 0.005f, dirArriba);
-    pos.rotacion = glm::quat_cast(
-            glm::toMat4(cuaternioGirar) * glm::toMat4(cuaternioInclinar) * glm::toMat4(pos.rotacion));
+    pos.rotacion = glm::normalize(glm::quat_cast(
+            glm::toMat4(cuaternioGirar) * glm::toMat4(cuaternioInclinar) * glm::toMat4(pos.rotacion)));
     glm::mat4 modelo = pos.matrizModelo();
 
     dirFrente = glm::vec3(modelo * DIRECCION_FRENTE_INICIAL);

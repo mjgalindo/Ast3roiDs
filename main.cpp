@@ -1822,6 +1822,7 @@ Estado tratarJuego3D(Estado estado) {
 
         // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
         glm::mat4 modeloNave = nave.pos.matrizModelo();
+
         switch (posCamara) {
             case PRIMERA_PERSONA:
                 camara.pos = glm::vec3(modeloNave * glm::vec4(2.0f, 2.0f, 0.0f, 1.0f));
@@ -1830,7 +1831,7 @@ Estado tratarJuego3D(Estado estado) {
                 break;
             case SIGUIENDO_DETRAS:
                 camara.pos = glm::vec3(modeloNave * glm::vec4(-30.0f, 4.0f, 0.0f, 1.0f));
-                camara.forward = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
+                camara.forward = glm::vec3(glm::toMat4(nave.pos.rotacion) * nave.DIRECCION_FRENTE_INICIAL);
                 camara.up = glm::cross(camara.forward, glm::vec3(modeloNave * glm::vec4{0.0f, 0.0f, -1.0f, 0.0f}));
                 break;
             case LIBRE:
@@ -1849,8 +1850,6 @@ Estado tratarJuego3D(Estado estado) {
                 camara.up = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
                 break;
         }
-
-        // Mantiene el vector up de la cámara apuntando hacia arriba
 
         // Limpia la ventana
         glClearColor(0.0f, 0.0f, 0.0f, 1.f);
