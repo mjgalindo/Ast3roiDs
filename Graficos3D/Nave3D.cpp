@@ -83,7 +83,7 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
 
         if (estado == NORMAL && colisionEsferaEsfera(ovni.pos.posicion, 4.8f * ovni.pos.escala.y , pos.posicion, 7.6f * pos.escala.z)) {
             //COLISION
-            *puntuacion += 1000;
+            *puntuacion += ovni.getPuntuacion();
             destruir();
             ovni.cambiarEstado(MUERTO);
         }
@@ -128,7 +128,7 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
         //Se comprueba la colision de los disparos con el ovni
         if(disparos[i].estado != DESTRUIDO && ovni.getEstado()==VIVO && colisionPuntoEsfera(disparos[i].pos.posicion, ovni.pos.posicion, 7.6f*ovni.pos.escala.z)){
             disparos[i].estado = DESTRUIDO;
-            *puntuacion += 1000;
+            *puntuacion += ovni.getPuntuacion();
             ovni.cambiarEstado(EstadoOvni::MUERTO);
         }
 

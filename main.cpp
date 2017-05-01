@@ -1485,6 +1485,12 @@ Estado tratarCreditos(Estado estado) {
     opcion4.setPosition({(resolucion.x - opcion4.getLocalBounds().width) / 2,
                          opcion3.getPosition().y + opcion3.getLocalBounds().height + ajustar_h(25u)});
 
+    sf::Text leyenda;
+    inicializaTexto(leyenda, ajustar_h(30u));
+    leyenda.setString("[ESC PARA CAMBIAR SALTAR]");
+    leyenda.setCharacterSize(ajustar_h(25u));
+    leyenda.setPosition(sf::Vector2f(0,resolucion.y - leyenda.getLocalBounds().height - ajustar_h(5)));
+
     sf::Clock reloj;
     reloj.restart();
     bool salir = false;
@@ -1542,6 +1548,7 @@ Estado tratarCreditos(Estado estado) {
         ventana.draw(opcion2);
         ventana.draw(opcion3);
         ventana.draw(opcion4);
+        ventana.draw(leyenda);
         ventana.display();
     }
 
