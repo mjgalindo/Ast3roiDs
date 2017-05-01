@@ -7,7 +7,7 @@
 class OvniInteligente : public Ovni {
 private:
     float error = (float) (PI / 4);
-    std::string ficheroRed = "disparo.nnet";
+    std::string ficheroRed = "Recursos/IA/disparo.nnet";
 
     vector<double> contexto;
     int ocultas = 0;

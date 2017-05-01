@@ -1,8 +1,6 @@
 #include <string>
 #include <iostream>
 #include "OvniInteligente3D.hpp"
-#include "../Util3D/ControladorTexturas.hpp"
-#include "../Util3D/ControladorShaders.hpp"
 
 using namespace std;
 using namespace sf;
@@ -16,6 +14,7 @@ OvniInteligente3D::OvniInteligente3D(ControladorSonido *controladorSonido, float
     red3D = red3D.read(fichero);
     sonidoOvni = ControladorSonido::OVNI_PEQUENO;
 }
+
 
 void OvniInteligente3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Elemento3D &nave) {
     if(estado == VIVO) {
@@ -87,6 +86,7 @@ void OvniInteligente3D::disparar(Elemento3D nave) {
     vector<double> salida = red3D.run(dir);
     glm::vec3 dirDisp = glm::normalize(glm::vec3(salida.at(0),salida.at(1),salida.at(2)));
     disparos.emplace_back(dirDisp, pos.posicion, pos.rotacion, limiteMovimiento);
+    disparos.back().cambioDisparoEsferico();
 
     csonido->reproducir(ControladorSonido::DISPARO,true);
 }

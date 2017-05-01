@@ -12,13 +12,532 @@ using namespace std;
 float limiteMovimiento = 100;
 
 
-double ratioAprendizaje = 0.7;      //Ratio de aprendizaje de la red
+double ratioAprendizaje = 0.6;      //Ratio de aprendizaje de la red
 
-string fichero = "disparo3D.nnet";
+float radioNave = 7.6f;
+float dispAcierto = radioNave * 2.0f;
+
+string fichero = "disparo3Dv13.nnet";
 bool leer = true;
 
 // Inicializa una red neuronal nueva
-neural::Network red(3, 3, {12});
+neural::Network red(3, 3, {9});
+
+vector<double> out2dir(vector<double> outReal) {
+    vector<double> out;
+    for(unsigned long long int i = 0; i < outReal.size(); i++){
+        if(outReal.at(i) < 0) {
+            out.push_back(0);
+        } else {
+            out.push_back(1);
+        }
+    }
+    if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {-1.0, -1.0, -1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {-1.0, -1.0, -0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {-1.0, -1.0, 0.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {-1.0, -1.0, 0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {-1.0, -1.0, 1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {-1.0, -0.5, -1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {-1.0, -0.5, -0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {-1.0, -0.5, 0.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {-1.0, -0.5, 0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {-1.0, -0.5, 1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {-1.0, 0.0, -1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {-1.0, 0.0, -0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {-1.0, 0.0, 0.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {-1.0, 0.0, 0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {-1.0, 0.0, 1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {-1.0, 0.5, -1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {-1.0, 0.5, -0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {-1.0, 0.5, 0.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {-1.0, 0.5, 0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {-1.0, 0.5, 1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {-1.0, 1.0, -1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {-1.0, 1.0, -0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {-1.0, 1.0, 0.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {-1.0, 1.0, 0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {-1.0, 1.0, 1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {-0.5, -1.0, -1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {-0.5, -1.0, -0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {-0.5, -1.0, 0.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {-0.5, -1.0, 0.5};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {-0.5, -1.0, 1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {-0.5, -0.5, -1.0};
+    } else if(out[0] == 0 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {-0.5, -0.5, -0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {-0.5, -0.5, 0.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {-0.5, -0.5, 0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {-0.5, -0.5, 1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {-0.5, 0.0, -1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {-0.5, 0.0, -0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {-0.5, 0.0, 0.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {-0.5, 0.0, 0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {-0.5, 0.0, 1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {-0.5, 0.5, -1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {-0.5, 0.5, -0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {-0.5, 0.5, 0.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {-0.5, 0.5, 0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {-0.5, 0.5, 1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {-0.5, 1.0, -1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {-0.5, 1.0, -0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {-0.5, 1.0, 0.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {-0.5, 1.0, 0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {-0.5, 1.0, 1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {0.0, -1.0, -1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {0.0, -1.0, -0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {0.0, -1.0, 0.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {0.0, -1.0, 0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {0.0, -1.0, 1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {0.0, -0.5, -1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {0.0, -0.5, -0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {0.0, -0.5, 0.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {0.0, -0.5, 0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {0.0, -0.5, 1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {0.0, 0.0, -1.0};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {0.0, 0.0, -0.5};
+    } else if(out[0] == 0 && out[1] == 1 && out[2] == 1 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {0.0, 0.0, 0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {0.0, 0.0, 1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {0.0, 0.5, -1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {0.0, 0.5, -0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {0.0, 0.5, 0.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {0.0, 0.5, 0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {0.0, 0.5, 1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {0.0, 1.0, -1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {0.0, 1.0, -0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {0.0, 1.0, 0.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {0.0, 1.0, 0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {0.0, 1.0, 1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {0.5, -1.0, -1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {0.5, -1.0, -0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {0.5, -1.0, 0.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {0.5, -1.0, 0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {0.5, -1.0, 1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {0.5, -0.5, -1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {0.5, -0.5, -0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {0.5, -0.5, 0.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {0.5, -0.5, 0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {0.5, -0.5, 1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {0.5, 0.0, -1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {0.5, 0.0, -0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {0.5, 0.0, 0.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {0.5, 0.0, 0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {0.5, 0.0, 1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {0.5, 0.5, -1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {0.5, 0.5, -0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {0.5, 0.5, 0.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {0.5, 0.5, 0.5};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {0.5, 0.5, 1.0};
+    } else if(out[0] == 1 && out[1] == 0 && out[2] == 1 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {0.5, 1.0, -1.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {0.5, 1.0, -0.5};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {0.5, 1.0, 0.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {0.5, 1.0, 0.5};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {0.5, 1.0, 1.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {1.0, -1.0, -1.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {1.0, -1.0, -0.5};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {1.0, -1.0, 0.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {1.0, -1.0, 0.5};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {1.0, -1.0, 1.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {1.0, -0.5, -1.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {1.0, -0.5, -0.5};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {1.0, -0.5, 0.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {1.0, -0.5, 0.5};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {1.0, -0.5, 1.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {1.0, 0.0, -1.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 0 &&out[3] == 1 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {1.0, 0.0, -0.5};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {1.0, 0.0, 0.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {1.0, 0.0, 0.5};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {1.0, 0.0, 1.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {1.0, 0.5, -1.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 0) {
+        return {1.0, 0.5, -0.5};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 0 && out[6] == 1) {
+        return {1.0, 0.5, 0.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 0) {
+        return {1.0, 0.5, 0.5};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 0 && out[4] == 1 && out[5] == 1 && out[6] == 1) {
+        return {1.0, 0.5, 1.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 0) {
+        return {1.0, 1.0, -1.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 0 && out[6] == 1) {
+        return {1.0, 1.0, -0.5};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 0) {
+        return {1.0, 1.0, 0.0};
+    } else if(out[0] == 1 && out[1] == 1 && out[2] == 1 &&out[3] == 1 && out[4] == 0 && out[5] == 1 && out[6] == 1) {
+        return {1.0, 1.0, 0.5};
+    } else {
+        return {1.0, 1.0, 1.0};
+    }
+}
+
+vector<double> dir2out(vector<double> dir) {
+    if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 0, 0, 0, 0, 0, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 0, 0, 0, 0, 0, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 0, 0, 0, 0, 1, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 0, 0, 0, 0, 1, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 1.0)) {
+        return {0, 0, 0, 0, 1, 0, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 0, 0, 0, 1, 0, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 0, 0, 0, 1, 1, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 0, 0, 0, 1, 1, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 0, 0, 1, 0, 0, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 1.0)) {
+        return {0, 0, 0, 1, 0, 0, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 0, 0, 1, 0, 1, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 0, 0, 1, 0, 1, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 0, 0, 1, 1, 0, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 0, 0, 1, 1, 0, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 1.0)) {
+        return {0, 0, 0, 1, 1, 1, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 0, 0, 1, 1, 1, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 0, 1, 0, 0, 0, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 0, 1, 0, 0, 0, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 0, 1, 0, 0, 1, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 1.0)) {
+        return {0, 0, 1, 0, 0, 1, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 1.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 0, 1, 0, 1, 0, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 1.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 0, 1, 0, 1, 0, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 1.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 0, 1, 0, 1, 1, 0};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 1.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 0, 1, 0, 1, 1, 1};
+    } else if((dir[0] >= -1.0 && dir[0] < -0.5) && (dir[1] >= 1.0) && (dir[2] >= 1.0)) {
+        return {0, 0, 1, 1, 0, 0, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 0, 1, 1, 0, 0, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 0, 1, 1, 0, 1, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 0, 1, 1, 0, 1, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 0, 1, 1, 1, 0, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 1.0)) {
+        return {0, 0, 1, 1, 1, 0, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 0, 1, 1, 1, 1, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 0, 1, 1, 1, 1, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 1, 0, 0, 0, 0, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 1, 0, 0, 0, 0, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 1.0)) {
+        return {0, 1, 0, 0, 0, 1, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 1, 0, 0, 0, 1, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 1, 0, 0, 1, 0, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 1, 0, 0, 1, 0, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 1, 0, 0, 1, 1, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 1.0)) {
+        return {0, 1, 0, 0, 1, 1, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 1, 0, 1, 0, 0, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 1, 0, 1, 0, 0, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 1, 0, 1, 0, 1, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 1, 0, 1, 0, 1, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 1.0)) {
+        return {0, 1, 0, 1, 1, 0, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 1.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 1, 0, 1, 1, 0, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 1.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 1, 0, 1, 1, 1, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 1.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 1, 0, 1, 1, 1, 1};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 1.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 1, 1, 0, 0, 0, 0};
+    } else if((dir[0] >= -0.5 && dir[0] < 0.0) && (dir[1] >= 1.0) && (dir[2] >= 1.0)) {
+        return {0, 1, 1, 0, 0, 0, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 1, 1, 0, 0, 1, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 1, 1, 0, 0, 1, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 1, 1, 0, 1, 0, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 1, 1, 0, 1, 0, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 1.0)) {
+        return {0, 1, 1, 0, 1, 1, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 1, 1, 0, 1, 1, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 1, 1, 1, 0, 0, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 1, 1, 1, 0, 0, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 1, 1, 1, 0, 1, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 1.0)) {
+        return {0, 1, 1, 1, 0, 1, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {0, 1, 1, 1, 1, 0, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {0, 1, 1, 1, 1, 0, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {0, 1, 1, 1, 1, 1, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {0, 1, 1, 1, 1, 1, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 1.0)) {
+        return {1, 0, 0, 0, 0, 0, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 0, 0, 0, 0, 0, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 0, 0, 0, 0, 1, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 0, 0, 0, 0, 1, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 0, 0, 0, 1, 0, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 1.0)) {
+        return {1, 0, 0, 0, 1, 0, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 1.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 0, 0, 0, 1, 1, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 1.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 0, 0, 0, 1, 1, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 1.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 0, 0, 1, 0, 0, 0};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 1.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 0, 0, 1, 0, 0, 1};
+    } else if((dir[0] >= 0.0 && dir[0] < 0.5) && (dir[1] >= 1.0) && (dir[2] >= 1.0)) {
+        return {1, 0, 0, 1, 0, 1, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 0, 0, 1, 0, 1, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 0, 0, 1, 1, 0, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 0, 0, 1, 1, 0, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 0, 0, 1, 1, 1, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 1.0)) {
+        return {1, 0, 0, 1, 1, 1, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 0, 1, 0, 0, 0, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 0, 1, 0, 0, 0, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 0, 1, 0, 0, 1, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 0, 1, 0, 0, 1, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 1.0)) {
+        return {1, 0, 1, 0, 1, 0, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 0, 1, 0, 1, 0, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 0, 1, 0, 1, 1, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 0, 1, 0, 1, 1, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 0, 1, 1, 0, 0, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 1.0)) {
+        return {1, 0, 1, 1, 0, 0, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 0, 1, 1, 0, 1, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 0, 1, 1, 0, 1, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 0, 1, 1, 1, 0, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 0, 1, 1, 1, 0, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 1.0)) {
+        return {1, 0, 1, 1, 1, 1, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 1.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 0, 1, 1, 1, 1, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 1.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 1, 0, 0, 0, 0, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 1.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 1, 0, 0, 0, 0, 1};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 1.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 1, 0, 0, 0, 1, 0};
+    } else if((dir[0] >= 0.5 && dir[0] < 1.0) && (dir[1] >= 1.0) && (dir[2] >= 1.0)) {
+        return {1, 1, 0, 0, 0, 1, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 1, 0, 0, 1, 0, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 1, 0, 0, 1, 0, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 1, 0, 0, 1, 1, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 1, 0, 0, 1, 1, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= -1.0 && dir[1] < -0.5) && (dir[2] >= 1.0)) {
+        return {1, 1, 0, 1, 0, 0, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 1, 0, 1, 0, 0, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 1, 0, 1, 0, 1, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 1, 0, 1, 0, 1, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 1, 0, 1, 1, 0, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= -0.5 && dir[1] < 0.0) && (dir[2] >= 1.0)) {
+        return {1, 1, 0, 1, 1, 0, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 1, 0, 1, 1, 1, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 1, 0, 1, 1, 1, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 1, 1, 0, 0, 0, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 1, 1, 0, 0, 0, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 0.0 && dir[1] < 0.5) && (dir[2] >= 1.0)) {
+        return {1, 1, 1, 0, 0, 1, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 1, 1, 0, 0, 1, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 1, 1, 0, 1, 0, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 1, 1, 0, 1, 0, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 1, 1, 0, 1, 1, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 0.5 && dir[1] < 1.0) && (dir[2] >= 1.0)) {
+        return {1, 1, 1, 0, 1, 1, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 1.0) && (dir[2] >= -1.0 && dir[1] < -0.5)) {
+        return {1, 1, 1, 1, 0, 0, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 1.0) && (dir[2] >= -0.5 && dir[1] < 0.0)) {
+        return {1, 1, 1, 1, 0, 0, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 1.0) && (dir[2] >= 0.0 && dir[1] < 0.5)) {
+        return {1, 1, 1, 1, 0, 1, 0};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 1.0) && (dir[2] >= 0.5 && dir[1] < 1.0)) {
+        return {1, 1, 1, 1, 0, 1, 1};
+    } else if((dir[0] >= 1.0) && (dir[1] >= 1.0) && (dir[2] >= 1.0)) {
+        return {1, 1, 1, 1, 1, 0, 0};
+    } else {
+        return {0, 0, 0, 0, 0, 0, 0};
+    }
+}
 
 int main() {
     sf::ContextSettings configuracion;
@@ -68,32 +587,26 @@ int main() {
             }
         }
 
-        //ventana.clear(sf::Color::Black);
-
         vector<double> entradasRed{nave.pos.posicion.x - sustitutoOvni.pos.posicion.x,
                                    nave.pos.posicion.y - sustitutoOvni.pos.posicion.y,
                                     nave.pos.posicion.z - sustitutoOvni.pos.posicion.z
         };
 
-        vector<double> salida = red.run(entradasRed);
+        vector<double> salida = (red.run(entradasRed));
         glm::vec3 direccion = glm::normalize(glm::vec3(salida.at(0), salida.at(1), salida.at(2)));
 
         Disparo3D disparo(direccion, sustitutoOvni.pos.posicion,glm::vec3(0.0f,0.0f,0.0f),limiteMovimiento); //FALTA LA ROTACION
         bool acertado = false;
         while (!acertado && disparo.estado != Elemento3D::Estado3D::DESTRUIDO) {
             disparo.actualizar();
-            if (colisionPuntoEsfera(disparo.pos.posicion,nave.pos.posicion,38.0f * nave.pos.escala.z)) {
+            if (colisionPuntoEsfera(disparo.pos.posicion,nave.pos.posicion,dispAcierto * nave.pos.escala.z)) {
                 acertado = true;
             }
         }
         glm::vec3 dirReal = glm::normalize((nave.pos.posicion - sustitutoOvni.pos.posicion));
 
-        /*if(dirReal.x * direccion.x > 0.0f && dirReal.y * direccion.y > 0.0f && dirReal.z * direccion.z > 0.0f) {
-            acertado = true;
-        }*/
-
         if (!acertado) {
-            red.trainSingle(entradasRed, {dirReal.x, dirReal.y, dirReal.z}, ratioAprendizaje);
+            red.trainSingle(entradasRed, {dirReal.x,dirReal.y,dirReal.z}, ratioAprendizaje);
             cout << aciertos << " " << disparos << " Fallo" << endl;
         } else {
             aciertos++;

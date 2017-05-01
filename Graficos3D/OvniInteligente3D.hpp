@@ -17,7 +17,7 @@ class OvniInteligente3D : public Ovni3D {
         int getPuntuacion() const;
 
     private:
-        std::string fichero = "disparo3D.nnet";
+        std::string fichero = "Recursos/IA/disparo3D.nnet";
 };
 
 
