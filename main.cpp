@@ -1559,7 +1559,7 @@ Estado tratarCreditos(Estado estado) {
  * De: https://guidedhacking.com/showthread.php?6588-OpenGL-Draw-a-crosshair
  * Dibuja una cruz en el centro de la ventana.
  */
-void dibujaCruz(sf::Vector2u tamVentana) {
+void dibujaCruz(sf::Vector2u tamVentana, double offsetVertical) {
     glPushMatrix();
     glViewport(0, 0, tamVentana.x, tamVentana.y);
     glMatrixMode(GL_PROJECTION);
@@ -1572,13 +1572,13 @@ void dibujaCruz(sf::Vector2u tamVentana) {
     glLineWidth(2.0);
     glBegin(GL_LINES);
     //horizontal line
-    glVertex2i(tamVentana.x / 2 - 7, tamVentana.y / 2);
-    glVertex2i(tamVentana.x / 2 + 7, tamVentana.y / 2);
+    glVertex2i(tamVentana.x / 2 - 7, tamVentana.y / 2 + offsetVertical);
+    glVertex2i(tamVentana.x / 2 + 7, tamVentana.y / 2 + offsetVertical);
     glEnd();
     //vertical line
     glBegin(GL_LINES);
-    glVertex2i(tamVentana.x / 2, tamVentana.y / 2 + 7);
-    glVertex2i(tamVentana.x / 2, tamVentana.y / 2 - 7);
+    glVertex2i(tamVentana.x / 2, tamVentana.y / 2 + 7 + offsetVertical);
+    glVertex2i(tamVentana.x / 2, tamVentana.y / 2 - 7 + offsetVertical);
     glEnd();
 
     glPopMatrix();
@@ -1880,8 +1880,11 @@ Estado tratarJuego3D(Estado estado) {
         nave.dibujar(ventana, camara, !configuracionGlobal.alambre && posCamara != PRIMERA_PERSONA);
         ovni->dibujar(ventana, camara, !configuracionGlobal.alambre);
 
-        if (posCamara == PRIMERA_PERSONA) {
-            dibujaCruz(ventana.getSize());
+        if (posCamara == SIGUIENDO_DETRAS) {
+            dibujaCruz(ventana.getSize(), ajustar_h(30));
+        }
+        else if (posCamara == PRIMERA_PERSONA) {
+            dibujaCruz(ventana.getSize(), ajustar_h(10));
         }
 
         // store the state
