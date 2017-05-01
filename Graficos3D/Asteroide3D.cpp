@@ -16,14 +16,13 @@ Asteroide3D::Asteroide3D(ControladorSonido *controladorSonido, float limitesMovi
             valorAleatorio(-VELOCIDAD_MAX, VELOCIDAD_MAX)
     };
 
-    velocidadAngular = glm::angleAxis(
-            valorAleatorio(0.0f, 0.2f),
+    velocidadAngular = glm::normalize(glm::angleAxis(
+            valorAleatorio(0.0f, 0.015f),
             glm::normalize(glm::vec3{
                     valorAleatorio((float) 0, (float) 1),
                     valorAleatorio((float) 0, (float) 1),
                     valorAleatorio((float) 0, (float) 1)})
-    );
-    velocidadAngular = glm::normalize(velocidadAngular);
+    ));
 
     pos.posicion = {
             valorAleatorio(0.8f * -limitesMovimiento, 0.8f * limitesMovimiento),
@@ -51,6 +50,14 @@ Asteroide3D::Asteroide3D(ControladorSonido *controladorSonido, float limitesMovi
     pos.posicion = posicion;
     pos.rotacion = rot;
 
+    velocidadAngular = glm::normalize(glm::angleAxis(
+            valorAleatorio(0.0f, 0.015f),
+            glm::normalize(glm::vec3{
+                    valorAleatorio((float) 0, (float) 1),
+                    valorAleatorio((float) 0, (float) 1),
+                    valorAleatorio((float) 0, (float) 1)})
+    ));
+
     version = tipo;
     tamano3D = tam3D;
 
@@ -77,7 +84,7 @@ void Asteroide3D::actualizar() {
         }
     }
 
-    //pos.rotacion = glm::quat(glm::toMat4(velocidadAngular) * glm::toMat4(pos.rotacion));
+    pos.rotacion = glm::normalize(glm::quat(velocidadAngular * pos.rotacion));
     pos.posicion += velocidad;
     if (distanciaEuclidea(pos.posicion, glm::vec3{0, 0, 0}) > limiteMovimiento) {
         pos.posicion = glm::vec3{0, 0, 0} - pos.posicion;
