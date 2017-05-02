@@ -150,7 +150,6 @@ void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar, sf
     Elemento3D::dibujar(target, camara, rellenar && estado != INVULNERABLE, states);
     if(sf::Keyboard::isKeyPressed(teclaAcelerar)) {
         fuego.dibujar(target, camara, rellenar && estado != INVULNERABLE, states);
-        fuego.dibujar(target, camara, rellenar && estado != INVULNERABLE, states);
     }
 }
 
