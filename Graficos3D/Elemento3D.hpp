@@ -4,6 +4,7 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
+#include "../Estados.hpp"
 #include "../Util3D/Posicionamiento.hpp"
 #include "../Util3D/Shader.hpp"
 #include "../Util3D/Textura.hpp"
@@ -12,9 +13,6 @@
 class Elemento3D : public sf::Drawable {
 public:
     Posicionamiento pos;
-    enum Estado3D {
-        NORMAL, EXPLOTANDO, DESTRUIDO, INVULNERABLE
-    };
     Estado3D estado = NORMAL;
 
     virtual void dibujar(sf::RenderTarget &target, Camara &camara, bool rellenado = true,

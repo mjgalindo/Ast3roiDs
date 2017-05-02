@@ -26,7 +26,7 @@ void Disparo3D::actualizar() {
     if ((pos.posicion.x != pos.posicion.x) | (pos.posicion.y != pos.posicion.y) | (pos.posicion.z != pos.posicion.z)){
         // Pueden suceder errores de coma flotante que causaran que alguno de los valores de posición tenga un valor no
         // válido. En tal caso se destruye el disparo.
-        estado = DESTRUIDO;
+        estado = DESTRUIDO_3D;
         return;
     }
     if (distanciaEuclidea(pos.posicion, glm::vec3{0, 0, 0}) > limiteMovimiento) {
@@ -42,6 +42,6 @@ void Disparo3D::actualizar() {
     }
 
     if (distanciaEuclidea(pos.posicion, posicionInicial) > distanciaRestante) {
-        estado = DESTRUIDO;
+        estado = DESTRUIDO_3D;
     }
 }

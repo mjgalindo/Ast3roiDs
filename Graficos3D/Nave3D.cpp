@@ -98,7 +98,7 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
         disparos[i].actualizar();
         // Si el disparo ha alcanzado el final de su trayectoria se borra y
         // se continua con el siguiente
-        if (disparos[i].estado == DESTRUIDO){
+        if (disparos[i].estado == DESTRUIDO_3D){
             disparos.erase(disparos.begin() + i);
             i--;
             continue;
@@ -124,19 +124,19 @@ void Nave3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Ovni3D 
                     default:
                         break;
                 }
-                disparos[i].estado = DESTRUIDO;
+                disparos[i].estado = DESTRUIDO_3D;
                 break;
             }
         }
 
         //Se comprueba la colision de los disparos con el ovni
-        if(disparos[i].estado != DESTRUIDO && ovni.getEstado()==VIVO && colisionPuntoEsfera(disparos[i].pos.posicion, ovni.pos.posicion, 7.6f*ovni.pos.escala.z)){
-            disparos[i].estado = DESTRUIDO;
+        if(disparos[i].estado != DESTRUIDO_3D && ovni.getEstado()==VIVO && colisionPuntoEsfera(disparos[i].pos.posicion, ovni.pos.posicion, 7.6f*ovni.pos.escala.z)){
+            disparos[i].estado = DESTRUIDO_3D;
             *puntuacion += ovni.getPuntuacion();
             ovni.cambiarEstado(EstadoOvni::MUERTO);
         }
 
-        if (disparos[i].estado == DESTRUIDO) {
+        if (disparos[i].estado == DESTRUIDO_3D) {
             disparos.erase(disparos.begin() + i);
             i--;
         }
@@ -149,6 +149,7 @@ void Nave3D::dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar, sf
         disparo.dibujar(target, camara, rellenar, states);
     Elemento3D::dibujar(target, camara, rellenar && estado != INVULNERABLE, states);
     if(sf::Keyboard::isKeyPressed(teclaAcelerar)) {
+        fuego.dibujar(target, camara, rellenar && estado != INVULNERABLE, states);
         fuego.dibujar(target, camara, rellenar && estado != INVULNERABLE, states);
     }
 }

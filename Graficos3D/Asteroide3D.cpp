@@ -80,7 +80,7 @@ void Asteroide3D::actualizar() {
             fragmentosExplosion[i].actualizar();
         }
         if (reloj.getElapsedTime().asSeconds() >= TIEMPO_EXPLOSION) {
-            estado = DESTRUIDO;
+            estado = DESTRUIDO_3D;
         }
     }
 
@@ -97,7 +97,7 @@ void Asteroide3D::actualizar() {
 }
 
 void Asteroide3D::colisionDetectada(int nivel, std::vector<Asteroide3D> &asteroides) {
-    if (estado != Elemento3D::NORMAL) return;
+    if (estado != NORMAL) return;
     estado = EXPLOTANDO;
     reloj.restart();
     for (int i = 0; i < NUM_FRAGMENTOS; i++) {

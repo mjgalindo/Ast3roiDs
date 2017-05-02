@@ -69,7 +69,7 @@ void Ovni3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Element
         disparos[i].actualizar();
         // Si el disparo ha alcanzado el final de su trayectoria se borra y
         // se continua con el siguiente
-        if (disparos[i].estado == DESTRUIDO){
+        if (disparos[i].estado == DESTRUIDO_3D){
             disparos.erase(disparos.begin() + i);
             i--;
             continue;
@@ -82,18 +82,18 @@ void Ovni3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroides, Element
                                     asteroides[j].pos.posicion, 1.0f * asteroides[j].pos.escala.y)) {
                 // Colision disparo-asteroide
                 asteroides[j].colisionDetectada(nivel, asteroides);
-                disparos[i].estado = DESTRUIDO;
+                disparos[i].estado = DESTRUIDO_3D;
                 break;
             }
         }
 
         //Se comprueba la colision de los disparos con la nave
-        if(disparos[i].estado != DESTRUIDO && nave.estado == NORMAL && colisionPuntoEsfera(disparos[i].pos.posicion, nave.pos.posicion, 7.6f*nave.pos.escala.z)){
-            disparos[i].estado = DESTRUIDO;
+        if(disparos[i].estado != DESTRUIDO_3D && nave.estado == NORMAL && colisionPuntoEsfera(disparos[i].pos.posicion, nave.pos.posicion, 7.6f*nave.pos.escala.z)){
+            disparos[i].estado = DESTRUIDO_3D;
             nave.destruir();
         }
 
-        if (disparos[i].estado == DESTRUIDO) {
+        if (disparos[i].estado == DESTRUIDO_3D) {
             disparos.erase(disparos.begin() + i);
             i--;
         }

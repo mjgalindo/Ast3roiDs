@@ -1821,7 +1821,7 @@ Estado tratarJuego3D(Estado estado) {
             // Mueve todos los asteroides y elimina los que estén destruidos.
             for (int i = 0; i < asteroides.size(); ++i) {
                 asteroides[i].actualizar();
-                if (asteroides[i].estado == Elemento3D::DESTRUIDO) {
+                if (asteroides[i].estado == DESTRUIDO_3D) {
                     asteroides.erase(asteroides.begin() + i);
                     i--;
                 }
@@ -1902,7 +1902,7 @@ Estado tratarJuego3D(Estado estado) {
         float escalado = ajustar_h(2);
         reapareciendo.setScale({escalado, escalado});
         reapareciendo.setPosition({resolucion.x/2.0f - reapareciendo.getLocalBounds().width/2.0f, resolucion.y/2.0f - reapareciendo.getLocalBounds().height/2.0f});
-        if(nave.estado==REAPARECIENDO){
+        if(nave.estado==INVULNERABLE){
             ventana.draw(reapareciendo);
         }
 

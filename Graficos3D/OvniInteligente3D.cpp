@@ -72,7 +72,7 @@ void OvniInteligente3D::actualizar(int nivel, std::vector<Asteroide3D> &asteroid
             nave.destruir();
         }
 
-        if (colisionado || disparos[i].estado == DESTRUIDO) {
+        if (colisionado || disparos[i].estado == DESTRUIDO_3D) {
             disparos.erase(disparos.begin() + i);
             i--;
         }
