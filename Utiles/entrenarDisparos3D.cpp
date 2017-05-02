@@ -597,7 +597,7 @@ int main() {
 
         Disparo3D disparo(direccion, sustitutoOvni.pos.posicion,glm::vec3(0.0f,0.0f,0.0f),limiteMovimiento); //FALTA LA ROTACION
         bool acertado = false;
-        while (!acertado && disparo.estado != Elemento3D::Estado3D::DESTRUIDO) {
+        while (!acertado && disparo.estado != Estado3D::DESTRUIDO_3D) {
             disparo.actualizar();
             if (colisionPuntoEsfera(disparo.pos.posicion,nave.pos.posicion,dispAcierto * nave.pos.escala.z)) {
                 acertado = true;

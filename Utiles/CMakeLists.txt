@@ -6,6 +6,8 @@ set(FUENTES_3D
         ../Graficos3D/Elemento3D.cpp
         ../Graficos3D/Asteroide3D.hpp
         ../Graficos3D/Asteroide3D.cpp
+        ../Graficos3D/Fuego.cpp
+        ../Graficos3D/Fuego.hpp
         ../Graficos3D/Nave3D.hpp
         ../Graficos3D/Nave3D.cpp
         ../Graficos3D/Ovni3D.cpp
