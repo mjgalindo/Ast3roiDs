@@ -1660,6 +1660,11 @@ Estado tratarJuego3D(Estado estado) {
     {
         cout << "Error al carcar ui_puntuacion.png" <<endl;
     }
+    sf::Texture texturaReapareciendo;
+    if (!texturaReapareciendo.loadFromFile("Recursos/Reapareciendo.png"))
+    {
+        cout << "Error al cargar Reapareciendo.png" <<endl;
+    }
 
     Minimapa minimapaXY({resolucion.x - ajustar_h(200.0f), resolucion.y - ajustar_h(200.0f) * 2.0f},
                         {ajustar_h(200u), ajustar_h(200u)}, true, true, false);
@@ -1891,6 +1896,16 @@ Estado tratarJuego3D(Estado estado) {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         ventana.pushGLStates();
+
+        sf::Sprite reapareciendo;
+        reapareciendo.setTexture(texturaReapareciendo);
+        float escalado = ajustar_h(2);
+        reapareciendo.setScale({escalado, escalado});
+        reapareciendo.setPosition({resolucion.x/2.0f - reapareciendo.getLocalBounds().width/2.0f, resolucion.y/2.0f - reapareciendo.getLocalBounds().height/2.0f});
+        if(nave.estado==REAPARECIENDO){
+            ventana.draw(reapareciendo);
+        }
+
 
         // Se dibuja la puntuacion
         sf::Sprite marco_puntuacion;
