@@ -11,6 +11,8 @@ public:
     void actualizar(Posicionamiento p);
     void dibujar(sf::RenderTarget &target, Camara &camara, bool rellenar, sf::RenderStates states) const;
 
+private:
+    float contador;
 };
 
 
