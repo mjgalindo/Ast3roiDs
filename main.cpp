@@ -1944,6 +1944,9 @@ Estado tratarJuego3D(Estado estado) {
         vidasText.setPosition({ajustar_w(5.0f), ajustar_h(65.0f)});
         ventana.draw(vidasText);
 
+        minimapaXY.setElementos3D(&nave, ovni, &asteroides, RADIO_ESFERA_JUGABLE);
+        minimapaYZ.setElementos3D(&nave, ovni, &asteroides, RADIO_ESFERA_JUGABLE);
+
         sf::Text idMapaXY;
         inicializaTexto(idMapaXY, ajustar_h(20u), 1.0);
         idMapaXY.setString("X Y");
