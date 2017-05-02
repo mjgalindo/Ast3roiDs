@@ -1673,6 +1673,10 @@ Estado tratarJuego3D(Estado estado) {
                         {ajustar_h(200u), ajustar_h(200u)}, false, true, true);
     minimapaYZ.setElementos3D(&nave, ovni, &asteroides, RADIO_ESFERA_JUGABLE);
 
+    // Mensaje de reaparición
+    sf::RectangleShape reapareciendo({(float) resolucion.x, (float) resolucion.y / 10});
+    reapareciendo.setTexture(&texturaReapareciendo);
+    reapareciendo.setPosition(0, resolucion.y / 6);
 
     //UI pausar
     sf::RectangleShape cuadroSalir1({ajustar_w(370.0f), ajustar_h(220.0f)});
@@ -1897,11 +1901,6 @@ Estado tratarJuego3D(Estado estado) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         ventana.pushGLStates();
 
-        sf::Sprite reapareciendo;
-        reapareciendo.setTexture(texturaReapareciendo);
-        float escalado = ajustar_h(2);
-        reapareciendo.setScale({escalado, escalado});
-        reapareciendo.setPosition({resolucion.x/2.0f - reapareciendo.getLocalBounds().width/2.0f, resolucion.y/2.0f - reapareciendo.getLocalBounds().height/2.0f});
         if(nave.estado==INVULNERABLE){
             ventana.draw(reapareciendo);
         }
