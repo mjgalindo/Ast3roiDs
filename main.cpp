@@ -1866,7 +1866,6 @@ Estado tratarJuego3D(Estado estado) {
                 camara.up = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
                 break;
         }
-
         // Limpia la ventana
         glClearColor(0.0f, 0.0f, 0.0f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -1981,7 +1980,6 @@ Estado tratarJuego3D(Estado estado) {
             ventana.draw(opcionSi);
             ventana.draw(opcionNo);
             ventana.draw(poligono, tPausa);
-            ventana.display();
         }
         // restore the state
         ventana.popGLStates();
