@@ -1796,7 +1796,7 @@ Estado tratarJuego3D(Estado estado) {
             if (ventana.hasFocus()) sf::Mouse::setPosition({(int) resolucion.x / 2, (int) resolucion.y / 2}, ventana);
         }
 
-        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LAlt) && !pausarJuego) {
+        if ((posCamara != LIBRE || !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LAlt)) && !pausarJuego) {
 
             nave.actualizar(nivel, asteroides, *ovni, avanceCursor);
 
