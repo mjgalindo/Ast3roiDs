@@ -5,6 +5,8 @@
 #include <random>
 #include <SFML/Graphics.hpp>
 #include <time.h>
+#include <glm/fwd.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 static constexpr double PI = 3.14159265358979323846;
 
@@ -32,8 +34,23 @@ static T distanciaEuclidea(sf::Vector2<T> a, sf::Vector2<T> b) {
 }
 
 template<typename T>
+static float distanciaEuclidea(T a, T b) {
+    return (float) sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
+}
+
+template<typename T>
 static int rad2deg(T radianes) {
     return (int) ((radianes < 0 ? radianes + 2 * PI : radianes) * 180 / PI);
+}
+
+template<typename T>
+static float tamanoVector(T vector3) {
+    return (float) sqrt(pow(vector3.x, 2) + pow(vector3.y, 2) + pow(vector3.z, 2));
+}
+
+static glm::quat rotacionAleatoria() {
+    return glm::angleAxis(valorAleatorio(0, (float) PI),
+                          glm::normalize(glm::vec3(valorAleatorio(), valorAleatorio(), valorAleatorio())));
 }
 
 #endif //AST3ROIDS_MATEMATICAS_HPP

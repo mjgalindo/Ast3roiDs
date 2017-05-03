@@ -9,7 +9,7 @@
 class ControladorSonido {
 public:
     enum Sonido {
-        EXP_0 = 0, EXP_1, EXP_2, ACELERAR, DISPARO, VIDA_EXTRA, OVNI_PEQUENO, OVNI_GRANDE, NUM_SONIDOS
+        EXP_0 = 0, EXP_1, EXP_2, ACELERAR, DISPARO, VIDA_EXTRA, OVNI_PEQUENO, OVNI_GRANDE, HAS_MUERTO, TELETRANSPORTE, NUM_SONIDOS
     };
 private:
     std::array<sf::SoundBuffer, NUM_SONIDOS> buffers;

@@ -6,7 +6,12 @@
 
 class OvniInteligente : public Ovni {
 private:
-    float error = (float) (PI / 2);
+    float error = (float) (PI / 4);
+    std::string ficheroRed = "Recursos/IA/disparo.nnet";
+
+    vector<double> contexto;
+    int ocultas = 0;
+
 public:
 
     OvniInteligente(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs);
@@ -16,6 +21,8 @@ public:
     void disparar(sf::Vector2f nave);
 
     virtual int getPuntuacion() const;
+
+    double output2RadiansDisparo(std::vector<double> output);
 
     void mover(std::vector<Asteroide> &astds, Triangular &nave);
 

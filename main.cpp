@@ -6,13 +6,20 @@
 
 #include "Graficos/Nave.hpp"
 #include "Graficos/OvniInteligente.hpp"
+#include "Graficos3D/Asteroide3D.hpp"
+#include "Graficos3D/Nave3D.hpp"
+#include "Graficos3D/Minimapa.hpp"
+#include "Util3D/Ventana3D.hpp"
+#include "Util3D/ControladorTexturas.hpp"
+#include "Util3D/ControladorShaders.hpp"
+#include "Graficos3D/Esfera.hpp"
 
 #define MAX_PUNTS 10
 
 using namespace std;
 
 enum Estado {
-    TITULO, MENU, JUEGO, GAME_OVER, PUNTUACIONES, CONTROLES, OPCIONES, CREDITOS, EXIT
+    TITULO, MENU, JUEGO2D, JUEGO3D, GAME_OVER, PUNTUACIONES, CONTROLES, OPCIONES, CREDITOS, EXIT
 };
 enum controles {
     GIRAR_IZQUIERDA = 0, GIRAR_DERECHA = 1, ACELERAR = 2, DISPARAR = 3, HIPERESPACIO = 4, VOLVER = 5
@@ -24,6 +31,7 @@ struct Configuracion {
     unsigned int volumen;
     unsigned int antialiasing;
     int colorId;
+    bool alambre;
     array<sf::Color, 4u> COLORES = {sf::Color::White, sf::Color::Red, sf::Color::Green, sf::Color::Cyan};
 
     sf::Keyboard::Key girar_izquierda = sf::Keyboard::Left;
@@ -72,6 +80,8 @@ Estado tratarMenu(Estado estado);
 
 Estado tratarJuego(Estado estado);
 
+Estado tratarJuego3D(Estado estado);
+
 Estado tratarGameOver(Estado estado);
 
 Estado tratarPuntuaciones(Estado estado);
@@ -113,17 +123,22 @@ sf::RenderWindow ventana;
 
 //Puntuacion
 long int puntuacion;
+bool juego2D = true;
 
 void inicializaVentana() {
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = configuracionGlobal.antialiasing;
+    sf::ContextSettings configuracion;
+    configuracion.depthBits = 24;
+    configuracion.stencilBits = 8;
+    configuracion.majorVersion = 3;
+    configuracion.minorVersion = 3;
+    configuracion.antialiasingLevel = configuracionGlobal.antialiasing;
 
     if (configuracionGlobal.pantallaCompleta) {
-        ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Fullscreen, settings);
+        ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Fullscreen, configuracion);
         ventana.setMouseCursorVisible(false);
     } else {
         ventana.create(sf::VideoMode(resolucion.x, resolucion.y), "Ast3roiDs", sf::Style::Titlebar | sf::Style::Close,
-                       settings);
+                       configuracion);
         ventana.setMouseCursorVisible(true);
     }
     ventana.setFramerateLimit(60);
@@ -174,8 +189,11 @@ int main() {
             case MENU:
                 estado_actual = tratarMenu(estado_actual);
                 break;
-            case JUEGO:
+            case JUEGO2D:
                 estado_actual = tratarJuego(estado_actual);
+                break;
+            case JUEGO3D:
+                estado_actual = tratarJuego3D(estado_actual);
                 break;
             case GAME_OVER:
                 estado_actual = tratarGameOver(estado_actual);
@@ -273,43 +291,49 @@ Estado tratarMenu(Estado estado) {
     sf::Text opcion4;
     sf::Text opcion5;
     sf::Text opcion6;
+    sf::Text opcion7;
 
 
     inicializaTexto(texto, ajustar_h(80u), 1.5);
     texto.setString("MENU");
-    texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 10.0f});
+    texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 20.0f});
 
     inicializaTexto(opcion1, ajustar_h(40u));
-    opcion1.setString("JUGAR");
+    opcion1.setString("JUGAR 2D");
     opcion1.setPosition(
-            {(resolucion.x - opcion1.getLocalBounds().width) / 2.0f, resolucion.y / 8 + resolucion.y / 8.0f});
+            {(resolucion.x - opcion1.getLocalBounds().width) / 2.0f, resolucion.y / 9 + resolucion.y / 9.0f});
 
     inicializaTexto(opcion2, ajustar_h(40u));
-    opcion2.setString("PUNTUACIONES");
+    opcion2.setString("JUGAR 3D");
     opcion2.setPosition(
-            {(resolucion.x - opcion2.getLocalBounds().width) / 2.0f, resolucion.y / 8 + 2 * resolucion.y / 8.0f});
+            {(resolucion.x - opcion2.getLocalBounds().width) / 2.0f, resolucion.y / 9 +  2 * resolucion.y / 9.0f});
 
     inicializaTexto(opcion3, ajustar_h(40u));
-    opcion3.setString("OPCIONES");
+    opcion3.setString("PUNTUACIONES");
     opcion3.setPosition(
-            {(resolucion.x - opcion3.getLocalBounds().width) / 2, resolucion.y / 8.0f + 3 * resolucion.y / 8.0f});
+            {(resolucion.x - opcion3.getLocalBounds().width) / 2.0f, resolucion.y / 9 + 3 * resolucion.y / 9.0f});
 
     inicializaTexto(opcion4, ajustar_h(40u));
-    opcion4.setString("CONTROLES");
+    opcion4.setString("OPCIONES");
     opcion4.setPosition(
-            {(resolucion.x - opcion4.getLocalBounds().width) / 2, resolucion.y / 8.0f + 4 * resolucion.y / 8.0f});
+            {(resolucion.x - opcion4.getLocalBounds().width) / 2, resolucion.y / 9.0f + 4 * resolucion.y / 9.0f});
 
     inicializaTexto(opcion5, ajustar_h(40u));
-    opcion5.setString("CREDITOS");
+    opcion5.setString("CONTROLES");
     opcion5.setPosition(
-            {(resolucion.x - opcion5.getLocalBounds().width) / 2, resolucion.y / 8.0f + 5 * resolucion.y / 8.0f});
+            {(resolucion.x - opcion5.getLocalBounds().width) / 2, resolucion.y / 9.0f + 5 * resolucion.y / 9.0f});
 
     inicializaTexto(opcion6, ajustar_h(40u));
-    opcion6.setString("SALIR");
+    opcion6.setString("CREDITOS");
     opcion6.setPosition(
-            {(resolucion.x - opcion6.getLocalBounds().width) / 2, resolucion.y / 8.0f + 6 * resolucion.y / 8.0f});
+            {(resolucion.x - opcion6.getLocalBounds().width) / 2, resolucion.y / 9.0f + 6 * resolucion.y / 9.0f});
 
-    array<Estado, 6> opciones = {JUEGO, PUNTUACIONES, OPCIONES, CONTROLES, CREDITOS, EXIT};
+    inicializaTexto(opcion7, ajustar_h(40u));
+    opcion7.setString("SALIR");
+    opcion7.setPosition(
+            {(resolucion.x - opcion7.getLocalBounds().width) / 2, resolucion.y / 9.0f + 7 * resolucion.y / 9.0f});
+
+    array<Estado, 7> opciones = {JUEGO2D, JUEGO3D, PUNTUACIONES, OPCIONES, CONTROLES, CREDITOS, EXIT};
     int seleccion = 0;
 
     while (true) {
@@ -325,7 +349,7 @@ Estado tratarMenu(Estado estado) {
                     } else if (event.key.code == sf::Keyboard::Up) {
                         seleccion--;
                         if (seleccion < 0) {
-                            seleccion = opciones.size() - 1;
+                            seleccion = (int) opciones.size() - 1;
                         }
                     } else if (event.key.code == sf::Keyboard::Down) {
                         seleccion++;
@@ -336,49 +360,54 @@ Estado tratarMenu(Estado estado) {
                 default:
                     break;
             }
-
-            //Indicador con forma de nave
-            sf::Transform t;
-            switch (seleccion) {
-                case 0:
-                    t.translate({opcion1.getPosition().x - resolucion.x / 10, opcion1.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                case 1:
-                    t.translate({opcion2.getPosition().x - resolucion.x / 10, opcion2.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                case 2:
-                    t.translate({opcion3.getPosition().x - resolucion.x / 10, opcion3.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                case 3:
-                    t.translate({opcion4.getPosition().x - resolucion.x / 10, opcion4.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                case 4:
-                    t.translate({opcion5.getPosition().x - resolucion.x / 10, opcion5.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                case 5:
-                    t.translate({opcion6.getPosition().x - resolucion.x / 10, opcion6.getPosition().y + ajustar_h(20u)})
-                            .scale(ajustar_h(35u), ajustar_w(20u));
-                    break;
-                default:
-                    break;
-            }
-
-            ventana.clear(sf::Color::Black);
-            ventana.draw(poligono, t);
-            ventana.draw(texto);
-            ventana.draw(opcion1);
-            ventana.draw(opcion2);
-            ventana.draw(opcion3);
-            ventana.draw(opcion4);
-            ventana.draw(opcion5);
-            ventana.draw(opcion6);
-            ventana.display();
         }
+
+        //Indicador con forma de nave
+        sf::Transform t;
+        switch (seleccion) {
+            case 0:
+                t.translate({opcion1.getPosition().x - resolucion.x / 10, opcion1.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            case 1:
+                t.translate({opcion2.getPosition().x - resolucion.x / 10, opcion2.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            case 2:
+                t.translate({opcion3.getPosition().x - resolucion.x / 10, opcion3.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            case 3:
+                t.translate({opcion4.getPosition().x - resolucion.x / 10, opcion4.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            case 4:
+                t.translate({opcion5.getPosition().x - resolucion.x / 10, opcion5.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            case 5:
+                t.translate({opcion6.getPosition().x - resolucion.x / 10, opcion6.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            case 6:
+                t.translate({opcion7.getPosition().x - resolucion.x / 10, opcion7.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+                break;
+            default:
+                break;
+        }
+
+        ventana.clear(sf::Color::Black);
+        ventana.draw(poligono, t);
+        ventana.draw(texto);
+        ventana.draw(opcion1);
+        ventana.draw(opcion2);
+        ventana.draw(opcion3);
+        ventana.draw(opcion4);
+        ventana.draw(opcion5);
+        ventana.draw(opcion6);
+        ventana.draw(opcion7);
+        ventana.display();
     }
 }
 
@@ -424,8 +453,11 @@ void comprobarMuerteAsteroides(std::vector<Asteroide> &asteroides) {
 
 Estado tratarJuego(Estado estado) {
 
+    juego2D = true;
+
     puntuacion = 0;
     int vidas_puntuacion = 0;
+    Asteroide::reiniciarNivel();
 
     sf::Text texto;
     sf::Text opcion1;
@@ -519,6 +551,7 @@ Estado tratarJuego(Estado estado) {
             if (numeroDeAsteroides > 12) {
                 numeroDeAsteroides = 12;
             }
+            Asteroide::aumentarNivel();
             Asteroide::nuevosAsteroidesAleatorios(asteroides, numeroDeAsteroides, resolucion,
                                                   configuracionGlobal.color(), &csonido);
             *reiniciarMusica = true;
@@ -769,7 +802,12 @@ Estado tratarGameOver(Estado estado) {
                         }
                     }
                     if (event.key.code == sf::Keyboard::Return) {
-                        ifstream f_puntuaciones("puntuaciones.dat");
+                        ifstream f_puntuaciones;
+                        if (juego2D) {
+                            f_puntuaciones = ifstream("puntuaciones.dat");
+                        } else {
+                            f_puntuaciones = ifstream("puntuaciones3D.dat");
+                        }
                         vector<string> nombres(0);
                         vector<long int> punts(0);
                         string nombre_aux = "";
@@ -812,7 +850,13 @@ Estado tratarGameOver(Estado estado) {
                         }
                         f_puntuaciones.close();
 
-                        ofstream f_puntuaciones_out("puntuaciones.dat");
+                        ofstream f_puntuaciones_out;
+                        if (juego2D) {
+                            f_puntuaciones_out = ofstream("puntuaciones.dat");
+                        }
+                        else{
+                            f_puntuaciones_out = ofstream("puntuaciones3D.dat");
+                        }
                         if (f_puntuaciones_out.good()) {
                             if (nombres.size() != 0) {
                                 for (int i = 0; i < nombres.size(); i++) {
@@ -856,10 +900,13 @@ Estado tratarGameOver(Estado estado) {
 Estado tratarPuntuaciones(Estado estado) {
     sf::Text texto;
     sf::Text opcion1;
+    sf::Text opcion2;
 
     vector<sf::Text> punts(MAX_PUNTS);
+    vector<sf::Text> punts3D(MAX_PUNTS);
 
     ifstream f_puntuaciones("puntuaciones.dat");
+    ifstream f_puntuaciones3D("puntuaciones3D.dat");
     if (f_puntuaciones.good()) {
         string nombre_aux;
         long int puntuacion_aux;
@@ -888,8 +935,36 @@ Estado tratarPuntuaciones(Estado estado) {
     }
     f_puntuaciones.close();
 
-    inicializaTexto(texto, ajustar_h(75u), 1.5);
-    texto.setString("PUNTUACIONES");
+    if (f_puntuaciones3D.good()) {
+        string nombre_aux;
+        long int puntuacion_aux;
+        for (int i = 0; i < MAX_PUNTS && !f_puntuaciones3D.eof(); i++) {
+            f_puntuaciones3D >> nombre_aux;
+            f_puntuaciones3D >> puntuacion_aux;
+
+            string linea = "";
+            linea.append(nombre_aux);
+            linea.append("    ");
+            linea.append(to_string(puntuacion_aux));
+
+            if (nombre_aux.compare("") != 0) {
+                nombre_aux = "";
+                puntuacion_aux = 0;
+
+                sf::Text punt;
+                inicializaTexto(punt, ajustar_h(30u));
+                punt.setString(linea);
+                punt.setPosition({(resolucion.x - punt.getLocalBounds().width) / 2.0f,
+                                  resolucion.y / 3.5f + i * resolucion.y / 14.0f});
+
+                punts3D.push_back(punt);
+            }
+        }
+    }
+    f_puntuaciones3D.close();
+
+    inicializaTexto(texto, ajustar_h(60u), 1.5);
+    texto.setString("PUNTUACIONES ( 2D )");
     texto.setPosition({(resolucion.x - texto.getLocalBounds().width) / 2.0f, resolucion.y / 14.0f});
 
     inicializaTexto(opcion1, ajustar_h(30u));
@@ -898,10 +973,16 @@ Estado tratarPuntuaciones(Estado estado) {
     opcion1.setPosition(sf::Vector2f(resolucion.x - opcion1.getLocalBounds().width - ajustar_w(5),
                                      resolucion.y - opcion1.getLocalBounds().height - ajustar_h(20)));
 
+    inicializaTexto(opcion2, ajustar_h(30u));
+    opcion2.setString("[TAB PARA CAMBIAR MODO]");
+    opcion2.setCharacterSize(ajustar_h(25u));
+    opcion2.setPosition(sf::Vector2f(0,resolucion.y - opcion2.getLocalBounds().height - ajustar_h(5)));
+
     sf::Transform t;
     t.translate({opcion1.getPosition().x - ajustar_w(30), opcion1.getPosition().y + ajustar_h(20u)})
             .scale(ajustar_h(35u), ajustar_w(20u));
 
+    bool mostrar2D = true;
     while (true) {
         sf::Event event;
         while (ventana.pollEvent(event)) {
@@ -913,6 +994,15 @@ Estado tratarPuntuaciones(Estado estado) {
                     if (event.key.code == sf::Keyboard::Return) {
                         return MENU;
                     }
+                    else if (event.key.code == sf::Keyboard::Tab) {
+                        mostrar2D = !mostrar2D;
+                        if(mostrar2D) {
+                            texto.setString("PUNTUACIONES ( 2D )");
+                        }
+                        else{
+                            texto.setString("PUNTUACIONES ( 3D )");
+                        }
+                    }
                 default:
                     break;
             }
@@ -920,10 +1010,19 @@ Estado tratarPuntuaciones(Estado estado) {
             ventana.clear(sf::Color::Black);
             ventana.draw(texto);
             ventana.draw(opcion1);
+            ventana.draw(opcion2);
             ventana.draw(poligono, t);
 
-            for (unsigned int i = 0; i < punts.size(); i++) {
-                ventana.draw(punts[i]);
+
+            if(mostrar2D) {
+                for (unsigned int i = 0; i < punts.size(); i++) {
+                    ventana.draw(punts[i]);
+                }
+            }
+            else{
+                for (unsigned int i = 0; i < punts3D.size(); i++) {
+                    ventana.draw(punts3D[i]);
+                }
             }
 
             ventana.display();
@@ -952,10 +1051,10 @@ Estado tratarOpciones(Estado estado) {
     }
 
     enum Opcion {
-        RESOLUCION = 0, PANTALLA_COMPLETA = 1, VOLUMEN = 2, ANTIALIASING = 3, COLOR = 4, VOLVER = 5
+        RESOLUCION = 0, PANTALLA_COMPLETA = 1, VOLUMEN = 2, ANTIALIASING = 3, COLOR = 4, ALAMBRE = 5, VOLVER = 6
     };
 
-    static constexpr int OPCIONES = 6;
+    static constexpr int OPCIONES = 7;
 
     array<tuple<string, string>, OPCIONES> textos{
             make_tuple("RESOLUCION", ""),
@@ -963,6 +1062,7 @@ Estado tratarOpciones(Estado estado) {
             make_tuple("VOLUMEN", ""),
             make_tuple("ANTIALIASING", ""),
             make_tuple("COLOR", ""),
+            make_tuple("ALAMBRE", ""),
             make_tuple("VOLVER", "")
     };
     array<tuple<sf::Text, sf::Text>, OPCIONES> opciones;
@@ -1025,6 +1125,10 @@ Estado tratarOpciones(Estado estado) {
                             case COLOR:
                                 configuracionGlobal.colorId = (int) ((configuracionGlobal.colorId - 1) %
                                                                      configuracionGlobal.COLORES.size());
+                                break;
+                            case ALAMBRE:
+                                configuracionGlobal.alambre = !configuracionGlobal.alambre;
+                                break;
                             default:
                                 break;
                         }
@@ -1050,6 +1154,10 @@ Estado tratarOpciones(Estado estado) {
                             case COLOR:
                                 configuracionGlobal.colorId = (int) ((configuracionGlobal.colorId + 1) %
                                                                      configuracionGlobal.COLORES.size());
+                                break;
+                            case ALAMBRE:
+                                configuracionGlobal.alambre = !configuracionGlobal.alambre;
+                                break;
                             default:
                                 break;
                         }
@@ -1065,6 +1173,7 @@ Estado tratarOpciones(Estado estado) {
         get<1>(textos[ANTIALIASING]) = to_string(configuracionGlobal.antialiasing);
         get<1>(textos[VOLUMEN]) = to_string(configuracionGlobal.volumen);
         get<1>(textos[COLOR]) = configuracionGlobal.colorString();
+        get<1>(textos[ALAMBRE]) = configuracionGlobal.alambre ? "SI" : "NO";
         for (unsigned int i = 0; i < OPCIONES; i++) {
             get<0>(opciones[i]).setString(get<0>(textos[i]));
             get<1>(opciones[i]).setString(get<1>(textos[i]));
@@ -1294,7 +1403,7 @@ Configuracion leeConfiguracion() {
     unsigned int resVertical = 0;
     int gir_izq, gir_der, acel, disp, hiper;
     fichConfig >> resVertical >> retVal.pantallaCompleta >> retVal.volumen >> retVal.antialiasing >> retVal.colorId
-               >> gir_izq >> gir_der >> acel >> disp >> hiper;
+               >> gir_izq >> gir_der >> acel >> disp >> hiper >> retVal.alambre;
     if (gir_izq != 0) {
         retVal.girar_izquierda = (sf::Keyboard::Key) gir_izq;
     }
@@ -1319,7 +1428,7 @@ void escribeConfiguracion(Configuracion config) {
     fichConfig << config.resolucion.y << ' ' << config.pantallaCompleta << ' ' << config.volumen << ' '
                << config.antialiasing << ' ' << config.colorId << ' ' << config.girar_izquierda << ' '
                << config.girar_derecha << ' ' << config.acelerar << ' ' << config.disparar << ' '
-               << config.hiperespacio;
+               << config.hiperespacio << ' ' << config.alambre;
 }
 
 string keyToString(sf::Keyboard::Key k) {
@@ -1376,9 +1485,30 @@ Estado tratarCreditos(Estado estado) {
     opcion4.setPosition({(resolucion.x - opcion4.getLocalBounds().width) / 2,
                          opcion3.getPosition().y + opcion3.getLocalBounds().height + ajustar_h(25u)});
 
+    sf::Text leyenda;
+    inicializaTexto(leyenda, ajustar_h(30u));
+    leyenda.setString("[ESC PARA CAMBIAR SALTAR]");
+    leyenda.setCharacterSize(ajustar_h(25u));
+    leyenda.setPosition(sf::Vector2f(0,resolucion.y - leyenda.getLocalBounds().height - ajustar_h(5)));
+
     sf::Clock reloj;
     reloj.restart();
-    while (opcion4.getPosition().y + opcion4.getLocalBounds().height > 0) {
+    bool salir = false;
+    while (true) {
+        sf::Event event;
+        if(ventana.pollEvent(event)){
+            switch (event.type) {
+                case sf::Event::Closed:
+                    ventana.close();
+                    return EXIT;
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Escape) {
+                        return MENU;
+                    }
+                    break;
+            }
+        }
+
         if (reloj.getElapsedTime().asMilliseconds() > 150) {
             if (opcion1.getCharacterSize() >= ajustar_h(20) &&
                 opcion1.getPosition().y + opcion1.getLocalBounds().height + resolucion.y / 6.0 < resolucion.y) {
@@ -1401,6 +1531,11 @@ Estado tratarCreditos(Estado estado) {
             }
             reloj.restart();
         }
+
+        if(opcion4.getPosition().y + opcion4.getLocalBounds().height < 0){
+            return MENU;
+        }
+
         opcion1.setPosition((resolucion.x - opcion1.getLocalBounds().width) / 2, opcion1.getPosition().y - 1);
         opcion2.setPosition((resolucion.x - opcion2.getLocalBounds().width) / 2, opcion2.getPosition().y - 1);
         opcion3.setPosition((resolucion.x - opcion3.getLocalBounds().width) / 2, opcion3.getPosition().y - 1);
@@ -1413,7 +1548,451 @@ Estado tratarCreditos(Estado estado) {
         ventana.draw(opcion2);
         ventana.draw(opcion3);
         ventana.draw(opcion4);
+        ventana.draw(leyenda);
         ventana.display();
     }
+
     return MENU;
+}
+
+/**
+ * De: https://guidedhacking.com/showthread.php?6588-OpenGL-Draw-a-crosshair
+ * Dibuja una cruz en el centro de la ventana.
+ */
+void dibujaCruz(sf::Vector2u tamVentana, double offsetVertical) {
+    glPushMatrix();
+    glViewport(0, 0, tamVentana.x, tamVentana.y);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, tamVentana.x, tamVentana.y, 0, -1, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glColor3ub(240, 240, 240);//white
+    glLineWidth(2.0);
+    glBegin(GL_LINES);
+    //horizontal line
+    glVertex2i(tamVentana.x / 2 - 7, tamVentana.y / 2 + offsetVertical);
+    glVertex2i(tamVentana.x / 2 + 7, tamVentana.y / 2 + offsetVertical);
+    glEnd();
+    //vertical line
+    glBegin(GL_LINES);
+    glVertex2i(tamVentana.x / 2, tamVentana.y / 2 + 7 + offsetVertical);
+    glVertex2i(tamVentana.x / 2, tamVentana.y / 2 - 7 + offsetVertical);
+    glEnd();
+
+    glPopMatrix();
+}
+
+Estado tratarJuego3D(Estado estado) {
+    puntuacion = 0;
+    int vidas_puntuacion = 0;
+    juego2D = false;
+
+    // Reinicializa la ventana para evitar modelos transparentes
+    inicializaVentana();
+    ventana.setMouseCursorVisible(false);
+    ventana.setMouseCursorGrabbed(true);
+    GLenum status = glewInit();
+    if (status != GLEW_OK) {
+        cerr << "Glew no ha podido inicializarse" << endl;
+    }
+
+    // Activa test de profundidad para ocluir triangulos que se encuentran detrás de otros.
+    glEnable(GL_DEPTH_TEST);
+
+    // Inicializa los modelos 3D y las texturas. Estos objetos solo existe para controlar
+    // la creacion y destrucción de recursos. Se iniciarán siempre que se empiece a jugar.
+    ControladorModelos __controladorModelos;
+    ControladorTexturas __controladorTexturas;
+    ControladorShaders __controladorShaders;
+
+    unique_ptr<ControladorSonido> csonido{new ControladorSonido};
+
+    // Inicializa shaders y texturas.
+    ControladorShaders::getShader(ControladorShaders::SIMPLE)->bind();
+    ControladorShaders::getShader(ControladorShaders::SIMPLE)->setDireccionLuz({0.0f, -0.75f, 0.25f});
+    ControladorShaders::getShader(ControladorShaders::BRILLO)->bind();
+    ControladorShaders::getShader(ControladorShaders::BRILLO)->setDireccionLuz({0.0f, -0.75f, 0.25f});
+
+    Esfera espacio(ControladorTexturas::ESPACIO, ControladorShaders::BRILLO, {0, 0, 0}, {800, 800, 800});
+
+    const float RADIO_ESFERA_JUGABLE = 100.0f;
+    const float DISTANCIA_RENDER_PELIGRO = 50.0f;
+    Esfera mallaLimites(ControladorTexturas::BLANCO, ControladorShaders::BRILLO, {0, 0, 0},
+                        {RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE, RADIO_ESFERA_JUGABLE}, true);
+
+    // Carga asteroides para ver como se mueve la nave
+    vector<Asteroide3D> asteroides;
+    int numeroDeAsteroides = 6;
+    for (int i = 0; i < numeroDeAsteroides; i++)
+        asteroides.emplace_back(csonido.get(), RADIO_ESFERA_JUGABLE);
+
+    Nave3D nave(csonido.get(), &puntuacion, RADIO_ESFERA_JUGABLE);
+    nave.teclaAcelerar = configuracionGlobal.acelerar;
+    Ovni3D ovniTonto(csonido.get(), RADIO_ESFERA_JUGABLE);
+    OvniInteligente3D ovniListo(csonido.get(), RADIO_ESFERA_JUGABLE);
+
+    Ovni3D *ovni = &ovniTonto;
+    bool ovniElegido = false;
+    float probabilidadOvniInt = 0.1;
+    float probabilidadOvniTon = 0.5;
+
+    Camara camara({0.0f, 0.0f, 0.0f}, Ventana3D::FOV, (float) ventana.getSize().x / (float) ventana.getSize().y,
+                  Ventana3D::Z_NEAR, Ventana3D::Z_FAR);
+
+    bool running = true;
+
+    int nivel = 1;
+
+    enum TipoCamara {
+        SIGUIENDO_DETRAS, PRIMERA_PERSONA, LIBRE, SIGUIENDO_LIBRE, BUSCA_NAVE, DESDE_ARRIBA
+    };
+    TipoCamara posCamara = SIGUIENDO_DETRAS;
+
+    sf::Texture texture;
+    if (!texture.loadFromFile("Recursos/ui_vidas.png"))
+    {
+        cout << "Error al carcar ui_vidas.png" <<endl;
+    }
+    sf::Texture texture2;
+    if (!texture2.loadFromFile("Recursos/ui_puntos.png"))
+    {
+        cout << "Error al carcar ui_puntuacion.png" <<endl;
+    }
+    sf::Texture texturaReapareciendo;
+    if (!texturaReapareciendo.loadFromFile("Recursos/Reapareciendo.png"))
+    {
+        cout << "Error al cargar Reapareciendo.png" <<endl;
+    }
+
+    Minimapa minimapaXY({resolucion.x - ajustar_h(200.0f), resolucion.y - ajustar_h(200.0f) * 2.0f},
+                        {ajustar_h(200u), ajustar_h(200u)}, true, true, false);
+    minimapaXY.setElementos3D(&nave, ovni, &asteroides, RADIO_ESFERA_JUGABLE);
+    Minimapa minimapaYZ({resolucion.x - ajustar_h(200.0f), resolucion.y - ajustar_h(200.0f)},
+                        {ajustar_h(200u), ajustar_h(200u)}, false, true, true);
+    minimapaYZ.setElementos3D(&nave, ovni, &asteroides, RADIO_ESFERA_JUGABLE);
+
+    // Mensaje de reaparición
+    sf::RectangleShape reapareciendo({(float) resolucion.x, (float) resolucion.y / 10});
+    reapareciendo.setTexture(&texturaReapareciendo);
+    reapareciendo.setPosition(0, resolucion.y / 6);
+
+    //UI pausar
+    sf::RectangleShape cuadroSalir1({ajustar_w(370.0f), ajustar_h(220.0f)});
+    sf::RectangleShape cuadroSalir2({ajustar_w(355.0f), ajustar_h(200.0f)});
+    cuadroSalir1.setFillColor(sf::Color(80,80,80,150));
+    cuadroSalir1.setPosition(configuracionGlobal.resolucion.x / 2.0f - cuadroSalir1.getSize().x / 2.0f,
+                             configuracionGlobal.resolucion.y / 2.0f - cuadroSalir1.getSize().y / 2.0f);
+    cuadroSalir2.setFillColor(sf::Color(0,100,100,100));
+    cuadroSalir2.setPosition(configuracionGlobal.resolucion.x / 2.0f - cuadroSalir2.getSize().x / 2.0f,
+                             configuracionGlobal.resolucion.y / 2.0f - cuadroSalir2.getSize().y / 2.0f);
+    sf::Text textoSalir;
+    inicializaTexto(textoSalir, ajustar_h(30u));
+    textoSalir.setString("SALIR?");
+    textoSalir.setPosition(configuracionGlobal.resolucion.x / 2.0f - textoSalir.getLocalBounds().width / 2.0f,
+                           configuracionGlobal.resolucion.y / 2.0f - ajustar_h(60u));
+
+    sf::Text opcionSi;
+    inicializaTexto(opcionSi, ajustar_h(30u));
+    opcionSi.setString("SI");
+    opcionSi.setPosition(
+            configuracionGlobal.resolucion.x / 2.0f - ajustar_w(60u) - opcionSi.getLocalBounds().width / 2.0f,
+            configuracionGlobal.resolucion.y / 2.0f + ajustar_h(30u));
+    sf::Text opcionNo;
+    inicializaTexto(opcionNo, ajustar_h(30u));
+    opcionNo.setString("NO");
+    opcionNo.setPosition(
+            configuracionGlobal.resolucion.x / 2.0f + ajustar_w(60u) - opcionNo.getLocalBounds().width / 2.0f,
+            configuracionGlobal.resolucion.y / 2.0f + ajustar_h(30u));
+    bool pausarJuego = false;
+    enum OpcionSalir {
+        SI, NO
+    };
+    OpcionSalir seleccionSalir = NO;
+    while (running) {
+        if (pausarJuego)
+        if (asteroides.size() == 0) {
+            nivel++;
+
+            if (probabilidadOvniInt < 0.5) {
+                probabilidadOvniInt += 0.05;
+            }
+            if (probabilidadOvniTon > 0.1) {
+                probabilidadOvniTon -= 0.05;
+            }
+
+            if (numeroDeAsteroides > 18) {
+                numeroDeAsteroides = 18;
+            }
+            else{
+                numeroDeAsteroides+=2;
+            }
+
+            for(int i=0 ; i<numeroDeAsteroides ; i++){
+                asteroides.emplace_back(csonido.get(), RADIO_ESFERA_JUGABLE);
+            }
+        }
+        sf::Event event;
+        while (ventana.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::MouseButtonPressed:
+                    if (event.mouseButton.button == sf::Mouse::Left && !pausarJuego) {
+                        nave.disparar();
+                        break;
+                    }
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::F1 && !pausarJuego) {
+                        posCamara = SIGUIENDO_DETRAS;
+                        break;
+                    } else if (event.key.code == sf::Keyboard::F2 && !pausarJuego) {
+                        posCamara = PRIMERA_PERSONA;
+                        break;
+                    } else if (event.key.code == sf::Keyboard::F3 && !pausarJuego) {
+                        posCamara = LIBRE;
+                        break;
+                    } else if (event.key.code == sf::Keyboard::F4 && !pausarJuego) {
+                        posCamara = SIGUIENDO_LIBRE;
+                        break;
+                    } else if (event.key.code == sf::Keyboard::F5 && !pausarJuego) {
+                        posCamara = DESDE_ARRIBA;
+                        break;
+                    } else if (event.key.code == configuracionGlobal.disparar && !pausarJuego) {
+                        nave.disparar();
+                        break;
+                    } else if(event.key.code == configuracionGlobal.hiperespacio && !pausarJuego){
+                        nave.hiperespacio();
+                        break;
+                    } else if (event.key.code == sf::Keyboard::Escape) {
+                        pausarJuego = !pausarJuego;
+                    } else if (pausarJuego and event.key.code == sf::Keyboard::Return) {
+                        if (seleccionSalir == NO) {
+                            // Continuar jugando
+                            pausarJuego = false;
+                        } else {
+                            // Salir del juego
+                            running = false;
+                        }
+                    } else if (pausarJuego and event.key.code == sf::Keyboard::Left) {
+                        seleccionSalir = SI;
+                    } else if (pausarJuego and event.key.code == sf::Keyboard::Right) {
+                        seleccionSalir = NO;
+                    }
+                default:
+                    break;
+            }
+        }
+        // Si no se está mirando a la pantalla se pausa el juego
+        if (!ventana.hasFocus()) {
+            sf::sleep(sf::milliseconds(30));
+            continue;
+        }
+
+        // Actualiza todos los elementos visibles
+        sf::Vector2i avanceCursor;
+        {
+            sf::Vector2i posCursor = sf::Mouse::getPosition(ventana);
+            avanceCursor = {posCursor.x - (int) resolucion.x / 2, posCursor.y - (int) resolucion.y / 2};
+            if (ventana.hasFocus()) sf::Mouse::setPosition({(int) resolucion.x / 2, (int) resolucion.y / 2}, ventana);
+        }
+
+        if ((posCamara != LIBRE || !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LAlt)) && !pausarJuego) {
+
+            nave.actualizar(nivel, asteroides, *ovni, avanceCursor);
+
+            if (nave.getVidas() < 0) {
+                running = false;
+            }
+
+            if (puntuacion - vidas_puntuacion >= 10000) {
+                vidas_puntuacion += 10000;
+                nave.vidaExtra();
+                csonido->reproducir(ControladorSonido::VIDA_EXTRA);
+            }
+
+            if (ovni->getEstado() == MUERTO && !ovniElegido) {
+                ovniElegido = true;
+                float va = valorAleatorio(0.0, 1.0);
+                if (va < probabilidadOvniInt) {
+                    ovni = &ovniListo;
+                } else if (va < probabilidadOvniInt + probabilidadOvniTon) {
+                    ovni = &ovniTonto;
+                }
+            }
+
+            ovni->actualizar(nivel, asteroides, nave);
+
+            // Mueve todos los asteroides y elimina los que estén destruidos.
+            for (int i = 0; i < asteroides.size(); ++i) {
+                asteroides[i].actualizar();
+                if (asteroides[i].estado == DESTRUIDO_3D) {
+                    asteroides.erase(asteroides.begin() + i);
+                    i--;
+                }
+            }
+
+            if(ovni->getEstado() == EstadoOvni::VIVO) {
+                ovniElegido = false;
+            }
+        }
+
+        // Actualiza la cámara con respecto a la posicion de la nave utilizando su matriz modelo-mundo.
+        glm::mat4 modeloNave = nave.pos.matrizModelo();
+
+        switch (posCamara) {
+            case PRIMERA_PERSONA:
+                camara.pos = glm::vec3(modeloNave * glm::vec4(2.0f, 2.0f, 0.0f, 1.0f));
+                camara.forward = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
+                camara.up = glm::cross(camara.forward, glm::vec3(modeloNave * glm::vec4{0.0f, 0.0f, -1.0f, 0.0f}));
+                break;
+            case SIGUIENDO_DETRAS:
+                camara.pos = glm::vec3(modeloNave * glm::vec4(-20.0f-tamanoVector(nave.velocidad)/2, 4.0f, 0.0f, 1.0f));
+                camara.forward = glm::vec3(glm::toMat4(nave.pos.rotacion) * nave.DIRECCION_FRENTE_INICIAL);
+                camara.up = glm::cross(camara.forward, glm::vec3(modeloNave * glm::vec4{0.0f, 0.0f, -1.0f, 0.0f}));
+                break;
+            case LIBRE:
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LAlt)) {
+                    camara.actualizar(glm::vec2{avanceCursor.x, avanceCursor.y});
+                }
+                break;
+            case SIGUIENDO_LIBRE:
+                camara.forward = nave.pos.posicion - camara.pos;
+                break;
+            case DESDE_ARRIBA:
+                camara.pos = glm::vec3(modeloNave * glm::vec4(2.0f, 222.0f, 0.0f, 1.0f));
+                glm::vec4 dir = {-nave.DIRECCION_ARRIBA_INICIAL.x, -nave.DIRECCION_ARRIBA_INICIAL.y,
+                                 -nave.DIRECCION_ARRIBA_INICIAL.z, -nave.DIRECCION_ARRIBA_INICIAL.w};
+                camara.forward = glm::vec3(modeloNave * dir);
+                camara.up = glm::vec3(modeloNave * nave.DIRECCION_FRENTE_INICIAL);
+                break;
+        }
+        // Limpia la ventana
+        glClearColor(0.0f, 0.0f, 0.0f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Dibuja todos los elementos
+        for (const Asteroide3D &asteroide : asteroides) {
+            asteroide.dibujar(ventana, camara, !configuracionGlobal.alambre);
+        }
+
+        // Si la nave está cerca del límite jugable considera si hay que renderizar los asteroides cercanos a su antípoda
+        if (distanciaEuclidea(nave.pos.posicion, glm::vec3{0, 0, 0}) >=
+            RADIO_ESFERA_JUGABLE - DISTANCIA_RENDER_PELIGRO) {
+            for (Asteroide3D &asteroide : asteroides) {
+                asteroide.dibujarSiCercaAntipoda(nave.pos.posicion, DISTANCIA_RENDER_PELIGRO, ventana, camara);
+            }
+        }
+        espacio.dibujar(ventana, camara, true);
+        if(posCamara != DESDE_ARRIBA) mallaLimites.dibujar(ventana, camara, false);
+
+        nave.dibujar(ventana, camara, !configuracionGlobal.alambre && posCamara != PRIMERA_PERSONA);
+        ovni->dibujar(ventana, camara, !configuracionGlobal.alambre);
+
+        if (posCamara == SIGUIENDO_DETRAS) {
+            dibujaCruz(ventana.getSize(), ajustar_h(30));
+        }
+        else if (posCamara == PRIMERA_PERSONA) {
+            dibujaCruz(ventana.getSize(), ajustar_h(10));
+        }
+
+        // store the state
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        ventana.pushGLStates();
+
+        if(nave.estado==INVULNERABLE){
+            ventana.draw(reapareciendo);
+        }
+
+
+        // Se dibuja la puntuacion
+        sf::Sprite marco_puntuacion;
+        marco_puntuacion.setTexture(texture2);
+        float escaladoHorizontal = 0.20f;
+        int p = puntuacion;
+        int i;
+        for(i =0; p>0;i++){
+            p = p/10;
+        }
+        if ( i>4) escaladoHorizontal = 0.20f+0.025f*(i-4);
+        marco_puntuacion.scale({ajustar_w(escaladoHorizontal), ajustar_h(0.2f)});
+        marco_puntuacion.setPosition(ajustar_w(1.0f),ajustar_h(1.0f));
+        ventana.draw(marco_puntuacion);
+
+        sf::Text puntuacionText;
+        inicializaTexto(puntuacionText, ajustar_h(35u), 1.5);
+        string puntuacionesStr = "P: ";
+        puntuacionesStr.append(std::to_string(puntuacion));
+        puntuacionText.setString(puntuacionesStr);
+        puntuacionText.setPosition({ajustar_w(12.0f),ajustar_h(12.0f)});
+        ventana.draw(puntuacionText);
+
+        //Se dibuja la vida
+
+        sf::Sprite marco_vidas;
+        marco_vidas.setTexture(texture);
+        marco_vidas.scale({ajustar_w(0.15f), ajustar_h(0.20f)});
+        marco_vidas.setPosition({ajustar_w(3.0f), ajustar_h(55.0f)});
+        ventana.draw(marco_vidas);
+        sf::Text vidasText;
+        inicializaTexto(vidasText, ajustar_h(35u), 1.5);
+        string vidasStr = "  ";
+        vidasStr.append(std::to_string(nave.getVidas()));
+        vidasText.setString(vidasStr);
+        vidasText.setPosition({ajustar_w(5.0f), ajustar_h(65.0f)});
+        ventana.draw(vidasText);
+
+        minimapaXY.setElementos3D(&nave, ovni, &asteroides, RADIO_ESFERA_JUGABLE);
+        minimapaYZ.setElementos3D(&nave, ovni, &asteroides, RADIO_ESFERA_JUGABLE);
+
+        sf::Text idMapaXY;
+        inicializaTexto(idMapaXY, ajustar_h(20u), 1.0);
+        idMapaXY.setString("X Y");
+        idMapaXY.setPosition({resolucion.x - ajustar_h(200) / 2.0f - idMapaXY.getLocalBounds().width / 2.0f,
+                              resolucion.y - ajustar_h(200) * 2.0f + ajustar_h(200) / 2.0f -
+                              idMapaXY.getLocalBounds().height / 2.0f});
+        idMapaXY.setFillColor(sf::Color(0, 50, 50, 70));
+
+        ventana.draw(idMapaXY);
+        ventana.draw(minimapaXY);
+        sf::Text idMapaYZ;
+        inicializaTexto(idMapaYZ, ajustar_h(20u), 1.0);
+        idMapaYZ.setString("Y Z");
+        idMapaYZ.setPosition({resolucion.x - ajustar_h(200) / 2.0f - idMapaYZ.getLocalBounds().width / 2.0f,
+                              resolucion.y - ajustar_h(200) / 2.0f - idMapaYZ.getLocalBounds().height / 2.0f});
+        idMapaYZ.setFillColor(sf::Color(0, 50, 50, 70));
+        ventana.draw(idMapaYZ);
+        ventana.draw(minimapaYZ);
+
+        if(pausarJuego){
+            sf::Transform tPausa;
+            if (seleccionSalir == SI) {
+                tPausa.translate({opcionSi.getPosition().x - ajustar_w(30), opcionSi.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+
+            } else {
+                tPausa.translate({opcionNo.getPosition().x - ajustar_w(30), opcionNo.getPosition().y + ajustar_h(20u)})
+                        .scale(ajustar_h(35u), ajustar_w(20u));
+            }
+            ventana.draw(cuadroSalir1);
+            ventana.draw(cuadroSalir2);
+            ventana.draw(textoSalir);
+            ventana.draw(opcionSi);
+            ventana.draw(opcionNo);
+            ventana.draw(poligono, tPausa);
+        }
+        // restore the state
+        ventana.popGLStates();
+
+        // Muestra el fotograma
+        ventana.display();
+    }
+
+    inicializaVentana();
+
+    ventana.setMouseCursorVisible(true);
+    ventana.setMouseCursorGrabbed(false);
+
+    glDisable(GL_DEPTH_TEST);
+    return GAME_OVER;
 }

@@ -3,11 +3,19 @@
 
 using namespace std;
 
+
+neural::Network red(1,1);
+
 OvniInteligente::OvniInteligente(sf::Vector2u limitesPantalla, sf::Color color, ControladorSonido *cs) :
         Ovni(limitesPantalla, color, cs) {
     radio = radio * 3 / 4;
     SonidoPresencia = ControladorSonido::OVNI_PEQUENO;
     SonidoDestruccion = ControladorSonido::EXP_1;
+    red = red.read(ficheroRed);
+    ocultas = red.getFirstLayer()->size();
+    for(int i = 0; i < ocultas; i++) {
+        contexto.push_back(0);
+    }
 }
 
 OvniInteligente::~OvniInteligente() {}
@@ -16,20 +24,228 @@ void OvniInteligente::disparar(sf::Vector2f nave) {
     if (estado == VIVO) {
         if (num_disparos < MAX_DISPAROS) {
             sf::Vector2f vectorDir = (nave - posicion);
-            float direccionDisp = atan2f(vectorDir.y, vectorDir.x);
+            if((abs(vectorDir.x) > limites.x/2)) {
+                if(vectorDir.x > 0.0f) {
+                    vectorDir.x = -posicion.x - (limites.x - nave.x);
+                } else {
+                    vectorDir.x = posicion.x + limites.x + nave.x;
+                }
+            }
+            if((abs(vectorDir.y) > limites.y/2)) {
+                if(vectorDir.y > 0.0f) {
+                    vectorDir.y = -posicion.y - (limites.y - nave.y);
+                } else {
+                    vectorDir.y = posicion.y + limites.y + nave.y;
+                }
+            }
+            double direccionDisp = output2RadiansDisparo(red.run({vectorDir.x,vectorDir.y}));
             disparos[num_disparos] = Disparo(posicion, (float) direccion, limites, color);
-            direccionDisp = direccionDisp + valorAleatorio(-error / 5, error / 5);
-            disparos[num_disparos].setDireccion(direccionDisp);
+            disparos[num_disparos].setDireccion((float)direccionDisp);
             num_disparos++;
         }
         cs->reproducir(SonidoDisparo);
     }
 }
 
+double OvniInteligente::output2RadiansDisparo(vector<double> output) {
+    vector<int> salidaEntero;
+    for(int i = 0; i < output.size(); i++) {
+        if(output.at(i) >= 0) {
+            salidaEntero.push_back(1);
+        } else {
+            salidaEntero.push_back(0);
+        }
+    }
+    switch(salidaEntero.at(0)) {
+        case 0:
+            switch(salidaEntero.at(1)) {
+                case 0:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 0.0;
+                                        case 1:
+                                            return -PI/16;
+                                    }
+
+                                case 1:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -PI/8;
+
+                                        case 1:
+                                            return -3*PI/16;
+                                    }
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -PI/4;
+
+                                        case 1:
+
+                                            return -5*PI/16;
+                                    }
+
+                                case 1:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -3*PI/8;
+
+                                        case 1:
+                                            return -7*PI/16;
+                                    }
+                            }
+                    }
+
+                case 1:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -PI/2;
+
+                                        case 1:
+
+                                            return -9*PI/16;
+                                    }
+
+                                case 1:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -10*PI/16;
+
+                                        case 1:
+                                            return -11*PI/16;
+                                    }
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -3*PI/4;
+
+                                        case 1:
+                                            return -13*PI/16;
+                                    }
+
+                                case 1:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return -7*PI/8;
+
+                                        case 1:
+                                            return -15*PI/16;
+                                    }
+                            }
+                    }
+            }
+        case 1:
+            switch(salidaEntero.at(1)) {
+                case 0:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI;
+                                        case 1:
+                                            return PI/16;
+                                    }
+
+                                case 1:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI/8;
+
+                                        case 1:
+                                            return 3*PI/16;
+                                    }
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI/4;
+
+                                        case 1:
+
+                                            return 5*PI/16;
+                                    }
+
+                                case 1:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 3*PI/8;
+
+                                        case 1:
+                                            return 7*PI/16;
+                                    }
+                            }
+                    }
+
+                case 1:
+                    switch(salidaEntero.at(2)) {
+                        case 0:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return PI/2;
+
+                                        case 1:
+
+                                            return 9*PI/16;
+                                    }
+
+                                case 1:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 10*PI/16;
+
+                                        case 1:
+                                            return 11*PI/16;
+
+                                    }
+                            }
+                        case 1:
+                            switch(salidaEntero.at(3)) {
+                                case 0:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 3*PI/4;
+
+                                        case 1:
+                                            return 13*PI/16;
+                                    }
+
+                                case 1:
+                                    switch(salidaEntero.at(4)) {
+                                        case 0:
+                                            return 7*PI/8;
+
+                                        case 1:
+                                            return 15*PI/16;
+                                    }
+                            }
+                    }
+            }
+    }
+}
+
 void OvniInteligente::mover(std::vector<Asteroide> &astds, Triangular &nave) {
     if (estado == VIVO) {
         direccion = direccionSegura(sf::CircleShape(radio), posicion, astds);
-
         posicion.x += VELOCIDAD * cos(direccion) * limites.y / (float) RESOLUCION_BASE.y;
         if (posicion.x - 1 >= limites.x) {
             posicion.x -= limites.x;
@@ -181,7 +397,7 @@ double OvniInteligente::direccionSegura(sf::CircleShape ovni, sf::Vector2f posic
     if (direccionesSeguras.size() == 0) {
         return ultimaDireccion;
     }
-    int elegido = enteroAleatorio(0, direccionesSeguras.size());
+    int elegido = enteroAleatorio(0, direccionesSeguras.size()-1);
     ultimaDireccion = direccionesSeguras[elegido];
     return direccionesSeguras[elegido];
 }
