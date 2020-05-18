@@ -42,7 +42,7 @@ set(FUENTES_2D
 		Graficos/Ovni.cpp
 		Graficos/Ovni.hpp
 		constantesGlobales.hpp
-		Graficos/OvniInteligente.cpp Graficos3D/OvniInteligente3D.cpp Graficos3D/OvniInteligente3D.hpp Graficos3D/fuego.cpp)
+		Graficos/OvniInteligente.cpp Graficos3D/OvniInteligente3D.cpp Graficos3D/OvniInteligente3D.hpp Graficos3D/Fuego.cpp)
 
 set(FUENTES_3D
         Graficos3D/Elemento3D.hpp
@@ -76,18 +76,15 @@ set(FUENTES_3D
 
 
 add_executable(${EXECUTABLE_NAME} main.cpp ${FUENTES_ASTEROIDS} ${FUENTES_2D} ${FUENTES_3D})
+find_package(SFML 2 REQUIRED network audio graphics window system)
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
 
-set(SFML_ROOT "C:/Program Files (x86)/SFML")
-
-find_package(OpenGL)
-find_package(glew)
 # Detecta y linkea SFML
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 find_package(SFML 2 REQUIRED system window graphics network audio)
 add_subdirectory(neural)
 include_directories(neural/include/)
 
-if(SFML_FOUND)
-    include_directories(${SFML_INCLUDE_DIR})
-	target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} neural)
-endif()
+target_include_directories(${EXECUTABLE_NAME} PRIVATE ${SFML_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS})
+target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} neural)

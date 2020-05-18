@@ -9,6 +9,7 @@
 #include "../matematicas.hpp"
 #include "../constantesGlobales.hpp"
 #include "../ControladorSonido.hpp"
+#include <cmath>
 
 class Asteroide : public sf::Drawable, public Circular {
 
@@ -62,8 +63,8 @@ public:
             float velocidad = valorAleatorio(0.2, 2.0) * limitesPantalla.y / (float) RESOLUCION_BASE.y;
             float direccion = anguloAleatorio();
 
-            int posX = limitesPantalla.x / 2;
-            int posY = limitesPantalla.y / 2;
+            float posX = limitesPantalla.x / 2;
+            float posY = limitesPantalla.y / 2;
 
             while (std::abs(posX - limitesPantalla.x / 2) < limitesPantalla.x * 0.05) {
                 posX = enteroAleatorio(0, limitesPantalla.x);
